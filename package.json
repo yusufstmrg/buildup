@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "BuildUp AI-native business transformation platform",
   "scripts": {
-    "dev": "python3 -m http.server ${PORT:-4173}",
-    "start": "python3 -m http.server ${PORT:-4173}"
+    "dev": "node server.js",
+    "start": "node server.js"
   }
 }
