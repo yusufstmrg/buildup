@@ -1,1 +1,21 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07111d"><title>BuildUp — AI-Native Business Transformation Partner</title></head><body><noscript>BuildUp requires JavaScript.</noscript><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>fetch('/assets/app.html.gz').then(r=>{if(!r.ok)throw Error('BuildUp app unavailable');return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).text()}).then(h=>{h=h.replace('</body>','<script src="/assets/enhance.js"></script><script src="/assets/auth-guard.js"></script></body>');document.open();document.write(h);document.close()}).catch(e=>{document.body.innerHTML='<main style="font:16px system-ui;padding:40px;background:#07111d;color:#fff;min-height:100vh">BuildUp is temporarily unavailable. Please refresh.</main>';console.error(e)})</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07111d" />
+    <meta name="description" content="BuildUp is the AI-Native Business Transformation Partner. Connected Intelligence, Decision Engine, AI Workforce & Business OS." />
+    <meta property="og:title" content="BuildUp — AI-Native Business Transformation Partner" />
+    <meta property="og:description" content="Turn your company's existing systems, data and workflows into an intelligent, continuously improving business operating system." />
+    <meta property="og:image" content="/buildup-logo.png" />
+    <link rel="icon" type="image/png" href="/buildup-logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>BuildUp — AI-Native Business Transformation Partner</title>
+  </head>
+  <body class="bg-brand-navy text-slate-200 antialiased selection:bg-brand-gold/30">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
