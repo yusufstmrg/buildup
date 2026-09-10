@@ -831,11 +831,11 @@ export const ERP_CONNECTORS: ERPConnectorSpec[] = [
   },
   {
     id: 'djp_efaktur',
-    name: 'DJP e-Faktur & Tax Compliance Engine',
+    name: 'Coretax & Tax Compliance Engine',
     category: 'Tax & Compliance',
     description: {
-      id: 'Verifikasi kepatuhan pajak otomatis antara faktur komersial perusahaan dengan sistem e-Faktur DJP Indonesia.',
-      en: 'Automated tax compliance verification matching commercial billing against DJP e-Faktur Indonesia.',
+      id: 'Verifikasi kepatuhan pajak otomatis antara faktur komersial perusahaan dengan sistem Coretax Indonesia.',
+      en: 'Automated tax compliance verification matching commercial billing against Coretax Indonesia.',
       zh: '印尼国家税务总局（DJP）电子发票直连——自动化核验商业发票与纳税申报记录。',
       ja: 'インドネシア国税総局（DJP）e-Faktur直結——商業請求書と税務申告の突合自動化。',
       ar: 'ربط مباشر مع منظومة الفوترة الضريبية الإلكترونية للتحقق من سلامة الإقرارات.'

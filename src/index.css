@@ -3,39 +3,35 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-brand-deep text-slate-200 antialiased font-sans;
+  :root {
+    --bg-deep: #ffffff;
+    --bg-navy: #f8fafc;
+    --bg-surface: #f1f5f9;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --border-light: #cbd5e1;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --gold: #b4860b; 
+    --gold-light: #d4af37;
+    --gold-dark: #8c6a08;
+  }
+  .dark {
+    --bg-deep: #04080F;
+    --bg-navy: #060D17;
+    --bg-surface: #0B1726;
+    --bg-card: #102238;
+    --border: #1E3550;
+    --border-light: #2A4A6F;
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    --gold: #D4AF37;
+    --gold-light: #F7E7A9;
+    --gold-dark: #9E7D20;
   }
 }
 
-@layer utilities {
-  .text-gold-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-goldLight via-brand-gold to-brand-goldDark;
-  }
-  .text-silver-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-silverLight via-white to-brand-silver;
-  }
-  .border-gold-gradient {
-    border-image: linear-gradient(to right, rgba(212, 175, 55, 0.6), rgba(212, 175, 55, 0.1)) 1;
-  }
-  .bg-radial-grid {
-    background-image: radial-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #060D17; 
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.3); 
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.7); 
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-main);
 }

@@ -240,12 +240,12 @@ export function AIWorkforce() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white tracking-tight">AI Workforce Studio™</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">AI Workforce Studio™</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Product Stage 08 · 12 Digital Roles
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-brand-textMuted mt-1">
             Section 10: The Coordinated Digital Organization. Governed, evidence-backed digital executives executing business operations.
           </p>
         </div>
@@ -254,7 +254,7 @@ export function AIWorkforce() {
           <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-emerald-400 font-semibold flex items-center gap-1.5">
             <Activity className="w-3.5 h-3.5" /> 12/12 Roles Deployed
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-slate-300">
+          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-brand-textMuted">
             Avg Accuracy: <strong>97.9%</strong>
           </span>
         </div>
@@ -269,7 +269,7 @@ export function AIWorkforce() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-black text-white">{activeAgent.name}</h3>
+                <h3 className="text-base font-black text-brand-textMain">{activeAgent.name}</h3>
                 <span className="text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded">
                   {activeAgent.status}
                 </span>
@@ -280,7 +280,7 @@ export function AIWorkforce() {
 
           {/* Autonomy Level Slider / Selector */}
           <div className="flex items-center gap-2 bg-brand-navy p-1 rounded-xl border border-brand-border text-xs">
-            <span className="text-[10px] font-bold text-slate-400 uppercase px-2">Autonomy Mode:</span>
+            <span className="text-[10px] font-bold text-brand-textMuted uppercase px-2">Autonomy Mode:</span>
             {(['Assist', 'Recommend', 'Approve', 'Orchestrate', 'Autonomous'] as const).map((mode) => (
               <button
                 key={mode}
@@ -288,7 +288,7 @@ export function AIWorkforce() {
                 className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-colors ${
                   activeAgent.autonomyMode === mode
                     ? 'bg-brand-gold text-brand-deep shadow-sm'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-brand-textMuted hover:text-brand-textMain'
                 }`}
               >
                 {mode}
@@ -312,8 +312,8 @@ export function AIWorkforce() {
               <div
                 className={`p-3 rounded-xl max-w-xl leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-brand-gold/20 text-white border border-brand-gold/40'
-                    : 'bg-brand-card/80 text-slate-200 border border-brand-border'
+                    ? 'bg-brand-gold/20 text-brand-textMain border border-brand-gold/40'
+                    : 'bg-brand-card/80 text-brand-textMain border border-brand-border'
                 }`}
               >
                 {msg.text}
@@ -329,7 +329,7 @@ export function AIWorkforce() {
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             placeholder={`Instruct or question ${activeAgent.name} (e.g. "${activeAgent.samplePrompt}")`}
-            className="flex-1 bg-brand-navy border border-brand-border rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-brand-gold"
+            className="flex-1 bg-brand-navy border border-brand-border rounded-xl px-4 py-2.5 text-xs text-brand-textMain placeholder:text-brand-textMuted focus:outline-none focus:border-brand-gold"
           />
           <button
             type="submit"
@@ -344,8 +344,8 @@ export function AIWorkforce() {
       {/* 12 Digital Roles Grid */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-white">All 12 Coordinated Digital Roles</h2>
-          <span className="text-xs text-slate-400">Click any role to inspect or command</span>
+          <h2 className="text-base font-bold text-brand-textMain">All 12 Coordinated Digital Roles</h2>
+          <span className="text-xs text-brand-textMuted">Click any role to inspect or command</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -374,12 +374,12 @@ export function AIWorkforce() {
                     </span>
                   </div>
 
-                  <h3 className="text-sm font-bold text-white">{agent.name}</h3>
+                  <h3 className="text-sm font-bold text-brand-textMain">{agent.name}</h3>
                   <div className="text-[11px] font-semibold text-brand-gold/90 mt-0.5 mb-2">{agent.role}</div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-3">{agent.desc}</p>
+                  <p className="text-[11px] text-brand-textMuted leading-relaxed line-clamp-3">{agent.desc}</p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-brand-border flex items-center justify-between text-[10px] text-slate-500">
+                <div className="mt-4 pt-3 border-t border-brand-border flex items-center justify-between text-[10px] text-brand-textMuted">
                   <span>{agent.tasksCompleted} Tasks Done</span>
                   <span className="text-emerald-400 font-semibold">{agent.accuracy}% Accuracy</span>
                 </div>

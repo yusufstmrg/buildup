@@ -50,12 +50,12 @@ export function CommandCenter() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white tracking-tight">Enterprise Command Center</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Enterprise Command Center</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Live System
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-brand-textMuted mt-1">
             Real-time cross-functional synthesis across Finance, Sales, Operations, and Governance.
           </p>
         </div>
@@ -71,7 +71,7 @@ export function CommandCenter() {
 
           <Link
             to="/planner"
-            className="bg-brand-surface hover:bg-brand-card text-slate-200 border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors"
+            className="bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors"
           >
             <TrendingUp className="w-4 h-4 text-brand-gold" />
             <span>Simulate Scenario</span>
@@ -84,9 +84,9 @@ export function CommandCenter() {
         
         {/* Score Card */}
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">BuildUp Score™</div>
+          <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">BuildUp Score™</div>
           <div className="text-3xl font-black text-gold-gradient tracking-tight mb-2">
-            {overallScore}<span className="text-sm font-normal text-slate-500">/100</span>
+            {overallScore}<span className="text-sm font-normal text-brand-textMuted">/100</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
@@ -103,23 +103,23 @@ export function CommandCenter() {
 
         {/* Working Capital Card */}
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Working Capital Freed</div>
-          <div className="text-2xl font-black text-white tracking-tight mb-2">
+          <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Working Capital Freed</div>
+          <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
             {formatMoney(1850000000, 119000)}
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <ArrowUpRight className="w-3.5 h-3.5" /> DSO -17 Days
             </span>
-            <span className="text-slate-400 text-[11px]">AI CFO Active</span>
+            <span className="text-brand-textMuted text-[11px]">AI CFO Active</span>
           </div>
         </div>
 
         {/* Active AI Workflows */}
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Active AI Workflows</div>
-          <div className="text-2xl font-black text-white tracking-tight mb-2">
-            18 / 18 <span className="text-xs font-normal text-slate-400">Autonomous</span>
+          <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Active AI Workflows</div>
+          <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
+            18 / 18 <span className="text-xs font-normal text-brand-textMuted">Autonomous</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
@@ -133,7 +133,7 @@ export function CommandCenter() {
 
         {/* Value Leakage Identified */}
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Recoverable Leakage</div>
+          <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Recoverable Leakage</div>
           <div className="text-2xl font-black text-emerald-400 tracking-tight mb-2">
             {formatMoney(1450000000, 96000)}
           </div>
@@ -154,16 +154,16 @@ export function CommandCenter() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4 pb-4 border-b border-brand-border">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white">Business Context Graph™</h2>
+              <h2 className="text-base font-bold text-brand-textMain">Business Context Graph™</h2>
               <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-brand-silver px-2 py-0.5 rounded">
                 Section 8.1: Connected Intelligence
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-brand-textMuted mt-0.5">
               Click any node to reveal second-order financial & operational ripple effects.
             </p>
           </div>
-          <div className="text-xs text-slate-400">
+          <div className="text-xs text-brand-textMuted">
             Selected Entity: <strong className="text-brand-gold">{activeGraphNode}</strong>
           </div>
         </div>
@@ -192,11 +192,11 @@ export function CommandCenter() {
                     ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:border-red-400'
                     : n.status === 'warning'
                     ? 'bg-yellow-500/10 border-yellow-500/40 text-yellow-300 hover:border-yellow-400'
-                    : 'bg-brand-card/40 border-brand-border text-slate-300 hover:border-brand-borderLight'
+                    : 'bg-brand-card/40 border-brand-border text-brand-textMuted hover:border-brand-borderLight'
                 }`}
               >
-                <div className="text-[11px] font-bold text-white truncate">{n.label}</div>
-                <div className="text-[10px] text-slate-400 mt-1">{n.metric}</div>
+                <div className="text-[11px] font-bold text-brand-textMain truncate">{n.label}</div>
+                <div className="text-[10px] text-brand-textMuted mt-1">{n.metric}</div>
               </button>
             );
           })}
@@ -206,7 +206,7 @@ export function CommandCenter() {
         <div className="mt-4 p-4 rounded-xl bg-brand-navy border border-brand-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-brand-gold">Graph Causal Trace:</span>
-            <p className="text-xs text-slate-200 mt-0.5">
+            <p className="text-xs text-brand-textMain mt-0.5">
               {activeGraphNode === 'Supplier' && "Supplier concentration in packaging -> 8.4% above benchmark quotation -> reduces gross margin by 1.2% -> inflates raw material cash burn."}
               {activeGraphNode === 'Cash' && "Customer payment delay (+18 days DSO) -> locks Rp 1.85B in uncollected working capital -> requires bank overdraft utilization."}
               {activeGraphNode === 'Customer' && "Top 20% of customers generate 74% of operating contribution. Low churn risk detected (96.2% retention score)."}
@@ -234,14 +234,14 @@ export function CommandCenter() {
         <div className="lg:col-span-7 bg-brand-surface border border-brand-border rounded-2xl p-6 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-bold text-white">Revenue, Margin & Cash Trajectory</h2>
-              <p className="text-xs text-slate-400">Weekly trajectory with BuildUp operational intervention</p>
+              <h2 className="text-base font-bold text-brand-textMain">Revenue, Margin & Cash Trajectory</h2>
+              <p className="text-xs text-brand-textMuted">Weekly trajectory with BuildUp operational intervention</p>
             </div>
             <div className="flex items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 text-slate-300">
+              <span className="flex items-center gap-1.5 text-brand-textMuted">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-gold" /> Revenue
               </span>
-              <span className="flex items-center gap-1.5 text-slate-300">
+              <span className="flex items-center gap-1.5 text-brand-textMuted">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Free Cash
               </span>
             </div>
@@ -279,7 +279,7 @@ export function CommandCenter() {
             <div className="flex items-center justify-between pb-3 border-b border-brand-border mb-4">
               <div className="flex items-center gap-2">
                 <BrainCircuit className="w-5 h-5 text-brand-gold" />
-                <h2 className="text-base font-bold text-white">Decision Engine</h2>
+                <h2 className="text-base font-bold text-brand-textMain">Decision Engine</h2>
               </div>
               <span className="text-[10px] font-bold text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded border border-brand-gold/20">
                 {decisionObjects.filter(d => d.status === 'Pending Review').length} Pending Review
@@ -291,20 +291,20 @@ export function CommandCenter() {
                 <div key={dec.id} className="p-4 rounded-xl bg-brand-navy border border-brand-border space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-brand-gold">{dec.agent}</span>
-                    <span className="text-[10px] text-slate-500">{dec.timestamp}</span>
+                    <span className="text-[10px] text-brand-textMuted">{dec.timestamp}</span>
                   </div>
                   
-                  <h3 className="text-xs font-bold text-white leading-snug">
+                  <h3 className="text-xs font-bold text-brand-textMain leading-snug">
                     {dec.title}
                   </h3>
 
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                  <p className="text-[11px] text-brand-textMuted leading-relaxed">
                     {dec.problem}
                   </p>
 
                   <div className="flex items-center justify-between text-[11px] pt-1 border-t border-brand-border/60">
                     <span className="text-emerald-400 font-semibold">{dec.financialImpact}</span>
-                    <span className="text-slate-400">{dec.confidence}% Confidence</span>
+                    <span className="text-brand-textMuted">{dec.confidence}% Confidence</span>
                   </div>
 
                   <div className="flex items-center gap-2 pt-1">
@@ -318,7 +318,7 @@ export function CommandCenter() {
                         </button>
                         <button
                           onClick={() => escalateDecision(dec.id)}
-                          className="py-1.5 px-3 rounded-lg bg-brand-card hover:bg-brand-border text-slate-300 text-[11px] font-semibold transition-colors"
+                          className="py-1.5 px-3 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMuted text-[11px] font-semibold transition-colors"
                         >
                           Escalate
                         </button>

@@ -60,7 +60,7 @@ export function RegisterPage() {
           <LanguageSelector />
           <Link
             to="/login"
-            className="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-700 hover:bg-slate-800 transition-colors"
+            className="text-xs font-bold text-brand-textMuted hover:text-brand-textMain px-3 py-1.5 rounded-lg border border-brand-border hover:bg-brand-surface transition-colors"
           >
             {t('clientPortalLogin')}
           </Link>
@@ -69,13 +69,13 @@ export function RegisterPage() {
 
       {/* Main Container */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-xl bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
+        <div className="w-full max-w-xl bg-brand-navy/90 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 text-brand-gold mb-3">
               <Building2 className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-black text-white tracking-tight">{t('registerTitle')}</h1>
-            <p className="text-xs text-slate-400 mt-1.5">{t('registerSubtitle')}</p>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">{t('registerTitle')}</h1>
+            <p className="text-xs text-brand-textMuted mt-1.5">{t('registerSubtitle')}</p>
           </div>
 
           {error && (
@@ -87,26 +87,26 @@ export function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t('fullNameLabel')} *</label>
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('fullNameLabel')} *</label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                  <User className="w-4 h-4 text-brand-textMuted absolute left-3 top-3.5" />
                   <input
                     type="text"
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Bambang Soediro, M.M."
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t('executiveRoleLabel')} *</label>
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('executiveRoleLabel')} *</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 >
                   <option value="Chief Executive Officer / Direktur Utama">Chief Executive Officer / Direktur Utama</option>
                   <option value="Chief Financial Officer / Direktur Keuangan">Chief Financial Officer / Direktur Keuangan</option>
@@ -119,27 +119,27 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">{t('companyNameLabel')} *</label>
+              <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('companyNameLabel')} *</label>
               <div className="relative">
-                <Building2 className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                <Building2 className="w-4 h-4 text-brand-textMuted absolute left-3 top-3.5" />
                 <input
                   type="text"
                   required
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="PT Samudera Logistik Makmur"
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 />
               </div>
             </div>
 
             {/* Comprehensive Industry Selector */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">{t('industryLabel')} *</label>
+              <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('industryLabel')} *</label>
               <select
                 value={selectedIndustry}
                 onChange={(e) => setSelectedIndustry(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
               >
                 {industries.map((ind) => (
                   <option key={ind.id} value={ind.id}>
@@ -161,7 +161,7 @@ export function RegisterPage() {
                   value={customIndustry}
                   onChange={(e) => setCustomIndustry(e.target.value)}
                   placeholder={t('customIndustryPlaceholder')}
-                  className="w-full px-3 py-2 bg-slate-900 border border-brand-gold/50 rounded-lg text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                  className="w-full px-3 py-2 bg-brand-navy border border-brand-gold/50 rounded-lg text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 />
                 <p className="text-[11px] text-amber-200/80 mt-1">
                   Model ontologi bisnis dan parameter benchmark akan otomatis disesuaikan dengan profil sektor khusus Anda.
@@ -171,42 +171,42 @@ export function RegisterPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t('emailLabel')} *</label>
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('emailLabel')} *</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                  <Mail className="w-4 h-4 text-brand-textMuted absolute left-3 top-3.5" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="bambang@samudera.co.id"
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">{t('passwordLabel')} *</label>
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('passwordLabel')} *</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+                  <Lock className="w-4 h-4 text-brand-textMuted absolute left-3 top-3.5" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">{t('annualRevenueLabel')}</label>
+              <label className="block text-xs font-semibold text-brand-textMuted mb-1">{t('annualRevenueLabel')}</label>
               <select
                 value={revenueBracket}
                 onChange={(e) => setRevenueBracket(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
               >
                 <option value="< Rp 10 Miliar / tahun">&lt; Rp 10 Miliar / tahun</option>
                 <option value="Rp 10 Miliar - Rp 50 Miliar">Rp 10 Miliar - Rp 50 Miliar</option>
@@ -234,7 +234,7 @@ export function RegisterPage() {
 
           <div className="relative my-6 flex items-center justify-center">
             <div className="border-t border-slate-800 w-full" />
-            <span className="bg-slate-900 px-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest absolute">
+            <span className="bg-brand-navy px-3 text-[11px] font-bold text-brand-textMuted uppercase tracking-widest absolute">
               Atau
             </span>
           </div>
@@ -245,13 +245,13 @@ export function RegisterPage() {
               enterDemoMode();
               navigate('/app');
             }}
-            className="w-full py-3 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-slate-200 hover:text-white text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 bg-brand-surface/90 hover:bg-brand-surface border border-brand-border text-brand-textMain hover:text-brand-textMain text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2"
           >
             <Sparkles className="w-4 h-4 text-brand-gold" />
             <span>Coba Dahulu dalam Mode Demo Sandbox</span>
           </button>
 
-          <p className="text-center text-xs text-slate-400 mt-6">
+          <p className="text-center text-xs text-brand-textMuted mt-6">
             Sudah memiliki akun resmi?{' '}
             <Link to="/login" className="text-brand-gold font-bold hover:underline">
               Masuk ke Portal Klien
@@ -261,7 +261,7 @@ export function RegisterPage() {
       </div>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-[11px] text-slate-400 border-t border-slate-900">
+      <footer className="py-4 text-center text-[11px] text-brand-textMuted border-t border-slate-900">
         © 2026 BuildUp — AI-Native Business Transformation Partner.
       </footer>
     </div>

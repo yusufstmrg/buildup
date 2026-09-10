@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { 
   ShieldCheck, 
@@ -20,8 +20,10 @@ import {
 import { BuildUpLogo } from '../components/BuildUpLogo';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useBuildUp } from '../context/BuildUpContext';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function AboutPage() {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const { setIsHealthCheckModalOpen, setIsAuthModalOpen, setAuthModalMode, t } = useBuildUp();
 
   const comparisonPoints = [
@@ -68,7 +70,7 @@ export function AboutPage() {
             <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-brand-textMuted">
             <Link to="/" className="hover:text-brand-gold transition-colors">{t('navHome')}</Link>
             <Link to="/about" className="text-brand-gold font-bold">{t('navAbout')}</Link>
             <Link to="/pricing" className="hover:text-brand-gold transition-colors">{t('navPricing')}</Link>
@@ -76,10 +78,11 @@ export function AboutPage() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <LanguageSelector />
             <button
               onClick={() => { setAuthModalMode('login'); setIsAuthModalOpen(true); }}
-              className="px-3.5 py-2 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition-all"
+              className="px-3.5 py-2 text-xs font-bold text-brand-textMain hover:text-brand-textMain bg-brand-surface/80 hover:bg-slate-700/80 border border-brand-border rounded-xl transition-all"
             >
               {t('clientPortalLogin')}
             </button>
@@ -101,11 +104,11 @@ export function AboutPage() {
             <span>Misi & Filosofi BuildUp</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-brand-textMain leading-tight">
             Kami Menggantikan Model Konsultasi Lama dengan <span className="bg-gradient-to-r from-[#FFF5C6] via-[#F2C54D] to-[#B37C0C] bg-clip-text text-transparent">AI-Native Transformation Partner</span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
+          <p className="mt-6 text-base sm:text-lg text-brand-textMuted leading-relaxed max-w-3xl mx-auto">
             Dunia bisnis bergerak setiap detik, namun pendekatan transformasi bisnis tradisional masih terjebak pada dokumen slide 6 bulanan yang mahal dan berdebu. BuildUp hadir sebagai mitra operasi cerdas yang terhubung langsung ke denyut nadi data perusahaan Anda.
           </p>
 
@@ -119,7 +122,7 @@ export function AboutPage() {
             </button>
             <Link
               to="/contact"
-              className="px-6 py-3.5 bg-slate-800/90 hover:bg-slate-800 border border-slate-700 text-white font-bold text-sm rounded-xl transition-all"
+              className="px-6 py-3.5 bg-brand-surface/90 hover:bg-brand-surface border border-brand-border text-brand-textMain font-bold text-sm rounded-xl transition-all"
             >
               Jadwalkan Diskusi dengan Partner Ahli
             </Link>
@@ -131,10 +134,10 @@ export function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800 bg-slate-950/40">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-textMain">
               Mengapa Korporasi Modern Beralih ke BuildUp?
             </h2>
-            <p className="text-sm text-slate-400 mt-2">
+            <p className="text-sm text-brand-textMuted mt-2">
               Perbandingan fundamental antara konsultan manajemen warisan (legacy) dengan arsitektur sistem operasi BuildUp.
             </p>
           </div>
@@ -143,14 +146,14 @@ export function AboutPage() {
             {comparisonPoints.map((item, idx) => (
               <div 
                 key={idx} 
-                className="grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-colors items-center"
+                className="grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-2xl bg-brand-navy/80 border border-slate-800 hover:border-brand-border transition-colors items-center"
               >
                 <div className="md:col-span-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-brand-gold">
                     {item.feature}
                   </span>
                 </div>
-                <div className="md:col-span-4 p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-xs text-slate-300">
+                <div className="md:col-span-4 p-3 rounded-xl bg-red-950/20 border border-red-900/30 text-xs text-brand-textMuted">
                   <span className="font-bold text-red-400 block mb-1">Konsultan Tradisional (Big 4):</span>
                   {item.traditional}
                 </div>
@@ -171,28 +174,28 @@ export function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-300 mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-brand-border text-xs font-semibold text-brand-textMuted mb-3">
               <Layers className="w-3.5 h-3.5 text-brand-gold" />
               <span>Metodologi Eksklusif</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-textMain">
               Siklus 9 Tahap Transformasi Bisnis Berkelanjutan
             </h2>
-            <p className="text-sm text-slate-400 mt-2">
+            <p className="text-sm text-brand-textMuted mt-2">
               Satu-satunya kerangka kerja yang menghubungkan identifikasi kebocoran nilai dengan orkestrasi eksekusi multi-sistem secara otomatis.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {nineStages.map((stage) => (
-              <div key={stage.num} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-brand-gold/40 transition-all group">
+              <div key={stage.num} className="p-6 rounded-2xl bg-brand-navy/60 border border-slate-800 hover:border-brand-gold/40 transition-all group">
                 <span className="text-3xl font-black text-slate-700 group-hover:text-brand-gold transition-colors font-mono">
                   {stage.num}
                 </span>
-                <h3 className="text-base font-bold text-white mt-2 mb-1.5 group-hover:text-brand-gold transition-colors">
+                <h3 className="text-base font-bold text-brand-textMain mt-2 mb-1.5 group-hover:text-brand-gold transition-colors">
                   {stage.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-brand-textMuted leading-relaxed">
                   {stage.desc}
                 </p>
               </div>
@@ -204,7 +207,7 @@ export function AboutPage() {
       {/* Security & Bank-Grade Compliance */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800 bg-slate-950/60">
         <div className="max-w-5xl mx-auto">
-          <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-700/80 shadow-2xl relative overflow-hidden">
+          <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-brand-border/80 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <Lock className="w-64 h-64 text-brand-gold" />
             </div>
@@ -215,44 +218,44 @@ export function AboutPage() {
                 <span>Standar Keamanan Korporat & Perbankan</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-black text-white">
+              <h2 className="text-2xl sm:text-3xl font-black text-brand-textMain">
                 Kerahasiaan Data Bisnis Anda Adalah Fondasi Kami
               </h2>
 
-              <p className="mt-3 text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="mt-3 text-sm text-brand-textMuted max-w-2xl leading-relaxed">
                 Kami memahami bahwa data keuangan, margin, dan transaksi pelanggan adalah rahasia dagang paling berharga. BuildUp dirancang dengan prinsip pertahanan berlapis (defense-in-depth):
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/60 border border-slate-700">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-brand-surface/60 border border-brand-border">
                   <CheckCircle2 className="w-5 h-5 text-brand-gold flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-white">Zero Data Retention untuk Pelatihan AI</h4>
-                    <p className="text-[11px] text-slate-400 mt-1">Data Anda tidak pernah digunakan untuk melatih model AI publik.</p>
+                    <h4 className="text-xs font-bold text-brand-textMain">Zero Data Retention untuk Pelatihan AI</h4>
+                    <p className="text-[11px] text-brand-textMuted mt-1">Data Anda tidak pernah digunakan untuk melatih model AI publik.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/60 border border-slate-700">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-brand-surface/60 border border-brand-border">
                   <CheckCircle2 className="w-5 h-5 text-brand-gold flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-white">Enkripsi AES-256 & TLS 1.3</h4>
-                    <p className="text-[11px] text-slate-400 mt-1">Standar enkripsi tingkat militer pada saat transit maupun saat tersimpan.</p>
+                    <h4 className="text-xs font-bold text-brand-textMain">Enkripsi AES-256 & TLS 1.3</h4>
+                    <p className="text-[11px] text-brand-textMuted mt-1">Standar enkripsi tingkat militer pada saat transit maupun saat tersimpan.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/60 border border-slate-700">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-brand-surface/60 border border-brand-border">
                   <CheckCircle2 className="w-5 h-5 text-brand-gold flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-white">Kepatuhan UU Perlindungan Data Pribadi (PDP)</h4>
-                    <p className="text-[11px] text-slate-400 mt-1">Sesuai regulasi UU No. 27 Tahun 2022 dan ISO/IEC 27001.</p>
+                    <h4 className="text-xs font-bold text-brand-textMain">Kepatuhan UU Perlindungan Data Pribadi (PDP)</h4>
+                    <p className="text-[11px] text-brand-textMuted mt-1">Sesuai regulasi UU No. 27 Tahun 2022 dan ISO/IEC 27001.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/60 border border-slate-700">
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-brand-surface/60 border border-brand-border">
                   <CheckCircle2 className="w-5 h-5 text-brand-gold flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="text-xs font-bold text-white">Opsi Deployment On-Premise / Private VPC</h4>
-                    <p className="text-[11px] text-slate-400 mt-1">Tersedia instalasi di server privat atau private cloud konglomerasi Anda.</p>
+                    <h4 className="text-xs font-bold text-brand-textMain">Opsi Deployment On-Premise / Private VPC</h4>
+                    <p className="text-[11px] text-brand-textMuted mt-1">Tersedia instalasi di server privat atau private cloud konglomerasi Anda.</p>
                   </div>
                 </div>
               </div>
@@ -264,10 +267,10 @@ export function AboutPage() {
       {/* CTA Footer Section */}
       <section className="py-16 px-4 text-center border-t border-slate-800 bg-brand-navy">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-textMain">
             Siap Memulai Transformasi Bisnis Bersama BuildUp?
           </h2>
-          <p className="text-sm text-slate-400 mt-2">
+          <p className="text-sm text-brand-textMuted mt-2">
             Ikuti ratusan pimpinan bisnis yang telah menghentikan kebocoran marjin dan mempercepat perputaran modal kerja.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -279,7 +282,7 @@ export function AboutPage() {
             </button>
             <Link
               to="/contact"
-              className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm rounded-xl border border-slate-700"
+              className="px-6 py-3 bg-brand-surface hover:bg-slate-700 text-brand-textMain font-bold text-sm rounded-xl border border-brand-border"
             >
               Hubungi Konsultan Kami
             </Link>
@@ -288,14 +291,14 @@ export function AboutPage() {
       </section>
 
       {/* Public Footer */}
-      <footer className="py-8 border-t border-slate-900 text-center text-xs text-slate-400">
+      <footer className="py-8 border-t border-slate-900 text-center text-xs text-brand-textMuted">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <BuildUpLogo size="sm" variant="horizontal" showSubtitle={false} />
           <p>© 2026 BuildUp Business Transformation Partner. {t('rightsReserved')}</p>
           <div className="flex gap-4">
-            <Link to="/about" className="hover:text-white">Tentang Kami</Link>
-            <Link to="/pricing" className="hover:text-white">Harga</Link>
-            <Link to="/contact" className="hover:text-white">Kontak</Link>
+            <Link to="/about" className="hover:text-brand-textMain">Tentang Kami</Link>
+            <Link to="/pricing" className="hover:text-brand-textMain">Harga</Link>
+            <Link to="/contact" className="hover:text-brand-textMain">Kontak</Link>
           </div>
         </div>
       </footer>

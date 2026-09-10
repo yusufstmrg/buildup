@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -11,20 +12,17 @@ export default {
       },
       colors: {
         brand: {
-          navy: '#060D17',
-          deep: '#04080F',
-          surface: '#0B1726',
-          card: '#102238',
-          border: '#1E3550',
-          borderLight: '#2A4A6F',
-          gold: '#D4AF37',
-          goldLight: '#F7E7A9',
-          goldDark: '#9E7D20',
-          silver: '#C5CBD3',
-          silverLight: '#ECEFF4',
-          emerald: '#10B981',
-          danger: '#EF4444',
-          warning: '#F59E0B',
+          navy: 'var(--bg-navy)',
+          deep: 'var(--bg-deep)',
+          surface: 'var(--bg-surface)',
+          card: 'var(--bg-card)',
+          border: 'var(--border)',
+          borderLight: 'var(--border-light)',
+          gold: 'var(--gold)',
+          goldLight: 'var(--gold-light)',
+          goldDark: 'var(--gold-dark)',
+          textMain: 'var(--text-main)',
+          textMuted: 'var(--text-muted)'
         }
       },
       boxShadow: {

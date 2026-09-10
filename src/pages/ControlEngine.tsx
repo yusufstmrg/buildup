@@ -91,12 +91,12 @@ export function ControlEngine() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white tracking-tight">Internal Control Engine™</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Internal Control Engine™</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Section 11 · 24/7 Governance Audit
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-brand-textMuted mt-1">
             Continuous transaction testing, Segregation of Duties (SoD) monitoring, duplicate payment blocking, and statutory tax compliance.
           </p>
         </div>
@@ -105,7 +105,7 @@ export function ControlEngine() {
           <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-emerald-400 font-semibold flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5" /> 100% Transactions Monitored
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-slate-300">
+          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-brand-textMuted">
             Audit Level: <strong>Tier-1 Readiness</strong>
           </span>
         </div>
@@ -114,21 +114,21 @@ export function ControlEngine() {
       {/* Top Threat & Vulnerability Status */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-brand-surface border border-brand-border rounded-xl p-5">
-          <div className="text-xs text-slate-400 uppercase font-semibold">Active Control Violations</div>
+          <div className="text-xs text-brand-textMuted uppercase font-semibold">Active Control Violations</div>
           <div className="text-2xl font-black text-red-400 mt-1">1 Critical Open</div>
-          <div className="text-[11px] text-slate-500 mt-0.5">Dual-custody authorization breach</div>
+          <div className="text-[11px] text-brand-textMuted mt-0.5">Dual-custody authorization breach</div>
         </div>
 
         <div className="bg-brand-surface border border-brand-border rounded-xl p-5">
-          <div className="text-xs text-slate-400 uppercase font-semibold">Duplicate Payments Prevented</div>
+          <div className="text-xs text-brand-textMuted uppercase font-semibold">Duplicate Payments Prevented</div>
           <div className="text-2xl font-black text-emerald-400 mt-1">Rp 142.800.000</div>
-          <div className="text-[11px] text-slate-500 mt-0.5">Blocked prior to bank release YTD</div>
+          <div className="text-[11px] text-brand-textMuted mt-0.5">Blocked prior to bank release YTD</div>
         </div>
 
         <div className="bg-brand-surface border border-brand-border rounded-xl p-5">
-          <div className="text-xs text-slate-400 uppercase font-semibold">Statutory Tax Health</div>
-          <div className="text-2xl font-black text-white mt-1">100% Compliant</div>
-          <div className="text-[11px] text-slate-500 mt-0.5">PPh 21/23 & PPN electronic match</div>
+          <div className="text-xs text-brand-textMuted uppercase font-semibold">Statutory Tax Health</div>
+          <div className="text-2xl font-black text-brand-textMain mt-1">100% Compliant</div>
+          <div className="text-[11px] text-brand-textMuted mt-0.5">PPh 21/23 & PPN electronic match</div>
         </div>
       </div>
 
@@ -138,8 +138,8 @@ export function ControlEngine() {
         {/* Left: Alert List (5 cols) */}
         <div className="lg:col-span-5 bg-brand-surface border border-brand-border rounded-2xl p-5 space-y-3">
           <div className="flex items-center justify-between pb-3 border-b border-brand-border">
-            <h2 className="text-sm font-bold text-white">Continuous Audit Log</h2>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Real-Time</span>
+            <h2 className="text-sm font-bold text-brand-textMain">Continuous Audit Log</h2>
+            <span className="text-[10px] font-bold text-brand-textMuted uppercase">Real-Time</span>
           </div>
 
           <div className="space-y-2.5">
@@ -166,13 +166,13 @@ export function ControlEngine() {
                     </span>
                   </div>
 
-                  <h3 className="text-xs font-bold text-white mb-1 leading-snug">
+                  <h3 className="text-xs font-bold text-brand-textMain mb-1 leading-snug">
                     {a.title}
                   </h3>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2">
-                    <span className="text-slate-300 font-medium">{a.amount}</span>
-                    <span className={a.status === 'Remediated' ? 'text-emerald-400 font-bold' : 'text-slate-400'}>
+                  <div className="flex items-center justify-between text-[10px] text-brand-textMuted mt-2">
+                    <span className="text-brand-textMuted font-medium">{a.amount}</span>
+                    <span className={a.status === 'Remediated' ? 'text-emerald-400 font-bold' : 'text-brand-textMuted'}>
                       {a.status}
                     </span>
                   </div>
@@ -189,34 +189,34 @@ export function ControlEngine() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-black text-brand-gold">{activeAlert.code}</span>
-                  <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-slate-300 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-brand-textMuted px-2 py-0.5 rounded">
                     Type: {activeAlert.type}
                   </span>
                 </div>
-                <h2 className="text-base font-black text-white">{activeAlert.title}</h2>
-                <div className="text-xs text-slate-400 mt-1">{activeAlert.userEntity} · {activeAlert.timestamp}</div>
+                <h2 className="text-base font-black text-brand-textMain">{activeAlert.title}</h2>
+                <div className="text-xs text-brand-textMuted mt-1">{activeAlert.userEntity} · {activeAlert.timestamp}</div>
               </div>
 
               <div className="text-right">
-                <span className="text-xs text-slate-400">At-Risk Value</span>
+                <span className="text-xs text-brand-textMuted">At-Risk Value</span>
                 <div className="text-base font-black text-red-400">{activeAlert.amount}</div>
               </div>
             </div>
 
             <div>
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1.5">
                 Audit Trail Evidence & Findings
               </div>
-              <div className="p-4 rounded-xl bg-brand-navy border border-brand-border text-xs text-slate-200 leading-relaxed space-y-2">
+              <div className="p-4 rounded-xl bg-brand-navy border border-brand-border text-xs text-brand-textMain leading-relaxed space-y-2">
                 <p>{activeAlert.details}</p>
-                <div className="pt-2 border-t border-brand-border text-[11px] text-slate-400">
+                <div className="pt-2 border-t border-brand-border text-[11px] text-brand-textMuted">
                   Policy Reference: <strong>Section 11.3 Materiality & Approval Threshold Policy</strong> (Requires non-overlapping operator and approver for any amount over Rp 50.000.000).
                 </div>
               </div>
             </div>
 
             <div>
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1.5">
                 Automated Containment Status
               </div>
               <div className="p-3.5 rounded-xl bg-brand-card border border-brand-border text-xs space-y-1.5">
@@ -243,7 +243,7 @@ export function ControlEngine() {
                 </button>
                 <button
                   onClick={() => handleEscalate(activeAlert.id)}
-                  className="px-4 py-3 bg-brand-card hover:bg-brand-border text-slate-300 font-bold text-xs rounded-xl border border-brand-border transition-colors"
+                  className="px-4 py-3 bg-brand-card hover:bg-brand-border text-brand-textMuted font-bold text-xs rounded-xl border border-brand-border transition-colors"
                 >
                   Escalate to Audit Committee
                 </button>

@@ -153,19 +153,19 @@ export function HealthCheckModal() {
             <div className="hidden sm:block h-6 w-px bg-slate-700" />
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white tracking-wide text-sm">{t('modalTitle')}</span>
+                <span className="font-bold text-brand-textMain tracking-wide text-sm">{t('modalTitle')}</span>
                 <span className="text-[10px] font-bold bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
                   Diagnostic Engine
                 </span>
               </div>
-              <p className="text-xs text-slate-400">{t('modalSubtitle')}</p>
+              <p className="text-xs text-brand-textMuted">{t('modalSubtitle')}</p>
             </div>
           </div>
           
           {/* Prominent, easy-to-see Close Button */}
           <button 
             onClick={handleClose}
-            className="flex items-center gap-1 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg bg-brand-card hover:bg-slate-800 border border-brand-border text-xs font-semibold transition-colors"
+            className="flex items-center gap-1 text-brand-textMuted hover:text-brand-textMain px-2.5 py-1.5 rounded-lg bg-brand-card hover:bg-brand-surface border border-brand-border text-xs font-semibold transition-colors"
             title="Tutup (Esc)"
           >
             <span>{t('modalClose')}</span>
@@ -181,7 +181,7 @@ export function HealthCheckModal() {
               className={`pb-3 px-3 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === 'quick'
                   ? 'border-brand-gold text-brand-gold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-brand-textMuted hover:text-brand-textMain'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -193,7 +193,7 @@ export function HealthCheckModal() {
               className={`pb-3 px-3 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === 'erp'
                   ? 'border-brand-gold text-brand-gold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  : 'border-transparent text-brand-textMuted hover:text-brand-textMain'
               }`}
             >
               <Database className="w-3.5 h-3.5 text-emerald-400" />
@@ -213,7 +213,7 @@ export function HealthCheckModal() {
               
               {/* Progress Indicator */}
               <div>
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                <div className="flex items-center justify-between text-xs text-brand-textMuted mb-2">
                   <span className="font-bold text-brand-gold tracking-wide uppercase">
                     Dimensi {currentStep + 1} / {questions.length}: {q.category[language] || q.category.en}
                   </span>
@@ -229,10 +229,10 @@ export function HealthCheckModal() {
 
               {/* Question Text */}
               <div className="space-y-1">
-                <h3 className="text-lg sm:text-xl font-bold text-white leading-snug">
+                <h3 className="text-lg sm:text-xl font-bold text-brand-textMain leading-snug">
                   {q.question[language] || q.question.en}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400">
+                <p className="text-xs sm:text-sm text-brand-textMuted">
                   {q.description[language] || q.description.en}
                 </p>
               </div>
@@ -247,14 +247,14 @@ export function HealthCheckModal() {
                       onClick={() => handleSelectOption(opt.score)}
                       className={`w-full text-left p-3.5 sm:p-4 rounded-xl border text-xs sm:text-sm transition-all flex items-start gap-3.5 group ${
                         isSelected 
-                          ? 'border-brand-gold bg-brand-gold/10 text-white shadow-gold-sm' 
-                          : 'border-brand-border bg-brand-card/70 hover:border-slate-500 text-slate-300 hover:text-white hover:bg-brand-card'
+                          ? 'border-brand-gold bg-brand-gold/10 text-brand-textMain shadow-gold-sm' 
+                          : 'border-brand-border bg-brand-card/70 hover:border-slate-500 text-brand-textMuted hover:text-brand-textMain hover:bg-brand-card'
                       }`}
                     >
                       <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
                         isSelected ? 'border-brand-gold bg-brand-gold text-brand-deep font-bold' : 'border-slate-600 group-hover:border-brand-gold'
                       }`}>
-                        {isSelected ? <CheckCircle2 className="w-4 h-4 text-brand-deep fill-brand-gold" /> : <span className="text-[10px] text-slate-500">{opt.score}</span>}
+                        {isSelected ? <CheckCircle2 className="w-4 h-4 text-brand-deep fill-brand-gold" /> : <span className="text-[10px] text-brand-textMuted">{opt.score}</span>}
                       </div>
                       <span className="leading-relaxed flex-1">
                         {opt.text[language] || opt.text.en}
@@ -270,20 +270,20 @@ export function HealthCheckModal() {
                   <button
                     onClick={handleBack}
                     disabled={currentStep === 0}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-20 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-semibold text-brand-textMuted hover:text-brand-textMain disabled:opacity-20 transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" /> 
                     <span>{t('modalPrev')}</span>
                   </button>
                   <button
                     onClick={handleClose}
-                    className="text-xs font-semibold text-slate-400 hover:text-rose-400 transition-colors pl-3 border-l border-slate-700"
+                    className="text-xs font-semibold text-brand-textMuted hover:text-rose-400 transition-colors pl-3 border-l border-brand-border"
                   >
                     {t('modalCancel')}
                   </button>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                <div className="flex items-center gap-1.5 text-[11px] text-brand-textMuted">
                   <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" />
                   <span>Evidence-backed BuildUp Method™</span>
                 </div>
@@ -297,10 +297,10 @@ export function HealthCheckModal() {
                   <Database className="w-3.5 h-3.5" />
                   <span>Automated System Health Screening</span>
                 </div>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-brand-textMain">
                   Diagnosis Langsung dari Data ERP & Bank Anda
                 </h3>
-                <p className="text-xs text-slate-300 mt-1">
+                <p className="text-xs text-brand-textMuted mt-1">
                   Pilih sistem yang Anda gunakan atau unggah file Trial Balance / AR Aging untuk analisis seketika tanpa menjawab kuesioner.
                 </p>
               </div>
@@ -318,17 +318,17 @@ export function HealthCheckModal() {
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                      <span className="text-[10px] font-bold text-brand-textMuted uppercase tracking-wide">
                         {erp.category.split(' ')[0]}
                       </span>
                       {selectedErp === erp.id && (
                         <Check className="w-3.5 h-3.5 text-brand-gold" />
                       )}
                     </div>
-                    <div className="text-xs font-bold text-white truncate">
+                    <div className="text-xs font-bold text-brand-textMain truncate">
                       {erp.name.split(' ')[0]} {erp.name.split(' ')[1]}
                     </div>
-                    <div className="text-[10px] text-slate-400 mt-1 truncate">
+                    <div className="text-[10px] text-brand-textMuted mt-1 truncate">
                       {erp.supportedProtocols[0]}
                     </div>
                   </button>
@@ -338,10 +338,10 @@ export function HealthCheckModal() {
               {/* Upload sample file alternative */}
               <div className="p-4 rounded-xl border border-dashed border-brand-border bg-brand-navy/40 hover:border-brand-gold/50 text-center transition-colors">
                 <UploadCloud className="w-7 h-7 text-brand-gold mx-auto mb-2 opacity-80" />
-                <p className="text-xs font-bold text-slate-200">
+                <p className="text-xs font-bold text-brand-textMain">
                   {uploadedFileName ? `File Terunggah: ${uploadedFileName}` : 'Atau Drag & Drop File Data (Excel / CSV / JSON)'}
                 </p>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[11px] text-brand-textMuted mt-0.5">
                   Format didukung: Neraca Saldo (Trial Balance), Aging Piutang AR, Mutasi Bank (MT940/CSV)
                 </p>
                 <input
@@ -356,7 +356,7 @@ export function HealthCheckModal() {
                 />
                 <label
                   htmlFor="erp-file-upload"
-                  className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-slate-700 text-slate-200 border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
+                  className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-slate-700 text-brand-textMain border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Pilih File Contoh
                 </label>
@@ -370,9 +370,9 @@ export function HealthCheckModal() {
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                       Mengekstrak transaksi read-only dan menjalankan analisis forensik...
                     </span>
-                    <span className="font-mono text-white">{erpScanProgress}%</span>
+                    <span className="font-mono text-brand-textMain">{erpScanProgress}%</span>
                   </div>
-                  <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                  <div className="w-full bg-brand-navy rounded-full h-1.5 overflow-hidden">
                     <div 
                       className="bg-brand-gold h-full transition-all duration-300"
                       style={{ width: `${erpScanProgress}%` }}
@@ -385,7 +385,7 @@ export function HealthCheckModal() {
               <div className="flex items-center justify-between pt-3 border-t border-brand-border">
                 <button
                   onClick={handleClose}
-                  className="text-xs font-semibold text-slate-400 hover:text-white"
+                  className="text-xs font-semibold text-brand-textMuted hover:text-brand-textMain"
                 >
                   {t('modalCancel')}
                 </button>
@@ -407,10 +407,10 @@ export function HealthCheckModal() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-bold uppercase tracking-wider mb-3">
                 Diagnostic Complete · Certified Health Signal
               </div>
-              <h2 className="text-2xl font-black text-white tracking-tight mb-1">
+              <h2 className="text-2xl font-black text-brand-textMain tracking-tight mb-1">
                 {t('modalScoreTitle')}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-brand-textMuted">
                 {t('modalScoreSubtitle')}
               </p>
             </div>
@@ -422,9 +422,9 @@ export function HealthCheckModal() {
                 <div>
                   <div className="text-6xl md:text-7xl font-black tracking-tighter text-gold-gradient">
                     {calculatedScore}
-                    <span className="text-xl md:text-2xl text-slate-500 font-normal"> / 100</span>
+                    <span className="text-xl md:text-2xl text-brand-textMuted font-normal"> / 100</span>
                   </div>
-                  <div className="mt-2 inline-block px-3 py-1 rounded-md text-xs font-bold tracking-wide uppercase bg-brand-navy border border-brand-border text-slate-200">
+                  <div className="mt-2 inline-block px-3 py-1 rounded-md text-xs font-bold tracking-wide uppercase bg-brand-navy border border-brand-border text-brand-textMain">
                     Status: {calculatedScore >= 80 ? 'Robust · Growth Ready' : calculatedScore >= 65 ? 'Moderate · Value Leakage Present' : 'High Vulnerability · Immediate Intervention Needed'}
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export function HealthCheckModal() {
                     <AlertTriangle className="w-4 h-4" />
                     <span>Temuan Kunci Nilai Bocor (Leakage)</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-brand-textMuted leading-relaxed">
                     Terdeteksi keterlambatan penagihan piutang (DSO) dan konsentrasi vendor tinggi. Diperkirakan <strong>4,8% dari omzet tahunan</strong> bocor akibat inefisiensi modal kerja.
                   </p>
                   <p className="text-xs text-emerald-400 font-semibold">
@@ -460,14 +460,14 @@ export function HealthCheckModal() {
               <Link
                 to="/app"
                 onClick={handleClose}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-card hover:bg-slate-800 text-slate-200 border border-brand-border text-xs font-bold transition-all text-center"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-surface text-brand-textMain border border-brand-border text-xs font-bold transition-all text-center"
               >
                 {t('modalExplorePlatform')}
               </Link>
 
               <button
                 onClick={handleClose}
-                className="w-full sm:w-auto px-4 py-3 rounded-xl text-slate-400 hover:text-white text-xs font-semibold"
+                className="w-full sm:w-auto px-4 py-3 rounded-xl text-brand-textMuted hover:text-brand-textMain text-xs font-semibold"
               >
                 {t('modalClose')}
               </button>

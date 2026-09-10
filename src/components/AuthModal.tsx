@@ -77,13 +77,13 @@ export function AuthModal() {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
       <div 
-        className="relative w-full max-w-xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/80 rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] p-6 md:p-8 text-white my-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-xl bg-gradient-to-b from-slate-900 to-slate-950 border border-brand-border/80 rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] p-6 md:p-8 text-brand-textMain my-8 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={() => setIsAuthModalOpen(false)}
-          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-xl text-brand-textMuted hover:text-brand-textMain hover:bg-brand-surface/80 transition-colors"
           aria-label="Tutup"
         >
           <X className="w-5 h-5" />
@@ -92,23 +92,23 @@ export function AuthModal() {
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} className="mb-3" />
-          <h2 className="text-2xl font-extrabold tracking-tight text-white mt-1">
+          <h2 className="text-2xl font-extrabold tracking-tight text-brand-textMain mt-1">
             {authModalMode === 'login' ? t('loginTitle') : t('registerTitle')}
           </h2>
-          <p className="text-xs md:text-sm text-slate-400 mt-1 max-w-md">
+          <p className="text-xs md:text-sm text-brand-textMuted mt-1 max-w-md">
             {authModalMode === 'login' ? t('loginSubtitle') : t('registerSubtitle')}
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1 bg-slate-800/80 border border-slate-700/60 rounded-xl mb-6">
+        <div className="flex p-1 bg-brand-surface/80 border border-brand-border/60 rounded-xl mb-6">
           <button
             type="button"
             onClick={() => { setAuthModalMode('login'); setErrorMessage(''); }}
             className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${
               authModalMode === 'login'
-                ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white shadow-sm border border-slate-600/50'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-brand-textMain shadow-sm border border-slate-600/50'
+                : 'text-brand-textMuted hover:text-brand-textMain'
             }`}
           >
             {t('clientPortalLogin')}
@@ -119,7 +119,7 @@ export function AuthModal() {
             className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${
               authModalMode === 'register'
                 ? 'bg-gradient-to-r from-brand-gold to-amber-600 text-slate-950 shadow-sm font-extrabold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-brand-textMuted hover:text-brand-textMain'
             }`}
           >
             {t('registerBusiness')}
@@ -139,30 +139,30 @@ export function AuthModal() {
               {/* Full Name & Executive Title */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-brand-textMuted mb-1">
                     {t('fullNameLabel')} *
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <User className="w-4 h-4 text-brand-textMuted absolute left-3 top-3" />
                     <input
                       type="text"
                       required
                       placeholder="Budi Santoso, S.E., M.B.A."
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                      className="w-full pl-9 pr-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-brand-textMuted mb-1">
                     {t('executiveRoleLabel')} *
                   </label>
                   <select
                     value={executiveRole}
                     onChange={(e) => setExecutiveRole(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                    className="w-full px-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
                   >
                     <option value="Chief Executive Officer / Direktur Utama">Chief Executive Officer / Direktur Utama</option>
                     <option value="Chief Financial Officer / Direktur Keuangan">Chief Financial Officer / Direktur Keuangan</option>
@@ -176,31 +176,31 @@ export function AuthModal() {
 
               {/* Company Name */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">
                   {t('companyNameLabel')} *
                 </label>
                 <div className="relative">
-                  <Building2 className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Building2 className="w-4 h-4 text-brand-textMuted absolute left-3 top-3" />
                   <input
                     type="text"
                     required
                     placeholder="PT Sumber Makmur Nusantara Group"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                    className="w-full pl-9 pr-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Industry Selector with Comprehensive 22 Sectors + Other */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">
                   {t('industryLabel')} *
                 </label>
                 <select
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                  className="w-full px-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
                 >
                   {industries.map((ind) => (
                     <option key={ind.id} value={ind.id}>
@@ -222,7 +222,7 @@ export function AuthModal() {
                     value={customIndustry}
                     onChange={(e) => setCustomIndustry(e.target.value)}
                     placeholder={t('customIndustryPlaceholder')}
-                    className="w-full px-3 py-2 bg-slate-950 border border-amber-500/50 rounded-lg text-xs md:text-sm text-white focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2 bg-slate-950 border border-amber-500/50 rounded-lg text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-amber-400"
                   />
                   <p className="text-[11px] text-amber-200/70 mt-1">
                     Tim arsitek BuildUp akan menyesuaikan model ontologi bisnis khusus untuk sektor spesifik Anda.
@@ -232,13 +232,13 @@ export function AuthModal() {
 
               {/* Revenue Bracket */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-brand-textMuted mb-1">
                   {t('annualRevenueLabel')}
                 </label>
                 <select
                   value={revenueBracket}
                   onChange={(e) => setRevenueBracket(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                  className="w-full px-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
                 >
                   <option value="< Rp 10 Miliar / tahun">&lt; Rp 10 Miliar / tahun (Growth Stage)</option>
                   <option value="Rp 10 Miliar - Rp 50 Miliar">Rp 10 Miliar - Rp 50 Miliar (Mid-Market)</option>
@@ -252,36 +252,36 @@ export function AuthModal() {
 
           {/* Email */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-brand-textMuted mb-1">
               {t('emailLabel')} *
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-brand-textMuted absolute left-3 top-3" />
               <input
                 type="email"
                 required
                 placeholder="ceo@perusahaan-anda.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                className="w-full pl-9 pr-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
               />
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-brand-textMuted mb-1">
               {t('passwordLabel')} *
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-brand-textMuted absolute left-3 top-3" />
               <input
                 type="password"
                 required
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs md:text-sm text-white focus:outline-none focus:border-brand-gold/80 transition-colors"
+                className="w-full pl-9 pr-3 py-2.5 bg-brand-navy border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold/80 transition-colors"
               />
             </div>
           </div>
@@ -306,7 +306,7 @@ export function AuthModal() {
         {/* Divider */}
         <div className="relative my-5 flex items-center justify-center">
           <div className="border-t border-slate-800 w-full" />
-          <span className="bg-slate-900 px-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest absolute">
+          <span className="bg-brand-navy px-3 text-[11px] font-bold text-brand-textMuted uppercase tracking-widest absolute">
             Atau Evaluasi
           </span>
         </div>
@@ -315,14 +315,14 @@ export function AuthModal() {
         <button
           type="button"
           onClick={enterDemoMode}
-          className="w-full py-2.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-brand-gold/60 text-slate-200 hover:text-white text-xs md:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 group"
+          className="w-full py-2.5 bg-brand-surface/80 hover:bg-brand-surface border border-brand-border hover:border-brand-gold/60 text-brand-textMain hover:text-brand-textMain text-xs md:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 group"
         >
           <Sparkles className="w-4 h-4 text-brand-gold group-hover:rotate-12 transition-transform" />
           <span>{t('exploreDemoCTA')}</span>
         </button>
 
         {/* Trust Badges */}
-        <div className="mt-5 pt-4 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="mt-5 pt-4 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-brand-textMuted">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Enkripsi 256-Bit Bank-Grade</span>

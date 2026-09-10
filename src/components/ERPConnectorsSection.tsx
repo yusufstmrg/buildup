@@ -33,7 +33,7 @@ export function ERPConnectorsSection() {
     { id: 'Tier 1 Global ERP', label: 'Tier 1 Global ERP (SAP / Oracle)' },
     { id: 'SME & Regional ERP', label: 'SME & Regional ERP (Accurate / Jurnal / Odoo)' },
     { id: 'Cash & Banking API', label: language === 'id' ? 'Bank & Rekening Giro (BCA / Mandiri)' : 'Cash & Banking API' },
-    { id: 'Tax & Compliance', label: language === 'id' ? 'Pajak & Kepatuhan (DJP e-Faktur)' : 'Tax & Compliance' },
+    { id: 'Tax & Compliance', label: language === 'id' ? 'Pajak & Kepatuhan (Coretax)' : 'Tax & Compliance' },
   ];
 
   const filtered = selectedCategory === 'all' 
@@ -80,16 +80,16 @@ export function ERPConnectorsSection() {
             <span>{t('erpBadge')}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-brand-textMain tracking-tight leading-tight">
             {t('erpHeading')}
           </h2>
 
-          <p className="mt-5 text-base sm:text-lg text-slate-300 leading-relaxed">
+          <p className="mt-5 text-base sm:text-lg text-brand-textMuted leading-relaxed">
             {t('erpSubheading')}
           </p>
 
           {/* Value props badges */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-300">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-brand-textMuted">
             <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-card/80 border border-brand-border">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>Read-Only & Zero Data Mutation</span>
@@ -114,7 +114,7 @@ export function ERPConnectorsSection() {
               className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedCategory === cat.id
                   ? 'bg-brand-gold text-slate-950 shadow-md shadow-brand-gold/20'
-                  : 'bg-brand-navy/60 text-slate-400 hover:text-white hover:bg-brand-card border border-brand-border'
+                  : 'bg-brand-navy/60 text-brand-textMuted hover:text-brand-textMain hover:bg-brand-card border border-brand-border'
               }`}
             >
               {cat.label}
@@ -137,10 +137,10 @@ export function ERPConnectorsSection() {
                       <Server className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-white group-hover:text-brand-gold transition-colors">
+                      <h3 className="text-base font-bold text-brand-textMain group-hover:text-brand-gold transition-colors">
                         {connector.name}
                       </h3>
-                      <span className="text-[11px] font-semibold text-slate-400">
+                      <span className="text-[11px] font-semibold text-brand-textMuted">
                         {connector.category}
                       </span>
                     </div>
@@ -150,19 +150,19 @@ export function ERPConnectorsSection() {
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                <p className="text-xs text-brand-textMuted leading-relaxed mb-4">
                   {connector.description[language] || connector.description.en}
                 </p>
 
                 {/* Data Read Capabilities */}
                 <div className="mb-4">
-                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                  <div className="text-[11px] font-bold uppercase tracking-wider text-brand-textMuted mb-2 flex items-center gap-1.5">
                     <Layers className="w-3 h-3 text-brand-gold" />
                     <span>Data Read Capabilities:</span>
                   </div>
                   <ul className="space-y-1">
                     {(connector.dataReadCapabilities[language] || connector.dataReadCapabilities.en).slice(0, 3).map((item, i) => (
-                      <li key={i} className="text-xs text-slate-300 flex items-center gap-2">
+                      <li key={i} className="text-xs text-brand-textMuted flex items-center gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
                         <span className="truncate">{item}</span>
                       </li>
@@ -176,7 +176,7 @@ export function ERPConnectorsSection() {
                     <AlertCircle className="w-3 h-3" />
                     <span>Contoh Temuan Diagnostik:</span>
                   </div>
-                  <p className="text-slate-300 text-[11px] leading-tight">
+                  <p className="text-brand-textMuted text-[11px] leading-tight">
                     {(connector.typicalDiagnosticsUncovered[language] || connector.typicalDiagnosticsUncovered.en)[0]}
                   </p>
                 </div>
@@ -184,7 +184,7 @@ export function ERPConnectorsSection() {
 
               {/* Action Button */}
               <div className="pt-3 border-t border-brand-border flex items-center justify-between gap-3">
-                <span className="text-[11px] font-mono text-slate-500">
+                <span className="text-[11px] font-mono text-brand-textMuted">
                   {connector.latency}
                 </span>
                 <button
@@ -212,17 +212,17 @@ export function ERPConnectorsSection() {
                       <Server className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-base font-bold text-brand-textMain">
                         {selectedConnector.name} — Live Ingestion Simulation
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-brand-textMuted">
                         Zero-invasive read-only extraction into BuildUp Business Context Graph™
                       </p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setSelectedConnector(null)}
-                    className="text-slate-400 hover:text-white text-xs px-2.5 py-1 rounded-lg border border-brand-border hover:bg-brand-card"
+                    className="text-brand-textMuted hover:text-brand-textMain text-xs px-2.5 py-1 rounded-lg border border-brand-border hover:bg-brand-card"
                   >
                     Esc
                   </button>
@@ -250,11 +250,11 @@ export function ERPConnectorsSection() {
                       <CheckCircle2 className="w-4 h-4" />
                       <span>Simulasi Diagnostik Selesai dengan Data Riil</span>
                     </div>
-                    <div className="text-xs text-slate-200 space-y-1.5">
-                      <p className="font-semibold text-white">
+                    <div className="text-xs text-brand-textMain space-y-1.5">
+                      <p className="font-semibold text-brand-textMain">
                         Hasil Analisis Otomatis BuildUp pada Transaksi:
                       </p>
-                      <ul className="list-disc pl-5 space-y-1 text-slate-300">
+                      <ul className="list-disc pl-5 space-y-1 text-brand-textMuted">
                         <li>
                           <strong className="text-amber-400">Kebocoran Modal Kerja:</strong> Rata-rata Days Sales Outstanding (DSO) mencapai 64 hari (standar industri: 45 hari), mengunci modal kerja sebesar ~Rp 1,8 Miliar.
                         </li>

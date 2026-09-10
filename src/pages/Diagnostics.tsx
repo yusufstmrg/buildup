@@ -62,12 +62,12 @@ export function Diagnostics() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white tracking-tight">Diagnostics & Business X-Ray™</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Diagnostics & Business X-Ray™</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Product Stages 01 - 04
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-brand-textMuted mt-1">
             Evidence-backed root cause analysis, value leakage quantification, and prioritized 90-day transformation agenda.
           </p>
         </div>
@@ -91,11 +91,11 @@ export function Diagnostics() {
             {overallScore}
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-semibold uppercase">BuildUp Health Score™</div>
-            <div className="text-base font-bold text-white">
+            <div className="text-xs text-brand-textMuted font-semibold uppercase">BuildUp Health Score™</div>
+            <div className="text-base font-bold text-brand-textMain">
               {overallScore >= 80 ? 'Robust · Growth Ready' : overallScore >= 65 ? 'Moderate · Leakage Present' : 'Vulnerable · Action Required'}
             </div>
-            <div className="text-[10px] text-slate-500">Benchmark: 80/100 (Regional Mid-Market)</div>
+            <div className="text-[10px] text-brand-textMuted">Benchmark: 80/100 (Regional Mid-Market)</div>
           </div>
         </div>
 
@@ -104,11 +104,11 @@ export function Diagnostics() {
             <DollarSign className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-semibold uppercase">Quantified Value Leakage</div>
+            <div className="text-xs text-brand-textMuted font-semibold uppercase">Quantified Value Leakage</div>
             <div className="text-base font-bold text-emerald-400">
               {formatMoney(totalAnnualLeakageIdr, totalAnnualLeakageUsd)} / year
             </div>
-            <div className="text-[10px] text-slate-500">Identified across 4 operational domains</div>
+            <div className="text-[10px] text-brand-textMuted">Identified across 4 operational domains</div>
           </div>
         </div>
 
@@ -117,9 +117,9 @@ export function Diagnostics() {
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-semibold uppercase">Transformation Window</div>
-            <div className="text-base font-bold text-white">90-Day Execution Sprint</div>
-            <div className="text-[10px] text-slate-500">Recover 68% of leakage within 90 days</div>
+            <div className="text-xs text-brand-textMuted font-semibold uppercase">Transformation Window</div>
+            <div className="text-base font-bold text-brand-textMain">90-Day Execution Sprint</div>
+            <div className="text-[10px] text-brand-textMuted">Recover 68% of leakage within 90 days</div>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export function Diagnostics() {
           className={`px-5 py-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === 'dimensions'
               ? 'border-brand-gold text-brand-gold'
-              : 'border-transparent text-slate-400 hover:text-white'
+              : 'border-transparent text-brand-textMuted hover:text-brand-textMain'
           }`}
         >
           8 Organizational Dimensions
@@ -142,7 +142,7 @@ export function Diagnostics() {
           className={`px-5 py-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === 'leakage'
               ? 'border-brand-gold text-brand-gold'
-              : 'border-transparent text-slate-400 hover:text-white'
+              : 'border-transparent text-brand-textMuted hover:text-brand-textMain'
           }`}
         >
           Quantified Value Leakage Map
@@ -152,7 +152,7 @@ export function Diagnostics() {
           className={`px-5 py-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === 'roadmap'
               ? 'border-brand-gold text-brand-gold'
-              : 'border-transparent text-slate-400 hover:text-white'
+              : 'border-transparent text-brand-textMuted hover:text-brand-textMain'
           }`}
         >
           90-Day Transformation Agenda
@@ -166,7 +166,7 @@ export function Diagnostics() {
             <div key={idx} className="bg-brand-surface border border-brand-border rounded-xl p-5 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-white uppercase tracking-wide">{dim.name}</span>
+                  <span className="text-xs font-bold text-brand-textMain uppercase tracking-wide">{dim.name}</span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
                     dim.status === 'Critical' ? 'bg-red-500/20 text-red-400' :
                     dim.status === 'Warning' ? 'bg-yellow-500/20 text-yellow-400' :
@@ -178,8 +178,8 @@ export function Diagnostics() {
 
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-2xl font-black text-gold-gradient">{dim.score}</span>
-                  <span className="text-xs text-slate-500">/ 100</span>
-                  <span className="text-[11px] text-slate-400 ml-auto">Benchmark: {dim.benchmark}</span>
+                  <span className="text-xs text-brand-textMuted">/ 100</span>
+                  <span className="text-[11px] text-brand-textMuted ml-auto">Benchmark: {dim.benchmark}</span>
                 </div>
 
                 <div className="h-1.5 w-full bg-brand-navy rounded-full overflow-hidden mb-3">
@@ -189,12 +189,12 @@ export function Diagnostics() {
                   />
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed mb-2">
+                <p className="text-xs text-brand-textMuted leading-relaxed mb-2">
                   {dim.findings}
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-brand-navy border border-brand-border text-[11px] text-slate-400">
+              <div className="p-2.5 rounded-lg bg-brand-navy border border-brand-border text-[11px] text-brand-textMuted">
                 <strong className="text-brand-gold">Root Bottleneck:</strong> {dim.bottleneck}
               </div>
             </div>
@@ -206,8 +206,8 @@ export function Diagnostics() {
       {activeTab === 'leakage' && (
         <div className="space-y-4">
           <div className="bg-brand-surface border border-brand-border rounded-2xl p-6">
-            <h2 className="text-base font-bold text-white mb-1">Value Leakage Quantification</h2>
-            <p className="text-xs text-slate-400 mb-6">
+            <h2 className="text-base font-bold text-brand-textMain mb-1">Value Leakage Quantification</h2>
+            <p className="text-xs text-brand-textMuted mb-6">
               Empirical calculation of recoverable capital across pricing, working capital, and operational waste.
             </p>
 
@@ -216,12 +216,12 @@ export function Diagnostics() {
                 <div key={i} className="p-4 rounded-xl bg-brand-navy border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white">{item.category}</span>
+                      <span className="text-xs font-bold text-brand-textMain">{item.category}</span>
                       <span className="text-[9px] font-bold uppercase bg-red-500/20 text-red-400 px-2 py-0.5 rounded">
                         {item.severity}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
+                    <p className="text-xs text-brand-textMuted leading-relaxed max-w-xl">
                       {item.desc}
                     </p>
                     <div className="text-[11px] text-brand-gold font-medium">
@@ -230,7 +230,7 @@ export function Diagnostics() {
                   </div>
 
                   <div className="text-right sm:shrink-0">
-                    <div className="text-xs text-slate-400">Estimated Annual Loss</div>
+                    <div className="text-xs text-brand-textMuted">Estimated Annual Loss</div>
                     <div className="text-lg font-black text-red-400">{formatMoney(item.amount)}</div>
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export function Diagnostics() {
                   <span className="w-7 h-7 rounded-lg bg-brand-gold/15 text-brand-gold font-bold flex items-center justify-center text-xs">
                     0{idx + 1}
                   </span>
-                  <h3 className="text-sm font-bold text-white">{phase.phase}</h3>
+                  <h3 className="text-sm font-bold text-brand-textMain">{phase.phase}</h3>
                 </div>
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
                   Target: {phase.target}
@@ -259,7 +259,7 @@ export function Diagnostics() {
 
               <ul className="space-y-2">
                 {phase.tasks.map((task, tidx) => (
-                  <li key={tidx} className="flex items-start gap-2.5 text-xs text-slate-300">
+                  <li key={tidx} className="flex items-start gap-2.5 text-xs text-brand-textMuted">
                     <CheckCircle2 className="w-4 h-4 text-brand-gold mt-0.5 shrink-0" />
                     <span>{task}</span>
                   </li>

@@ -34,18 +34,18 @@ export function Intelligence() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-white tracking-tight">BuildUp Intelligence™</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">BuildUp Intelligence™</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Product Stage 06
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-brand-textMuted mt-1">
             Connected Business Context Graph & Auditable Decision Engine. The brain above your existing systems.
           </p>
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-slate-300">
+          <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-brand-textMuted">
             Active Context Graph: <strong>4,829 entities</strong>
           </span>
           <span className="px-3 py-1.5 rounded-lg bg-brand-surface border border-brand-border text-emerald-400 font-semibold">
@@ -59,9 +59,9 @@ export function Intelligence() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-brand-gold" />
-            <h2 className="text-base font-bold text-white">Cross-Functional Context Graph</h2>
+            <h2 className="text-base font-bold text-brand-textMain">Cross-Functional Context Graph</h2>
           </div>
-          <span className="text-xs text-slate-400">Section 8.1: Entity & Relationship Mapping</span>
+          <span className="text-xs text-brand-textMuted">Section 8.1: Entity & Relationship Mapping</span>
         </div>
 
         {/* Visual Graph Relationship Bar */}
@@ -84,12 +84,12 @@ export function Intelligence() {
                       ? 'bg-brand-gold/20 border-brand-gold shadow-gold-sm'
                       : node.highlight
                       ? 'bg-brand-card/70 border-yellow-500/40 text-yellow-300'
-                      : 'bg-brand-card/40 border-brand-border text-slate-300'
+                      : 'bg-brand-card/40 border-brand-border text-brand-textMuted'
                   }`}
                 >
-                  <div className="text-[11px] font-bold text-white">{node.name}</div>
+                  <div className="text-[11px] font-bold text-brand-textMain">{node.name}</div>
                   <div className="text-xs font-black text-brand-gold mt-0.5">{node.count}</div>
-                  <div className="text-[9px] text-slate-400 mt-1">{node.sub}</div>
+                  <div className="text-[9px] text-brand-textMuted mt-1">{node.sub}</div>
                 </button>
                 {i < 6 && <span className="text-brand-gold font-black">→</span>}
               </React.Fragment>
@@ -97,7 +97,7 @@ export function Intelligence() {
           </div>
         </div>
 
-        <div className="mt-3 text-[11px] text-slate-400 flex items-center gap-2">
+        <div className="mt-3 text-[11px] text-brand-textMuted flex items-center gap-2">
           <Cpu className="w-3.5 h-3.5 text-brand-gold" />
           <span>Continuous context indexing detects second-order impacts across inventory delays, pricing leakage, and uncollected invoices.</span>
         </div>
@@ -111,9 +111,9 @@ export function Intelligence() {
           <div className="flex items-center justify-between pb-3 border-b border-brand-border">
             <div className="flex items-center gap-2">
               <BrainCircuit className="w-4 h-4 text-brand-gold" />
-              <h2 className="text-sm font-bold text-white">Decision Objects Queue</h2>
+              <h2 className="text-sm font-bold text-brand-textMain">Decision Objects Queue</h2>
             </div>
-            <span className="text-[10px] text-slate-400">Auditable Decisional Layer</span>
+            <span className="text-[10px] text-brand-textMuted">Auditable Decisional Layer</span>
           </div>
 
           {/* Domain Filter Pills */}
@@ -125,7 +125,7 @@ export function Intelligence() {
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
                   selectedDomain === domain 
                     ? 'bg-brand-gold text-brand-deep font-bold' 
-                    : 'bg-brand-navy border border-brand-border text-slate-400 hover:text-white'
+                    : 'bg-brand-navy border border-brand-border text-brand-textMuted hover:text-brand-textMain'
                 }`}
               >
                 {domain}
@@ -158,11 +158,11 @@ export function Intelligence() {
                     </span>
                   </div>
 
-                  <h3 className="text-xs font-bold text-white mb-1 leading-snug">
+                  <h3 className="text-xs font-bold text-brand-textMain mb-1 leading-snug">
                     {dec.title}
                   </h3>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2">
+                  <div className="flex items-center justify-between text-[10px] text-brand-textMuted mt-2">
                     <span className="text-emerald-400 font-semibold">{dec.financialImpact}</span>
                     <span>{dec.confidence}% Confidence</span>
                   </div>
@@ -181,40 +181,40 @@ export function Intelligence() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-black text-brand-gold">{activeDecision.code}</span>
-                  <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-slate-300 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-brand-textMuted px-2 py-0.5 rounded">
                     Domain: {activeDecision.domain}
                   </span>
                   <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
                     {activeDecision.confidence}% AI Confidence
                   </span>
                 </div>
-                <h2 className="text-lg font-black text-white">{activeDecision.title}</h2>
-                <div className="text-[11px] text-slate-400 mt-0.5">Authoring Agent: <strong>{activeDecision.agent}</strong> · {activeDecision.timestamp}</div>
+                <h2 className="text-lg font-black text-brand-textMain">{activeDecision.title}</h2>
+                <div className="text-[11px] text-brand-textMuted mt-0.5">Authoring Agent: <strong>{activeDecision.agent}</strong> · {activeDecision.timestamp}</div>
               </div>
 
               <div className="text-right">
-                <div className="text-[10px] text-slate-500 font-semibold uppercase">Projected Impact</div>
+                <div className="text-[10px] text-brand-textMuted font-semibold uppercase">Projected Impact</div>
                 <div className="text-sm font-black text-emerald-400">{activeDecision.financialImpact}</div>
               </div>
             </div>
 
             {/* Problem Statement */}
             <div>
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1.5">
                 Problem Statement
               </div>
-              <div className="p-3.5 rounded-xl bg-brand-navy border border-brand-border text-xs text-slate-200 leading-relaxed">
+              <div className="p-3.5 rounded-xl bg-brand-navy border border-brand-border text-xs text-brand-textMain leading-relaxed">
                 {activeDecision.problem}
               </div>
             </div>
 
             {/* Evidence Base */}
             <div>
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-brand-gold" />
                 Evidence Base (Cross-System Verification)
               </div>
-              <ul className="space-y-1.5 text-xs text-slate-300">
+              <ul className="space-y-1.5 text-xs text-brand-textMuted">
                 {activeDecision.evidence.map((ev, i) => (
                   <li key={i} className="flex items-start gap-2 bg-brand-card/30 p-2.5 rounded-lg border border-brand-border/60">
                     <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold mt-0.5 shrink-0" />
@@ -226,17 +226,17 @@ export function Intelligence() {
 
             {/* Evaluated Options */}
             <div>
-              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+              <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1.5">
                 Evaluated Options
               </div>
               <div className="space-y-2">
                 {activeDecision.options.map((opt, i) => (
                   <div key={i} className="p-3 rounded-xl bg-brand-navy border border-brand-border flex items-center justify-between text-xs">
                     <div>
-                      <div className="font-semibold text-white">{opt.label}</div>
+                      <div className="font-semibold text-brand-textMain">{opt.label}</div>
                       <div className="text-[11px] text-emerald-400 mt-0.5">{opt.impact}</div>
                     </div>
-                    <span className="text-[10px] font-bold bg-brand-card px-2 py-0.5 rounded text-slate-400 border border-brand-border">
+                    <span className="text-[10px] font-bold bg-brand-card px-2 py-0.5 rounded text-brand-textMuted border border-brand-border">
                       Risk: {opt.risk}
                     </span>
                   </div>
@@ -250,11 +250,11 @@ export function Intelligence() {
                 <Sparkles className="w-3.5 h-3.5" />
                 Model Recommendation
               </div>
-              <p className="text-xs text-slate-200 font-medium leading-relaxed">
+              <p className="text-xs text-brand-textMain font-medium leading-relaxed">
                 {activeDecision.recommendation}
               </p>
-              <div className="mt-2 text-[11px] text-slate-400">
-                Required Authority Gate: <strong className="text-white">{activeDecision.authority}</strong>
+              <div className="mt-2 text-[11px] text-brand-textMuted">
+                Required Authority Gate: <strong className="text-brand-textMain">{activeDecision.authority}</strong>
               </div>
             </div>
 
@@ -272,7 +272,7 @@ export function Intelligence() {
                 </button>
                 <button
                   onClick={() => escalateDecision(activeDecision.id)}
-                  className="px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-border text-slate-200 font-bold text-xs border border-brand-border transition-colors flex items-center gap-2"
+                  className="px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-border text-brand-textMain font-bold text-xs border border-brand-border transition-colors flex items-center gap-2"
                 >
                   <UserCheck className="w-4 h-4 text-brand-gold" />
                   <span>Escalate to Human Partner</span>

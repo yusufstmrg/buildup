@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { BuildUpProvider } from './context/BuildUpContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { HealthCheckModal } from './components/HealthCheckModal';
 import { AuthModal } from './components/AuthModal';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -23,11 +24,13 @@ import { BusinessOS } from './pages/BusinessOS';
 import { StrategicPlanner } from './pages/StrategicPlanner';
 import { ControlEngine } from './pages/ControlEngine';
 import { MonetizationHub } from './pages/MonetizationHub';
+import { AdminDashboard } from './pages/AdminDashboard';
 
 export default function App() {
   return (
-    <BuildUpProvider>
-      <BrowserRouter>
+    <ThemeProvider defaultTheme="light">
+      <BuildUpProvider>
+        <BrowserRouter>
         {/* Global Modals */}
         <HealthCheckModal />
         <AuthModal />
@@ -58,12 +61,14 @@ export default function App() {
             <Route path="/planner" element={<StrategicPlanner />} />
             <Route path="/control" element={<ControlEngine />} />
             <Route path="/monetization" element={<MonetizationHub />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Route>
 
           {/* Catch-all fallback redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </BuildUpProvider>
+      </BuildUpProvider>
+    </ThemeProvider>
   );
 }
