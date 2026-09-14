@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BuildUpProvider } from './context/BuildUpContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { HealthCheckModal } from './components/HealthCheckModal';
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      <SpeedInsights />
       </BuildUpProvider>
     </ThemeProvider>
   );
