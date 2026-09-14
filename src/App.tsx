@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { BuildUpProvider } from './context/BuildUpContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { HealthCheckModal } from './components/HealthCheckModal';
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
       </BuildUpProvider>
     </ThemeProvider>
   );
