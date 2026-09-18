@@ -118,7 +118,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<CmsState>(defaultState);
 
   useEffect(() => {
-    const saved = localStorage.getItem('cmsState');
+    const saved = localStorage.getItem('buildup-cms-state-v2');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -126,7 +126,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
       } catch (e) {}
     } else {
       setState(defaultState);
-      localStorage.setItem('cmsState', JSON.stringify(defaultState));
+      localStorage.setItem('buildup-cms-state-v2', JSON.stringify(defaultState));
     }
 
     const loadFromDb = async () => {
@@ -137,7 +137,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
           const remoteData = snap.data();
           setState(prev => {
             const newState = { ...prev, ...remoteData, editMode: false };
-            localStorage.setItem('cmsState', JSON.stringify(newState));
+            localStorage.setItem('buildup-cms-state-v2', JSON.stringify(newState));
             return newState;
           });
         }
@@ -149,7 +149,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cmsState', JSON.stringify(state));
+    localStorage.setItem('buildup-cms-state-v2', JSON.stringify(state));
   }, [state]);
 
   const syncToFirestore = async (newState: CmsState) => {
@@ -216,3 +216,4 @@ export const useCms = () => {
   if (!ctx) throw new Error('useCms must be used within CmsProvider');
   return ctx;
 };
+

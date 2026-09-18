@@ -55,7 +55,7 @@ export const AdminBar: React.FC = () => {
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to reset all configurations to their default values?")) {
-      localStorage.removeItem('buildup-cms');
+      localStorage.removeItem('buildup-cms-state-v2');
       window.location.reload();
     }
   };
@@ -98,3 +98,4 @@ export const AdminBar: React.FC = () => {
     </div>
   );
 };
+
