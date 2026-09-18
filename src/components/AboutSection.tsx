@@ -81,7 +81,7 @@ export function AboutSection() {
           </div>
 
           <div className="space-y-4">
-            {comparisonPoints.map((item, idx) => (
+            {(comparisonPoints || []).map((item, idx) => (
               <div 
                 key={idx} 
                 className="grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-2xl bg-brand-navy/80 border border-brand-border hover:border-brand-border transition-colors items-center"
@@ -126,7 +126,7 @@ export function AboutSection() {
 
         <div className="max-w-5xl mx-auto mt-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {nineStages.map((stage, index) => (
+            {(nineStages || []).map((stage, index) => (
               <div 
                 key={stage.num} 
                 className="relative bg-brand-navy/80 backdrop-blur-md border border-brand-border p-6 rounded-2xl transition-all shadow-lg hover:shadow-brand-gold/10 hover:border-brand-gold/40 flex flex-col h-full group"
@@ -239,6 +239,7 @@ export function AboutSection() {
     </section>
   );
 }
+
 
 
 
