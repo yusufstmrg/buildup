@@ -1,14 +1,9 @@
-// src/components/admin/EditableText.tsx
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useCms } from '../../context/CmsContext';
 
-/**
- * EditableText renders static content when not in edit mode and a textarea when edit mode is enabled.
- * It synchronises its value with CmsContext using the provided `id`.
- */
 interface Props {
-  id: string; // unique identifier for this piece of content
-  default?: string; // fallback content when no saved value exists
+  id: string;
+  default?: string;
   className?: string;
 }
 
@@ -18,7 +13,6 @@ export const EditableText: React.FC<Props> = ({ id, default: defaultContent = ''
   const saved = state.content[id] ?? defaultContent;
   const [value, setValue] = useState<string>(saved);
 
-  // Keep local state in sync when context changes (e.g., load from storage)
   useEffect(() => {
     setValue(state.content[id] ?? defaultContent);
   }, [state.content, id, defaultContent]);
@@ -33,11 +27,13 @@ export const EditableText: React.FC<Props> = ({ id, default: defaultContent = ''
 
   return (
     <textarea
-      className={className}
+      className={className + " border-2 border-dashed border-brand-gold bg-brand-surface text-brand-textMain p-1 rounded min-h-[30px] w-full resize-y"}
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onBlur={handleBlur}
-      rows={2}
+      onClick={(e) => e.stopPropagation()}
+      rows={1}
+      style={{ minHeight: '1lh' }}
     />
   );
 };

@@ -4,6 +4,7 @@ import { CheckCircle2, ChevronDown } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Switch from '@radix-ui/react-switch';
+import { EditableText } from '../components/admin/EditableText';
 
 export function PricingSection() {
   const { 
@@ -148,10 +149,10 @@ export function PricingSection() {
       <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h1 className="text-4xl sm:text-5xl font-black text-brand-textMain tracking-tight">
-            Transparent, Outcome-Led Pricing
+            <EditableText id="pricing.title" default="Transparent, Outcome-Led Pricing" />
           </h1>
           <p className="mt-4 text-base text-brand-textMuted">
-            Select the engagement model that fits your scale.
+            <EditableText id="pricing.subtitle" default="Select the engagement model that fits your scale." className="block" />
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-4">
@@ -303,7 +304,7 @@ export function PricingSection() {
 
         <div className="mt-32 max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-brand-textMain tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-black text-brand-textMain tracking-tight"><EditableText id="pricing.faq.title" default="Frequently Asked Questions" /></h2>
           </div>
           
           <Accordion.Root type="single" collapsible className="space-y-4">

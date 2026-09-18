@@ -21,6 +21,7 @@ import { BuildUpLogo } from '../components/BuildUpLogo';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { useBuildUp } from '../context/BuildUpContext';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { EditableText } from '../components/admin/EditableText';
 
 export function AboutSection() {
   
@@ -146,10 +147,10 @@ export function AboutSection() {
               <span>Metodologi Eksklusif</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-textMain">
-              Siklus 9 Tahap Transformasi Bisnis Berkelanjutan
+              <EditableText id="about.stages.title" default="Siklus 9 Tahap Transformasi Bisnis Berkelanjutan" />
             </h2>
             <p className="text-sm text-brand-textMuted mt-2">
-              Satu-satunya kerangka kerja yang menghubungkan identifikasi kebocoran nilai dengan orkestrasi eksekusi multi-sistem secara otomatis.
+              <EditableText id="about.stages.subtitle" default="Satu-satunya kerangka kerja yang menghubungkan identifikasi kebocoran nilai dengan orkestrasi eksekusi multi-sistem secara otomatis." className="block" />
             </p>
           </div>
 
@@ -193,11 +194,11 @@ export function AboutSection() {
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black text-brand-textMain">
-                Kerahasiaan Data Bisnis Anda Adalah Fondasi Kami
+                <EditableText id="about.security.title" default="Kerahasiaan Data Bisnis Anda Adalah Fondasi Kami" />
               </h2>
 
               <p className="mt-3 text-sm text-brand-textMuted max-w-2xl leading-relaxed">
-                Kami memahami bahwa data keuangan, margin, dan transaksi pelanggan adalah rahasia dagang paling berharga. BuildUp dirancang dengan prinsip pertahanan berlapis (defense-in-depth):
+                <EditableText id="about.security.desc" default="Kami memahami bahwa data keuangan, margin, dan transaksi pelanggan adalah rahasia dagang paling berharga. BuildUp dirancang dengan prinsip pertahanan berlapis (defense-in-depth):" className="block w-full" />
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
@@ -242,10 +243,10 @@ export function AboutSection() {
       <section className="py-16 px-4 text-center border-t border-brand-border bg-brand-navy">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-textMain">
-            Siap Memulai Transformasi Bisnis Bersama BuildUp?
+            <EditableText id="about.cta.title" default="Siap Memulai Transformasi Bisnis Bersama BuildUp?" />
           </h2>
           <p className="text-sm text-brand-textMuted mt-2">
-            Ikuti ratusan pimpinan bisnis yang telah menghentikan kebocoran margin dan mempercepat perputaran modal kerja.
+            <EditableText id="about.cta.subtitle" default="Ikuti ratusan pimpinan bisnis yang telah menghentikan kebocoran margin dan mempercepat perputaran modal kerja." className="block w-full" />
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <button
