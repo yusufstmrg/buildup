@@ -51,7 +51,7 @@ export default function App() {
         <AdminBar />
         <ThemePanel />
         <SectionManager />
-        <PricingManager />
+        <DataManager />
 
         <Routes>
           {/* Public Enterprise Transformation Portal */}
@@ -89,4 +89,5 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 

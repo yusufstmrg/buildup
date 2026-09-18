@@ -1,29 +1,46 @@
-// src/context/CmsContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { db } from '../firebaseConfig'; // optional Firestore instance
-import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-// Types for editable content and layout
 export interface CmsState {
-  // map of element ids to HTML content
   content: Record<string, string>;
-  // visibility flags for sections (by key)
   visibleSections: Record<string, boolean>;
-  // ordered list of section keys
   sectionOrder: string[];
-  // pricing configuration
-  pricing: PricingTier[];
-  // optional theme overrides
+  pricing: PricingPackage[];
+  faqs: FaqItem[];
+  aboutStages: AboutStage[];
+  aboutComparisons: AboutComparison[];
   themeOverrides?: Partial<ThemeOverrides>;
-  // live‑edit mode flag
   editMode: boolean;
 }
 
-export interface PricingTier {
+export interface PricingPackage {
   id: string;
+  label: string;
   name: string;
-  price: string;
+  priceIdr: number;
+  priceUsd: number;
+  description: string;
   features: string[];
+  buttonText: string;
+  isPopular: boolean;
+}
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export interface AboutStage {
+  num: string;
+  title: string;
+  desc: string;
+}
+
+export interface AboutComparison {
+  feature: string;
+  traditional: string;
+  buildup: string;
 }
 
 export interface ThemeOverrides {
@@ -37,16 +54,60 @@ interface CmsContextProps {
   updateContent: (id: string, html: string) => void;
   toggleSection: (key: string, visible: boolean) => void;
   reorderSections: (order: string[]) => void;
-  setPricing: (tiers: PricingTier[]) => void;
+  setPricing: (tiers: PricingPackage[]) => void;
+  setFaqs: (faqs: FaqItem[]) => void;
+  setAboutStages: (stages: AboutStage[]) => void;
+  setAboutComparisons: (comparisons: AboutComparison[]) => void;
   setThemeOverrides: (overrides: Partial<ThemeOverrides>) => void;
   toggleEditMode: (enabled: boolean) => void;
 }
 
 const defaultState: CmsState = {
   content: {},
-  visibleSections: {},
-  sectionOrder: [],
-  pricing: [],
+  visibleSections: {
+    hero: true, calculator: true, connectors: true, workforce: true, pricing: true, about: true, contact: true
+  },
+  sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing', 'about', 'contact'],
+  pricing: [
+    {
+      id: 'starter', label: 'ENTRY DIAGNOSTIC', name: 'Starter / Basic', priceIdr: 0, priceUsd: 0,
+      description: 'Fast, low-friction front door screening.', features: ['Overall Health Score', '8-Dimension scores'],
+      buttonText: 'Request Diagnostic Audit', isPopular: false
+    },
+    {
+      id: 'standard', label: 'MONITORING', name: 'Standard Business', priceIdr: 6000000, priceUsd: 390,
+      description: 'Live continuous benchmark progression.', features: ['Pemantauan 8 Dimensi 24/7', 'Peringatan Dini'],
+      buttonText: 'Start Monitoring', isPopular: false
+    },
+    {
+      id: 'growth', label: 'ACTIVE OPTIMIZATION', name: 'Growth & Scale', priceIdr: 28000000, priceUsd: 1790,
+      description: 'Full business OS replacement.', features: ['Semua Fitur Standard', 'Automated Decision Objects'],
+      buttonText: 'Deploy Business OS', isPopular: true
+    },
+    {
+      id: 'enterprise', label: 'CUSTOM ENGAGEMENT', name: 'Enterprise Custom', priceIdr: 120000000, priceUsd: 7900,
+      description: 'For conglomerates and multi-entity holding groups.', features: ['Private VPC Deployment', 'Dedicated Architect'],
+      buttonText: 'Talk to Sales', isPopular: false
+    },
+    {
+      id: 'gainshare', label: 'PERFORMANCE-BASED', name: 'Gain-Share Partnership', priceIdr: 0, priceUsd: 0,
+      description: 'Zero fixed cost, pure profit-share.', features: ['15-25% dari Peningkatan EBITDA', 'No-cure no-pay'],
+      buttonText: 'Apply for Partnership', isPopular: false
+    }
+  ],
+  faqs: [
+    { q: 'Bagaimana BuildUp menjamin ROI?', a: 'Berdasarkan rekam jejak pada 120+ korporasi...' },
+    { q: 'Berapa lama proses implementasi?', a: 'Tahap Diagnostic dapat selesai dalam hitungan menit...' }
+  ],
+  aboutStages: [
+    { num: '01', title: 'Diagnostic Triage', desc: 'Pemindaian 8 dimensi...' },
+    { num: '02', title: 'Root-Cause Discovery', desc: 'Menggali kelemahan...' },
+    { num: '03', title: 'Orkestrasi', desc: 'Orkestrasi eksekusi multi-sistem secara otomatis.' }
+  ],
+  aboutComparisons: [
+    { feature: 'Model Pelayanan', traditional: 'Presentasi statis', buildup: 'Sistem operasi 24/7' },
+    { feature: 'Dasar Bukti & Data', traditional: 'Wawancara subjektif', buildup: 'Membaca data nyata' }
+  ],
   themeOverrides: undefined,
   editMode: false,
 };
@@ -56,80 +117,46 @@ const CmsContext = createContext<CmsContextProps | undefined>(undefined);
 export const CmsProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<CmsState>(defaultState);
 
-  // Load persisted state on mount
   useEffect(() => {
     const saved = localStorage.getItem('cmsState');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        
-        // Migration: If the old dummy pricing 'basic' is still in localStorage, overwrite it.
-        let loadedPricing = parsed.pricing;
-        if (loadedPricing && loadedPricing.length > 0 && loadedPricing[0].id === 'basic') {
-          loadedPricing = [
-            { id: 'diagnostic', name: 'Diagnostic Retainer', price: 'Rp 15.000.000', features: ['8-Dimension Context Graph Analysis', 'Value Leakage Pinpointing', 'Executive Strategic Report', '1-Month Delivery Time'] },
-            { id: 'xray', name: 'Business X-Ray', price: 'Rp 45.000.000', features: ['Deep ERP & Banking Integration', 'Automated Decision Objects', 'Continuous KPI Monitoring', 'Monthly Evaluation Session'] },
-            { id: 'growth', name: 'Growth & Scale', price: 'Rp 90.000.000', features: ['Full Autonomous Workflow Agents', 'Strategic Re-Forecasting & Sandbox', 'On-Premise/VPC Deployment Option', 'Dedicated Enterprise Architect'] },
-          ];
-        } else if (!loadedPricing || loadedPricing.length === 0) {
-          loadedPricing = [
-            { id: 'diagnostic', name: 'Diagnostic Retainer', price: 'Rp 15.000.000', features: ['8-Dimension Context Graph Analysis', 'Value Leakage Pinpointing', 'Executive Strategic Report', '1-Month Delivery Time'] },
-            { id: 'xray', name: 'Business X-Ray', price: 'Rp 45.000.000', features: ['Deep ERP & Banking Integration', 'Automated Decision Objects', 'Continuous KPI Monitoring', 'Monthly Evaluation Session'] },
-            { id: 'growth', name: 'Growth & Scale', price: 'Rp 90.000.000', features: ['Full Autonomous Workflow Agents', 'Strategic Re-Forecasting & Sandbox', 'On-Premise/VPC Deployment Option', 'Dedicated Enterprise Architect'] },
-          ];
-        }
-
-        setState(prevState => ({
-          ...defaultState,
-          ...parsed,
-          content: { ...defaultState.content, ...(parsed.content || {}) },
-          visibleSections: { ...defaultState.visibleSections, ...(parsed.visibleSections || {}) },
-          sectionOrder: parsed.sectionOrder || ['hero', 'calculator', 'connectors', 'workforce', 'pricing', 'about', 'contact'],
-          pricing: loadedPricing,
-          themeOverrides: parsed.themeOverrides || undefined
-        }));
-      } catch (e) {
-        // Fallback
-        setState(defaultState);
-      }
+        setState(prev => ({ ...defaultState, ...parsed, editMode: false }));
+      } catch (e) {}
     } else {
-      // Initialise with sensible defaults
-      const init: CmsState = {
-        ...defaultState,
-        visibleSections: { 
-          hero: true, 
-          calculator: true,
-          connectors: true,
-          workforce: true,
-          pricing: true, 
-          about: true,
-          contact: true 
-        },
-        sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing', 'about', 'contact'],
-        pricing: [
-          { id: 'diagnostic', name: 'Diagnostic Retainer', price: 'Rp 15.000.000', features: ['8-Dimension Context Graph Analysis', 'Value Leakage Pinpointing', 'Executive Strategic Report', '1-Month Delivery Time'] },
-          { id: 'xray', name: 'Business X-Ray', price: 'Rp 45.000.000', features: ['Deep ERP & Banking Integration', 'Automated Decision Objects', 'Continuous KPI Monitoring', 'Monthly Evaluation Session'] },
-          { id: 'growth', name: 'Growth & Scale', price: 'Rp 90.000.000', features: ['Full Autonomous Workflow Agents', 'Strategic Re-Forecasting & Sandbox', 'On-Premise/VPC Deployment Option', 'Dedicated Enterprise Architect'] },
-        ],
-      };
-      setState(init);
-      localStorage.setItem('cmsState', JSON.stringify(init));
+      setState(defaultState);
+      localStorage.setItem('cmsState', JSON.stringify(defaultState));
     }
+
+    const loadFromDb = async () => {
+      try {
+        const docRef = doc(db, 'cms', 'state');
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const remoteData = snap.data();
+          setState(prev => {
+            const newState = { ...prev, ...remoteData, editMode: false };
+            localStorage.setItem('cmsState', JSON.stringify(newState));
+            return newState;
+          });
+        }
+      } catch (e) {
+        console.warn('Firestore CMS read failed:', e);
+      }
+    };
+    loadFromDb();
   }, []);
 
-  // Persist to localStorage whenever state changes
   useEffect(() => {
     localStorage.setItem('cmsState', JSON.stringify(state));
   }, [state]);
 
-  // Optional Firestore sync (fails silently if not configured)
   const syncToFirestore = async (newState: CmsState) => {
     try {
       const docRef = doc(db, 'cms', 'state');
       await setDoc(docRef, newState);
-    } catch (e) {
-      // ignore – Firestore may be absent in local dev
-    }
+    } catch (e) {}
   };
 
   const updateContent = (id: string, html: string) => {
@@ -137,49 +164,48 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
     setState(newState);
     syncToFirestore(newState);
   };
-
   const toggleSection = (key: string, visible: boolean) => {
     const newState = { ...state, visibleSections: { ...state.visibleSections, [key]: visible } };
     setState(newState);
     syncToFirestore(newState);
   };
-
   const reorderSections = (order: string[]) => {
     const newState = { ...state, sectionOrder: order };
     setState(newState);
     syncToFirestore(newState);
   };
-
-  const setPricing = (tiers: PricingTier[]) => {
+  const setPricing = (tiers: PricingPackage[]) => {
     const newState = { ...state, pricing: tiers };
     setState(newState);
     syncToFirestore(newState);
   };
-
+  const setFaqs = (faqs: FaqItem[]) => {
+    const newState = { ...state, faqs };
+    setState(newState);
+    syncToFirestore(newState);
+  };
+  const setAboutStages = (stages: AboutStage[]) => {
+    const newState = { ...state, aboutStages: stages };
+    setState(newState);
+    syncToFirestore(newState);
+  };
+  const setAboutComparisons = (comps: AboutComparison[]) => {
+    const newState = { ...state, aboutComparisons: comps };
+    setState(newState);
+    syncToFirestore(newState);
+  };
   const setThemeOverrides = (overrides: Partial<ThemeOverrides>) => {
     const newState = { ...state, themeOverrides: { ...state.themeOverrides, ...overrides } };
     setState(newState);
     syncToFirestore(newState);
   };
-
   const toggleEditMode = (enabled: boolean) => {
     const newState = { ...state, editMode: enabled };
     setState(newState);
-    syncToFirestore(newState);
   };
 
   return (
-    <CmsContext.Provider
-      value={{
-        state,
-        updateContent,
-        toggleSection,
-        reorderSections,
-        setPricing,
-        setThemeOverrides,
-        toggleEditMode,
-      }}
-    >
+    <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setPricing, setFaqs, setAboutStages, setAboutComparisons, setThemeOverrides, toggleEditMode }}>
       {children}
     </CmsContext.Provider>
   );

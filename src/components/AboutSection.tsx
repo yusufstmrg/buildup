@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { 
   ShieldCheck, 
@@ -22,45 +22,15 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { useBuildUp } from '../context/BuildUpContext';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { EditableText } from '../components/admin/EditableText';
+import { useCms } from '../context/CmsContext';
 
 export function AboutSection() {
   
   const { setIsHealthCheckModalOpen, setIsAuthModalOpen, setAuthModalMode, t } = useBuildUp();
+  const { state } = useCms();
 
-  const comparisonPoints = [
-    {
-      feature: t('aboutWhyFeature1') || 'Model Pelayanan',
-      traditional: t('aboutWhyTrad1') || 'Presentasi slide PowerPoint statis, durasi 3-6 bulan, setelah proyek selesai konsultan pergi.',
-      buildup: t('aboutWhyBuildup1') || 'Sistem operasi cerdas (Business OS) yang aktif 24/7 di dalam perusahaan Anda, terus memantau dan memperbaiki.'
-    },
-    {
-      feature: t('aboutWhyFeature2') || 'Dasar Bukti & Data',
-      traditional: t('aboutWhyTrad2') || 'Wawancara subjektif dan sampel survei terbatas yang cepat kedaluwarsa.',
-      buildup: 'Business Context Graphâ„¢ membaca data transaksi nyata dari ERP, penjualan, dan rekening bank secara real-time.'
-    },
-    {
-      feature: t('aboutWhyFeature3') || 'Tanggung Jawab Eksekusi',
-      traditional: t('aboutWhyTrad3') || 'Klien dibebani mengeksekusi rekomendasi tebal tanpa alat orkestrasi.',
-      buildup: 'Auditable Decision Engineâ„¢ & 12 AI Workforce Agents menyiapkan draft aksi siap eksekusi (Human-in-the-loop).'
-    },
-    {
-      feature: t('aboutWhyFeature4') || 'Biaya & Pengembalian Modal (ROI)',
-      traditional: t('aboutWhyTrad4') || 'Biaya retainer miliaran rupiah tanpa jaminan peningkatan EBITDA terukur.',
-      buildup: t('aboutWhyBuildup4') || 'Biaya terjangkau dengan atribusi ROI terbukti rata-rata 10.6x atas biaya investasi.'
-    }
-  ];
-
-  const nineStages = [
-    { num: '01', title: 'Deep Context Ingestion', desc: 'Menghubungkan data ERP, jurnal akuntansi, invoice, dan kontrak ke dalam ontologi cerdas.' },
-    { num: '02', title: 'Baseline 8-Dimension X-Ray', desc: 'Pemindaian menyeluruh terhadap kas, margin, SOP, vendor, pajak, dan tata kelola.' },
-    { num: '03', title: 'Value Leakage Pinpointing', desc: 'Menemukan titik kebocoran margin, penumpukan stok mati, dan penagihan piutang lambat.' },
-    { num: '04', title: 'Decision Object Formation', desc: 'Merumuskan rekomendasi keputusan berbasis bukti lengkap dengan proyeksi dampak finansial.' },
-    { num: '05', title: 'Human Authority Gate', desc: 'Direksi dan manajemen memiliki kontrol penuh untuk menyetujui atau mengeskalasi aksi.' },
-    { num: '06', title: 'Autonomous Multi-System Workflow', desc: 'Eksekusi otomatis ke sistem terkait (pembaharuan PO, reminder penagihan, validasi pajak).' },
-    { num: '07', title: 'Continuous KPI Monitoring', desc: 'Pengawasan real-time terhadap indikator kinerja utama dan peringatan dini anomali.' },
-    { num: '08', title: 'Strategic Re-Forecasting', desc: 'Simulasi skenario bisnis dinamis terhadap perubahan harga bahan baku dan fluktuasi pasar.' },
-    { num: '09', title: 'Enterprise Value Accretion', desc: 'Peningkatan EBITDA yang tervalidasi dan peningkatan valuasi korporasi secara terukur.' }
-  ];
+  const comparisonPoints = state.aboutComparisons;
+  const nineStages = state.aboutStages;
 
   return (
     <section id="about" className="py-24">

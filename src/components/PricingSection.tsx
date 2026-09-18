@@ -1,7 +1,8 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, ChevronDown } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
+import { useCms } from '../context/CmsContext';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Switch from '@radix-ui/react-switch';
 import { EditableText } from '../components/admin/EditableText';
@@ -13,6 +14,7 @@ export function PricingSection() {
     setCurrency, 
     formatMoney
   } = useBuildUp();
+  const { state } = useCms();
 
   const [isAnnual, setIsAnnual] = useState(true);
 
@@ -48,101 +50,8 @@ export function PricingSection() {
     return formatMoney(value);
   };
 
-  const faqs = [
-    {
-      q: "Bagaimana BuildUp menjamin ROI (Return on Investment)?",
-      a: "Berdasarkan rekam jejak pada 120+ korporasi di Indonesia, BuildUp rata-rata menemukan dan memulihkan kebocoran modal kerja serta inefisiensi biaya operasional sebesar Rp 1,4 Miliar per tahun. Hasil ini memberikan rata-rata ROI sebesar 10.6x dari nilai investasi langganan retainer kami."
-    },
-    {
-      q: "Berapa lama proses implementasi dan integrasi data?",
-      a: "Tahap Diagnostic dapat selesai dalam hitungan menit. Untuk integrasi penuh Business X-Ray dan paket Growth, koneksi ke sistem ERP (seperti SAP, Accurate, Jurnal, Odoo) berlangsung antara 7 hingga 14 hari kerja tanpa mengganggu operasional harian tim Anda."
-    },
-    {
-      q: "Apakah data rahasia perusahaan kami aman?",
-      a: "Sangat aman. Kami menerapkan enkripsi bank-grade AES-256 dan protokol zero data retention, yang memastikan data finansial Anda tidak pernah digunakan untuk melatih model AI publik atau dibagikan ke pihak ketiga mana pun. Klien konglomerasi juga dapat memilih instalasi privat on-premise."
-    },
-    {
-      q: "Apakah sistem AI ini bisa mengambil keputusan sendiri tanpa izin direksi?",
-      a: "Tidak. BuildUp menganut prinsip Human-in-the-loop yang ketat melalui Auditable Decision Engine™. Seluruh keputusan bernilai material dirumuskan sebagai Decision Object yang membutuhkan persetujuan resmi (approval gate) dari direksi atau pimpinan yang berwenang sebelum dieksekusi."
-    },
-    {
-      q: "Apa perbedaan Certified Business Advisor dengan Konsultan Pajak biasa?",
-      a: "Konsultan pajak umumnya berfokus pada kepatuhan fiskal historis. Certified Business Advisor kami bertindak sebagai mitra operasional strategis yang melihat seluruh dimensi bisnis (arus kas, rantai pasok, SDM, dll) untuk meningkatkan EBITDA secara holistik dan terukur."
-    }
-  ];
-
-  const packages = [
-    {
-      id: "starter",
-      label: "ENTRY DIAGNOSTIC",
-      name: "Starter / Basic",
-      priceIdr: 0,
-      priceUsd: 0,
-      description: "Fast, low-friction front door screening to measure company health and benchmark position.",
-      features: [
-        "Overall Health Score (0–100)",
-        "8-Dimension performance scores",
-        "Top 3 critical constraint signals",
-        "Instant diagnostic summary PDF"
-      ],
-      buttonText: "Request Diagnostic Audit",
-      isPopular: false
-    },
-    {
-      id: "standard",
-      label: "MONITORING",
-      name: "Standard Business",
-      priceIdr: 6000000,
-      priceUsd: 390,
-      description: "Live continuous benchmark progression, ongoing diagnostic tracking, and automated governance audit.",
-      features: [
-        "Pemantauan 8 Dimensi Bisnis 24/7",
-        "Peringatan Dini Anomali Arus Kas & Marjin",
-        "Benchmarking Industri Nasional & Regional",
-        "Dashboard Eksekutif C-Level",
-        "Integrasi 2 Sistem ERP / Pembukuan",
-        "Dukungan Teknis Prioritas"
-      ],
-      buttonText: "Mulai Berlangganan",
-      isPopular: false
-    },
-    {
-      id: "growth",
-      label: "RECOMMENDED",
-      name: "Growth / Expansion",
-      priceIdr: 28000000,
-      priceUsd: 1800,
-      description: "Full AI Workforce deployment, continuous Business OS orchestration, and Certified Business Advisor guidance.",
-      features: [
-        "Semua Fitur Standard Business",
-        "12 Agen Eksekutif AI Workforce",
-        "Auditable Decision Engine™",
-        "Orkestrasi Alur Kerja Multi-Sistem",
-        "Pendampingan Certified Business Advisor",
-        "Jaminan ROI Terbukti"
-      ],
-      buttonText: "Pilih Growth Package",
-      isPopular: true
-    },
-    {
-      id: "enterprise",
-      label: "SOLUSI KHUSUS HOLDING",
-      name: "Enterprise Conglomerate",
-      priceIdr: 120000000,
-      priceUsd: 7800,
-      description: "Multi-entity corporate groups, complex legacy systems, bank API connections, and private cloud deployments.",
-      features: [
-        "Koneksi Multi-Entity Business Context Graph™",
-        "Instalasi On-Premise / Private VPC",
-        "Integrasi ERP Kustom (SAP, Oracle)",
-        "Tim Partner Konsultan Berdedikasi",
-        "Pelatihan Khusus Divisi Anak Perusahaan",
-        "SLA Respon 1 Jam"
-      ],
-      buttonText: "Hubungi Tim Korporat",
-      isPopular: false
-    }
-  ];
+  const faqs = state.faqs;
+  const packages = state.pricing;
 
   return (
     <section id="pricing" className="py-24 bg-brand-deep">
@@ -327,4 +236,5 @@ export function PricingSection() {
     </section>
   );
 }
+
 
