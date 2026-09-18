@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { 
   ShieldCheck, 
@@ -35,12 +35,12 @@ export function AboutSection() {
     {
       feature: t('aboutWhyFeature2') || 'Dasar Bukti & Data',
       traditional: t('aboutWhyTrad2') || 'Wawancara subjektif dan sampel survei terbatas yang cepat kedaluwarsa.',
-      buildup: 'Business Context Graph™ membaca data transaksi nyata dari ERP, penjualan, dan rekening bank secara real-time.'
+      buildup: 'Business Context Graphâ„¢ membaca data transaksi nyata dari ERP, penjualan, dan rekening bank secara real-time.'
     },
     {
       feature: t('aboutWhyFeature3') || 'Tanggung Jawab Eksekusi',
       traditional: t('aboutWhyTrad3') || 'Klien dibebani mengeksekusi rekomendasi tebal tanpa alat orkestrasi.',
-      buildup: 'Auditable Decision Engine™ & 12 AI Workforce Agents menyiapkan draft aksi siap eksekusi (Human-in-the-loop).'
+      buildup: 'Auditable Decision Engineâ„¢ & 12 AI Workforce Agents menyiapkan draft aksi siap eksekusi (Human-in-the-loop).'
     },
     {
       feature: t('aboutWhyFeature4') || 'Biaya & Pengembalian Modal (ROI)',
@@ -72,7 +72,7 @@ export function AboutSection() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-brand-textMain leading-tight">
-            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="bg-gradient-to-r from-[#FFF5C6] via-[#F2C54D] to-[#B37C0C] bg-clip-text text-transparent">AI-Native Business Transformation Intelligence</span>
+            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="bg-gradient-to-r from-amber-600 to-amber-500 dark:from-brand-gold dark:to-amber-500 bg-clip-text text-transparent">AI-Native Business Transformation Intelligence &bull; Direct Internal System Connectivity</span>
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-brand-textMuted leading-relaxed max-w-3xl mx-auto">
@@ -268,6 +268,8 @@ export function AboutSection() {
     </section>
   );
 }
+
+
 
 
 
