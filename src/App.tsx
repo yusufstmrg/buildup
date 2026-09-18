@@ -10,6 +10,7 @@ import { AdminBar } from './components/admin/AdminBar';
 import { ThemePanel } from './components/admin/ThemePanel';
 import { SectionManager } from './components/admin/SectionManager';
 import { PricingManager } from './components/admin/PricingManager';
+import { DataManager } from './components/admin/DataManager';
 
 // Public Institutional Pages
 import { LandingPage } from './pages/LandingPage';
@@ -89,5 +90,6 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
