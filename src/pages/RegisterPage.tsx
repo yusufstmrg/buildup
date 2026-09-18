@@ -52,7 +52,7 @@ export function RegisterPage() {
   return (
     <div className="min-h-screen bg-brand-navy text-slate-100 flex flex-col justify-between font-sans selection:bg-brand-gold/30">
       {/* Topbar */}
-      <header className="px-6 py-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/40">
+      <header className="px-6 py-4 flex items-center justify-between border-b border-brand-border/80 bg-brand-surface/40">
         <Link to="/">
           <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} />
         </Link>
@@ -69,7 +69,7 @@ export function RegisterPage() {
 
       {/* Main Container */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-xl bg-brand-navy/90 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
+        <div className="w-full max-w-xl bg-brand-navy/90 border border-brand-border rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 text-brand-gold mb-3">
               <Building2 className="w-6 h-6" />
@@ -96,7 +96,7 @@ export function RegisterPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Bambang Soediro, M.M."
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
@@ -106,7 +106,7 @@ export function RegisterPage() {
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                  className="w-full px-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 >
                   <option value="Chief Executive Officer / Direktur Utama">Chief Executive Officer / Direktur Utama</option>
                   <option value="Chief Financial Officer / Direktur Keuangan">Chief Financial Officer / Direktur Keuangan</option>
@@ -128,7 +128,7 @@ export function RegisterPage() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="PT Samudera Logistik Makmur"
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 />
               </div>
             </div>
@@ -139,7 +139,7 @@ export function RegisterPage() {
               <select
                 value={selectedIndustry}
                 onChange={(e) => setSelectedIndustry(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
               >
                 {industries.map((ind) => (
                   <option key={ind.id} value={ind.id}>
@@ -180,7 +180,7 @@ export function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="bambang@samudera.co.id"
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                   />
                 </div>
               </div>
@@ -206,7 +206,7 @@ export function RegisterPage() {
               <select
                 value={revenueBracket}
                 onChange={(e) => setRevenueBracket(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
               >
                 <option value="< Rp 10 Miliar / tahun">&lt; Rp 10 Miliar / tahun</option>
                 <option value="Rp 10 Miliar - Rp 50 Miliar">Rp 10 Miliar - Rp 50 Miliar</option>
@@ -233,7 +233,7 @@ export function RegisterPage() {
           </form>
 
           <div className="relative my-6 flex items-center justify-center">
-            <div className="border-t border-slate-800 w-full" />
+            <div className="border-t border-brand-border w-full" />
             <span className="bg-brand-navy px-3 text-[11px] font-bold text-brand-textMuted uppercase tracking-widest absolute">
               Atau
             </span>
@@ -254,7 +254,7 @@ export function RegisterPage() {
           <p className="text-center text-xs text-brand-textMuted mt-6">
             Sudah memiliki akun resmi?{' '}
             <Link to="/login" className="text-brand-gold font-bold hover:underline">
-              Masuk ke Portal Klien
+              Masuk ke Akun Bisnis
             </Link>
           </p>
         </div>
@@ -262,8 +262,9 @@ export function RegisterPage() {
 
       {/* Footer */}
       <footer className="py-4 text-center text-[11px] text-brand-textMuted border-t border-slate-900">
-        © 2026 BuildUp — AI-Native Business Transformation Partner.
+        © 2026 BuildUp — AI-Native Business Transformation Intelligence.
       </footer>
     </div>
   );
 }
+

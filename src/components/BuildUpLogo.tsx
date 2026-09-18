@@ -27,23 +27,16 @@ export function BuildUpLogo({
 
   // Select the appropriate official image asset based on theme
   // Both dark and transparent assets match the authentic 3D metallic BuildUp logo provided by the user
-  const logoSrc = theme === 'light' 
-    ? '/buildup-logo-transparent.png' 
-    : '/buildup-logo-dark.png';
-
-  const fallbackSrc = '/buildup-logo.png';
+  const logoSrc = '/buildup-logo.png';
+  const altText = 'BuildUp - Business Transformation Intelligence';
 
   if (variant === 'mark') {
     return (
       <div className={`inline-flex items-center justify-center flex-shrink-0 select-none ${className}`}>
         <img
           src={logoSrc}
-          alt="BuildUp Logo Mark"
-          className={`${heightMap[size]} w-auto object-contain drop-shadow-[0_4px_12px_rgba(212,160,23,0.3)] transition-transform duration-300 hover:scale-105`}
-          onError={(e) => {
-            // fallback
-            (e.target as HTMLImageElement).src = fallbackSrc;
-          }}
+          alt={altText}
+          className={`${heightMap[size]} w-auto object-contain`}
           referrerPolicy="no-referrer"
         />
       </div>
@@ -54,12 +47,8 @@ export function BuildUpLogo({
     <div className={`inline-flex items-center select-none ${className}`}>
       <img
         src={logoSrc}
-        alt="BuildUp - Business Transformation Partner"
-        className={`${heightMap[size]} w-auto object-contain drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transition-all duration-300 hover:brightness-105`}
-        onError={(e) => {
-          // fallback
-          (e.target as HTMLImageElement).src = fallbackSrc;
-        }}
+        alt={altText}
+        className={`${heightMap[size]} w-auto object-contain`}
         referrerPolicy="no-referrer"
       />
     </div>

@@ -1,0 +1,64 @@
+# BuildUp Platform - Core Business Transformation Intelligence Schema
+
+type Organization @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type User @table {
+  id: String! # Maps to Firebase Auth UID
+  email: String!
+  displayName: String
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type Membership @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  user: User!
+  role: String! # e.g., "OWNER", "EXECUTIVE", "ANALYST"
+  joinedAt: Timestamp! @default(expr: "request.time")
+}
+
+type BusinessProfile @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  industry: String!
+  revenueRange: String
+  headcount: Int
+  currency: String! @default(value: "IDR")
+}
+
+# The Business Genome stores normalized transformation metrics
+type BusinessGenome @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  dimension: String! # "ECONOMIC", "COMMERCIAL", "OPERATIONS", "PEOPLE", "FINANCE", "RISK", "TECHNOLOGY", "STRATEGY"
+  metricKey: String!
+  metricValue: Float
+  confidence: Float! @default(value: 1.0)
+  provenance: String # source of truth
+  lastUpdated: Timestamp! @default(expr: "request.time")
+}
+
+type Assessment @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  type: String! # "HEALTH_CHECK", "X_RAY", "360"
+  status: String! # "DRAFT", "COMPLETED"
+  overallScore: Float
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type Initiative @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  title: String!
+  description: String
+  status: String! # "PROPOSED", "APPROVED", "EXECUTING", "MEASURING", "CLOSED"
+  expectedRoi: Float
+  department: String!
+  owner: User!
+}

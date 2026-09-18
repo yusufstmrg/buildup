@@ -19,6 +19,7 @@ import {
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useBuildUp } from '../context/BuildUpContext';
 import { Link } from 'react-router-dom';
+import { PremiumLock } from '../components/PremiumLock';
 
 const chartData = [
   { week: 'W1', revenue: 4200, margin: 1250, cash: 3100 },
@@ -274,6 +275,8 @@ export function CommandCenter() {
         </div>
 
         {/* Decision Engine Pending Review Column (5 cols) */}
+        <div className="lg:col-span-5">
+        <PremiumLock featureName="Decision Engine" requiredPlan="Transformation Retainer">
         <div className="lg:col-span-5 bg-brand-surface border border-brand-border rounded-2xl p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-brand-border mb-4">
@@ -344,9 +347,12 @@ export function CommandCenter() {
             </Link>
           </div>
         </div>
+        </PremiumLock>
+        </div>
 
       </div>
 
     </div>
   );
 }
+

@@ -57,7 +57,7 @@ export function Topbar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => { setAuthModalMode('register'); setIsAuthModalOpen(true); }}
-              className="px-2.5 py-0.5 bg-slate-950 hover:bg-brand-navy text-brand-gold hover:text-brand-textMain rounded-lg text-[11px] font-extrabold transition-colors"
+              className="px-2.5 py-0.5 bg-brand-surface hover:bg-brand-navy text-brand-gold hover:text-brand-textMain rounded-lg text-[11px] font-extrabold transition-colors"
             >
               Hubungkan Data Nyata ERP
             </button>
@@ -167,8 +167,15 @@ export function Topbar() {
                   {user?.role || 'Chief Executive Officer'}
                 </div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-gold to-amber-600 flex items-center justify-center text-slate-950 font-black text-xs shadow-md">
-                {(user?.name || 'B').charAt(0)}
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-gold/60 shadow-md bg-brand-surface flex items-center justify-center">
+                <img 
+                  src="/yusuf.png" 
+                  alt={user?.name || "Yusuf Situmorang"} 
+                  className="w-full h-full object-cover object-top"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
               </div>
               <ChevronDown className={`w-3.5 h-3.5 text-brand-textMuted transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
             </button>
@@ -176,7 +183,7 @@ export function Topbar() {
             {/* User Dropdown Menu */}
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-64 bg-brand-navy border border-brand-border/80 rounded-2xl shadow-2xl p-3 z-50 animate-fade-in backdrop-blur-xl">
-                <div className="pb-3 mb-2 border-b border-slate-800">
+                <div className="pb-3 mb-2 border-b border-brand-border">
                   <p className="text-xs font-extrabold text-brand-textMain truncate">{user?.companyName || 'PT Global Distribusi Nusantara'}</p>
                   <p className="text-[11px] text-brand-textMuted truncate mt-0.5">{user?.email || 'director@nusantara-group.co.id'}</p>
                   <div className="mt-2 flex items-center gap-1.5 text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
@@ -211,7 +218,7 @@ export function Topbar() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-950/40 rounded-lg transition-colors text-left font-semibold mt-2 pt-2 border-t border-slate-800"
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-950/40 rounded-lg transition-colors text-left font-semibold mt-2 pt-2 border-t border-brand-border"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Keluar dari Portal</span>
@@ -226,3 +233,4 @@ export function Topbar() {
     </header>
   );
 }
+

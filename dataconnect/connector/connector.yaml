@@ -1,0 +1,6 @@
+connectorId: "buildup-connector"
+authMode: "PUBLIC" # We enforce auth inside queries.gql and mutations.gql via @auth(level: USER)
+generate:
+  javascriptSdk:
+    outputDir: "../../src/lib/dataconnect"
+    package: "@buildup/dataconnect"

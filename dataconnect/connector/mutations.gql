@@ -1,0 +1,46 @@
+# Mutations
+
+mutation CreateOrganization($name: String!, $uid: String!) @auth(level: USER) @transaction {
+  org: organization_insert(data: { name: $name })
+  mem: membership_insert(data: {
+    organizationId_expr: "response.org.id",
+    userId: $uid,
+    role: "OWNER"
+  })
+}
+
+mutation UpdateGenomeMetric(
+  $orgId: UUID!, 
+  $dimension: String!, 
+  $metricKey: String!, 
+  $metricValue: Float!, 
+  $provenance: String
+) @auth(level: USER) {
+  businessGenome_insert(data: {
+    organizationId: $orgId,
+    dimension: $dimension,
+    metricKey: $metricKey,
+    metricValue: $metricValue,
+    provenance: $provenance
+  })
+}
+
+mutation CreateInitiative(
+  $orgId: UUID!,
+  $title: String!,
+  $description: String,
+  $department: String!,
+  $ownerId: String!,
+  $expectedRoi: Float
+) @auth(level: USER) {
+  initiative_insert(data: {
+    organizationId: $orgId,
+    title: $title,
+    description: $description,
+    department: $department,
+    ownerId: $ownerId,
+    status: "PROPOSED",
+    expectedRoi: $expectedRoi
+  })
+}
+

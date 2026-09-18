@@ -19,23 +19,22 @@ import {
 import { BuildUpLogo } from './BuildUpLogo';
 import { useBuildUp } from '../context/BuildUpContext';
 
-const navigation = [
-  { name: 'Command Center', href: '/app', icon: LayoutDashboard },
-  { name: 'BuildUp Intelligence™', href: '/intelligence', icon: BrainCircuit, badge: 'Active Graph' },
-  { name: 'Diagnostics & X-Ray™', href: '/diagnostics', icon: ActivitySquare },
-  { name: 'AI Workforce', href: '/workforce', icon: Users, badge: '12 Roles' },
-  { name: 'Business OS™', href: '/business-os', icon: Settings },
-  { name: 'Strategic Planner', href: '/planner', icon: TrendingUp },
-  { name: 'Internal Control Engine', href: '/control', icon: ShieldAlert, badge: '3 Alerts' },
-  { name: 'Commercial & Monetization', href: '/monetization', icon: Coins, highlight: true },
-  { name: 'Admin Dashboard', href: '/admin', icon: ShieldAlert, badge: 'Admin' },
-];
-
 export function Sidebar() {
   const location = useLocation();
-  const { overallScore, setIsHealthCheckModalOpen } = useBuildUp();
+  const { overallScore, setIsHealthCheckModalOpen, t, language } = useBuildUp();
   const [showExpertModal, setShowExpertModal] = useState(false);
   const [expertSubmitted, setExpertSubmitted] = useState(false);
+
+  const navigation = [
+    { name: t('navCommandCenter') || 'Command Center', href: '/app', icon: LayoutDashboard },
+    { name: t('navIntelligence') || 'BuildUp Intelligence™', href: '/intelligence', icon: BrainCircuit, badge: 'Active Graph' },
+    { name: t('navDiagnostics') || 'Diagnostics & X-Ray™', href: '/diagnostics', icon: ActivitySquare },
+    { name: t('navWorkforce') || 'AI Workforce', href: '/workforce', icon: Users, badge: '12 Roles' },
+    { name: t('navBusinessOS') || 'Business OS™', href: '/business-os', icon: Settings },
+    { name: t('navPlanner') || 'Strategic Planner', href: '/planner', icon: TrendingUp },
+    { name: t('navControlEngine') || 'Internal Control Engine', href: '/control', icon: ShieldAlert, badge: '3 Alerts' },
+    { name: t('navMonetization') || 'Commercial & Monetization', href: '/monetization', icon: Coins, highlight: true },
+    ];
 
   return (
     <>
@@ -56,7 +55,7 @@ export function Sidebar() {
           >
             <div className="flex items-center gap-2">
               <Globe className="w-3.5 h-3.5 text-brand-gold group-hover:rotate-12 transition-transform" />
-              <span>Public Landing Page</span>
+              <span>{language === 'id' ? 'Landing Page Publik' : 'Public Landing Page'}</span>
             </div>
             <span className="text-[10px] text-brand-gold font-bold">View →</span>
           </Link>
@@ -65,7 +64,7 @@ export function Sidebar() {
         {/* Navigation List */}
         <div className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
           <div className="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-wider px-3 py-2">
-            Enterprise Navigation
+            {language === 'id' ? 'Navigasi Eksekutif' : 'Enterprise Navigation'}
           </div>
 
           {navigation.map((item) => {
@@ -217,3 +216,4 @@ export function Sidebar() {
     </>
   );
 }
+

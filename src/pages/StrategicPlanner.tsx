@@ -13,8 +13,18 @@ import {
   Loader2
 } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
+import { PremiumLock } from '../components/PremiumLock';
+import { auth } from '../firebaseConfig';
 
 export function StrategicPlanner() {
+  return (
+    <PremiumLock featureName="Strategic AI Planner" requiredPlan="Transformation Retainer">
+      <StrategicPlannerContent />
+    </PremiumLock>
+  );
+}
+
+function StrategicPlannerContent() {
   const { formatMoney, user } = useBuildUp();
 
   // Scenario parameters
@@ -69,9 +79,13 @@ export function StrategicPlanner() {
     try {
       const scenarioQuery = `We are modeling a ${selectedScenario} scenario. Target top-line growth is ${revenueGrowth}%. We aim to squeeze COGS by ${cogsReduction}% through vendor renegotiation, and accelerate DSO by ${dsoImprovement} days. Baseline revenue is Rp 50B with 15% EBITDA margin. Evaluate the operational viability and risks of executing this plan over the next 90 days.`;
       
+      const token = await auth.currentUser?.getIdToken();
       const res = await fetch('/api/ai/strategic-analysis', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           scenario: scenarioQuery,
           companyContext: {
@@ -267,7 +281,7 @@ export function StrategicPlanner() {
               {loadingAi ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing 10k+ variables...</>
               ) : (
-                <><Sparkles className="w-4 h-4" /> Ask Gemini AI to Analyze Scenario</>
+                <><Sparkles className="w-4 h-4" /> Ask AI to Analyze Scenario</>
               )}
             </button>
             <button className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldLight hover:from-brand-goldDark hover:to-brand-gold text-brand-deep font-extrabold text-xs uppercase tracking-wider shadow-gold-sm transition-all">
@@ -365,3 +379,5 @@ export function StrategicPlanner() {
     </div>
   );
 }
+
+

@@ -27,6 +27,7 @@ export function HealthCheckModal() {
     isHealthCheckModalOpen, 
     setIsHealthCheckModalOpen, 
     updateScoreFromAnswers, 
+    setGlobalHealthScore,
     formatMoney,
     language,
     t
@@ -37,6 +38,10 @@ export function HealthCheckModal() {
 
   // Diagnostic State
   const [currentStep, setCurrentStep] = useState(0);
+  const [isProfiling, setIsProfiling] = useState(true);
+  const [estRevenue, setEstRevenue] = useState('');
+  const [estMargin, setEstMargin] = useState('');
+  const [estEmployees, setEstEmployees] = useState('');
   const [answers, setAnswers] = useState<number[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [calculatedScore, setCalculatedScore] = useState<number>(0);
@@ -47,7 +52,13 @@ export function HealthCheckModal() {
   const [isErpScanning, setIsErpScanning] = useState(false);
   const [erpScanProgress, setErpScanProgress] = useState(0);
   const [erpScanComplete, setErpScanComplete] = useState(false);
-  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [aiFindings, setAiFindings] = useState<string[]>([
+      'Terdeteksi keterlambatan penagihan piutang (DSO) dan konsentrasi vendor tinggi.',
+      'Diperkirakan 4,8% dari omzet tahunan bocor akibat inefisiensi modal kerja.'
+    ]);
+    const [aiRecommendation, setAiRecommendation] = useState<string>('Potensi pemulihan kas: ~Rp 1,6 Miliar dalam 90 hari pertama.');
 
   // Close on Escape key
   useEffect(() => {
@@ -96,44 +107,133 @@ export function HealthCheckModal() {
   const handleClose = () => {
     setIsHealthCheckModalOpen(false);
     setCurrentStep(0);
+    setIsProfiling(true);
     setIsCompleted(false);
     setIsErpScanning(false);
     setErpScanComplete(false);
   };
 
-  const handleRunErpScan = () => {
+  const parseFile = async (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target?.result;
+        if (!data) { resolve(""); return; }
+        
+        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+          try {
+            // Import dinamis xlsx agar tidak membebani initial load
+            import('xlsx').then(xlsx => {
+              const workbook = xlsx.read(data, { type: 'binary' });
+              let text = "";
+              workbook.SheetNames.forEach(sheetName => {
+                const sheet = workbook.Sheets[sheetName];
+                text += `Sheet: ${sheetName}\n` + xlsx.utils.sheet_to_csv(sheet).substring(0, 500) + "\n\n";
+              });
+              resolve(text);
+            });
+          } catch(err) {
+            resolve("Error reading excel file.");
+          }
+        } else {
+          // Asumsikan CSV/TXT
+          resolve(data as string);
+        }
+      };
+      
+      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        reader.readAsBinaryString(file);
+      } else {
+        reader.readAsText(file);
+      }
+    });
+  };
+
+  const handleRunErpScan = async () => {
     setIsErpScanning(true);
     setErpScanProgress(15);
     setErpScanComplete(false);
 
-    const timer1 = setTimeout(() => setErpScanProgress(45), 600);
-    const timer2 = setTimeout(() => setErpScanProgress(80), 1200);
-    const timer3 = setTimeout(() => {
-      setErpScanProgress(100);
-      setIsErpScanning(false);
-      setErpScanComplete(true);
-      setCalculatedScore(74); // Derived from real transactional data scan
-      setIsCompleted(true);
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#D4AF37', '#FFFFFF', '#10B981']
-      });
-    }, 1800);
+    try {
+      let fileDataString = "No file uploaded. Assume typical SME inefficiencies.";
+      if (uploadedFiles.length > 0) {
+        setErpScanProgress(30);
+        const parsedFiles = await Promise.all(uploadedFiles.map(f => parseFile(f)));
+        fileDataString = parsedFiles.join("\n\n--- NEXT FILE ---\n\n");
+      }
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
+      setErpScanProgress(50);
+      
+      let aiResult;
+      const { auth } = await import('../firebaseConfig');
+      const token = await auth.currentUser?.getIdToken();
+      if (token) {
+        const res = await fetch('/api/ai/health-check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ fileData: fileDataString })
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Diagnostic failed');
+        }
+        aiResult = await res.json();
+      } else {
+        // Fallback for non-logged-in users (demo)
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        aiResult = {
+          analysis: {
+            score: 68,
+            findings: [
+              'Terdeteksi penumpukan inventory senilai ~Rp 1.2M pada SKU slow-moving.',
+              'Siklus penagihan piutang (DSO) 14 hari lebih lambat dari benchmark industri.',
+              'Terdapat 12% inefisiensi pada pengadaan vendor tier-2.'
+            ]
+          }
+        };
+      }
+      
+      setErpScanProgress(80);
+
+      const calculatedScore = aiResult.analysis?.score || 68;
+      const findings = aiResult.analysis?.findings || [
+        'Terdeteksi inefisiensi modal kerja.'
+      ];
+      
+      const rec = 'Optimalisasi modal kerja dapat membebaskan kas secara signifikan.';
+      
+      setCalculatedScore(calculatedScore);
+      setGlobalHealthScore(calculatedScore, findings, rec);
+      setAiFindings(findings);
+      setAiRecommendation(rec);
+
+    } catch (e: any) {
+      console.error("Diagnostic error:", e);
+      setCalculatedScore(40);
+      setGlobalHealthScore(40, ['Kesalahan koneksi / API Key belum diatur'], 'Pastikan API Key / Kredensial Vertex AI sudah diatur dengan benar di backend.');
+      setAiFindings(['Sistem gagal memproses data operasional Anda karena kendala API.', `Pesan Error: ${e.message}`]);
+      setAiRecommendation('Pastikan API Key / Kredensial Vertex AI sudah diatur dengan benar di backend.');
+    }
+
+    setErpScanProgress(100);
+    setIsErpScanning(false);
+    setErpScanComplete(true);
+    setIsCompleted(true);
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#D4AF37', '#FFFFFF', '#10B981']
+    });
   };
-
   const q = questions[currentStep];
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brand-deep/85 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         // Dismiss when clicking directly on backdrop
         if (e.target === e.currentTarget) {
@@ -150,7 +250,7 @@ export function HealthCheckModal() {
         <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-brand-border bg-brand-navy/60">
           <div className="flex items-center gap-3">
             <BuildUpLogo size="sm" variant="horizontal" showSubtitle={false} />
-            <div className="hidden sm:block h-6 w-px bg-slate-700" />
+            <div className="hidden sm:block h-6 w-px bg-brand-border" />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-brand-textMain tracking-wide text-sm">{t('modalTitle')}</span>
@@ -208,6 +308,66 @@ export function HealthCheckModal() {
         {/* Modal Body */}
         {!isCompleted ? (
           activeTab === 'quick' ? (
+            isProfiling ? (
+              <div className="p-5 sm:p-7 space-y-5 animate-in fade-in duration-300">
+                <div>
+                  <h3 className="text-xl font-bold text-brand-textMain mb-1">Estimasi Baseline Bisnis Anda</h3>
+                  <p className="text-sm text-brand-textMuted mb-6">Agar hasil screening lebih akurat, mohon isi perkiraan angka berikut. Kami tidak menyimpan data ini secara permanen.</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-brand-textMain mb-1.5 uppercase tracking-wide">1. Estimasi Omzet Tahunan (Rp)</label>
+                    <input 
+                      type="text" 
+                      value={estRevenue}
+                      onChange={(e) => setEstRevenue(e.target.value)}
+                      placeholder="Contoh: 50.000.000.000" 
+                      className="w-full bg-brand-deep border border-brand-border rounded-xl px-4 py-2.5 text-sm text-brand-textMain placeholder-brand-textMuted/50 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-brand-textMain mb-1.5 uppercase tracking-wide">2. Estimasi Margin Laba Bersih (%)</label>
+                    <input 
+                      type="text" 
+                      value={estMargin}
+                      onChange={(e) => setEstMargin(e.target.value)}
+                      placeholder="Contoh: 15" 
+                      className="w-full bg-brand-deep border border-brand-border rounded-xl px-4 py-2.5 text-sm text-brand-textMain placeholder-brand-textMuted/50 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-brand-textMain mb-1.5 uppercase tracking-wide">3. Jumlah Karyawan Aktif</label>
+                    <input 
+                      type="text" 
+                      value={estEmployees}
+                      onChange={(e) => setEstEmployees(e.target.value)}
+                      placeholder="Contoh: 120" 
+                      className="w-full bg-brand-deep border border-brand-border rounded-xl px-4 py-2.5 text-sm text-brand-textMain placeholder-brand-textMuted/50 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 flex flex-col sm:flex-row items-center gap-3">
+                  <button 
+                    onClick={() => setIsProfiling(false)}
+                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-brand-deep font-bold text-sm shadow-gold-sm transition-all"
+                  >
+                    Lanjutkan ke 8 Pertanyaan
+                  </button>
+                </div>
+
+                <div className="mt-6 p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-center">
+                  <p className="text-xs text-brand-textMuted mb-2">Ingin hasil akurasi 100% dari AI tanpa menjawab manual?</p>
+                  <button 
+                    onClick={() => setActiveTab('erp')}
+                    className="text-xs font-bold text-emerald-400 hover:text-emerald-300 underline transition-colors"
+                  >
+                    Upload Data Bisnis & Laporan (Excel/CSV)
+                  </button>
+                </div>
+              </div>
+            ) : (
             /* QUESTIONS FLOW */
             <div className="p-5 sm:p-7 space-y-6">
               
@@ -289,6 +449,7 @@ export function HealthCheckModal() {
                 </div>
               </div>
             </div>
+            )
           ) : (
             /* ERP CONNECT & FILE UPLOAD TAB (Request 5) */
             <div className="p-5 sm:p-7 space-y-6">
@@ -339,24 +500,26 @@ export function HealthCheckModal() {
               <div className="p-4 rounded-xl border border-dashed border-brand-border bg-brand-navy/40 hover:border-brand-gold/50 text-center transition-colors">
                 <UploadCloud className="w-7 h-7 text-brand-gold mx-auto mb-2 opacity-80" />
                 <p className="text-xs font-bold text-brand-textMain">
-                  {uploadedFileName ? `File Terunggah: ${uploadedFileName}` : 'Atau Drag & Drop File Data (Excel / CSV / JSON)'}
+                  {uploadedFiles.length > 0 ? ` File Terunggah` : 'Atau Drag & Drop Semua File Data Bisnis (Excel/CSV)'}
                 </p>
                 <p className="text-[11px] text-brand-textMuted mt-0.5">
-                  Format didukung: Neraca Saldo (Trial Balance), Aging Piutang AR, Mutasi Bank (MT940/CSV)
+                  Format didukung: Data Penjualan, Laporan Laba Rugi, Piutang, Inventori, atau Mutasi Bank (Excel/CSV)
                 </p>
                 <input
                   type="file"
+                  multiple
                   id="erp-file-upload"
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files?.[0]) {
-                      setUploadedFileName(e.target.files[0].name);
+                      
+                        setUploadedFiles(Array.from(e.target.files || []));
                     }
                   }}
                 />
                 <label
                   htmlFor="erp-file-upload"
-                  className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-slate-700 text-brand-textMain border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
+                  className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMain border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
                 >
                   Pilih File Contoh
                 </label>
@@ -429,20 +592,22 @@ export function HealthCheckModal() {
                   </div>
                 </div>
 
-                <div className="h-20 w-px bg-slate-700 hidden md:block" />
+                <div className="h-20 w-px bg-brand-border hidden md:block" />
 
-                <div className="text-left space-y-2 max-w-sm">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Temuan Kunci Nilai Bocor (Leakage)</span>
+                  <div className="text-left space-y-2 max-w-sm">
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span>Temuan Kunci Nilai Bocor (Leakage)</span>
+                    </div>
+                    {aiFindings.map((finding, index) => (
+                      <p key={index} className="text-xs text-brand-textMuted leading-relaxed">
+                        • {finding}
+                      </p>
+                    ))}
+                    <p className="text-xs text-emerald-400 font-semibold mt-2">
+                      Rekomendasi Utama: {aiRecommendation}
+                    </p>
                   </div>
-                  <p className="text-xs text-brand-textMuted leading-relaxed">
-                    Terdeteksi keterlambatan penagihan piutang (DSO) dan konsentrasi vendor tinggi. Diperkirakan <strong>4,8% dari omzet tahunan</strong> bocor akibat inefisiensi modal kerja.
-                  </p>
-                  <p className="text-xs text-emerald-400 font-semibold">
-                    Potensi pemulihan kas: ~Rp 1,6 Miliar dalam 90 hari pertama.
-                  </p>
-                </div>
               </div>
             </div>
 
@@ -479,3 +644,15 @@ export function HealthCheckModal() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+

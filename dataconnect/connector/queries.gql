@@ -1,0 +1,50 @@
+# Queries
+
+query GetUserOrganizations($uid: String!) @auth(level: USER) {
+  memberships(where: { userId: { eq: $uid } }) {
+    id
+    role
+    organization {
+      id
+      name
+      createdAt
+    }
+  }
+}
+
+query GetBusinessProfile($orgId: UUID!) @auth(level: USER) {
+  businessProfiles(where: { organizationId: { eq: $orgId } }) {
+    id
+    industry
+    revenueRange
+    headcount
+    currency
+  }
+}
+
+query GetBusinessGenome($orgId: UUID!) @auth(level: USER) {
+  businessGenomes(where: { organizationId: { eq: $orgId } }) {
+    id
+    dimension
+    metricKey
+    metricValue
+    confidence
+    provenance
+    lastUpdated
+  }
+}
+
+query GetInitiatives($orgId: UUID!) @auth(level: USER) {
+  initiatives(where: { organizationId: { eq: $orgId } }, orderBy: { expectedRoi: DESC }) {
+    id
+    title
+    description
+    status
+    expectedRoi
+    department
+    owner {
+      displayName
+      email
+    }
+  }
+}

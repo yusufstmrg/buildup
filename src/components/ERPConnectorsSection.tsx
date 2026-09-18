@@ -201,7 +201,7 @@ export function ERPConnectorsSection() {
 
         {/* Simulation Modal / Drawer */}
         {selectedConnector && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-surface/80 backdrop-blur-md animate-in fade-in duration-200">
             <div className="bg-brand-surface border border-brand-gold/30 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden relative">
               <div className="h-1.5 bg-gradient-to-r from-brand-goldDark via-brand-gold to-brand-goldLight" />
               
@@ -229,7 +229,7 @@ export function ERPConnectorsSection() {
                 </div>
 
                 {/* Simulated Terminal Window */}
-                <div className="bg-slate-950 rounded-xl p-4 font-mono text-xs text-emerald-400 border border-slate-800 space-y-2 min-h-[200px]">
+                <div className="bg-brand-surface rounded-xl p-4 font-mono text-xs text-emerald-400 border border-brand-border space-y-2 min-h-[200px]">
                   {simulationLogs.map((log, idx) => (
                     <div key={idx} className="leading-relaxed animate-in fade-in duration-150">
                       {log}
@@ -285,3 +285,5 @@ export function ERPConnectorsSection() {
     </section>
   );
 }
+
+

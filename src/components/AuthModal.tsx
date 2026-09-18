@@ -75,9 +75,9 @@ export function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-deep/80 backdrop-blur-md overflow-y-auto animate-fade-in">
       <div 
-        className="relative w-full max-w-xl bg-gradient-to-b from-slate-900 to-slate-950 border border-brand-border/80 rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] p-6 md:p-8 text-brand-textMain my-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-xl bg-gradient-to-b from-brand-card to-brand-navy border border-brand-border/80 rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] p-6 md:p-8 text-brand-textMain my-8 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -107,7 +107,7 @@ export function AuthModal() {
             onClick={() => { setAuthModalMode('login'); setErrorMessage(''); }}
             className={`flex-1 py-2 text-xs md:text-sm font-bold rounded-lg transition-all ${
               authModalMode === 'login'
-                ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-brand-textMain shadow-sm border border-slate-600/50'
+                ? 'bg-brand-surface border-brand-gold/50 text-brand-textMain shadow-sm border border-slate-600/50'
                 : 'text-brand-textMuted hover:text-brand-textMain'
             }`}
           >
@@ -222,7 +222,7 @@ export function AuthModal() {
                     value={customIndustry}
                     onChange={(e) => setCustomIndustry(e.target.value)}
                     placeholder={t('customIndustryPlaceholder')}
-                    className="w-full px-3 py-2 bg-slate-950 border border-amber-500/50 rounded-lg text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2 bg-brand-navy border border-amber-500/50 rounded-lg text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-amber-400"
                   />
                   <p className="text-[11px] text-amber-200/70 mt-1">
                     Tim arsitek BuildUp akan menyesuaikan model ontologi bisnis khusus untuk sektor spesifik Anda.
@@ -336,3 +336,4 @@ export function AuthModal() {
     </div>
   );
 }
+

@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language, TRANSLATIONS, COMPREHENSIVE_INDUSTRIES, IndustryOption } from '../lib/i18n';
+import { auth, db } from '../firebaseConfig';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export interface DecisionObject {
   id: string;
@@ -77,6 +80,7 @@ interface BuildUpContextType {
   totalAnnualLeakageIdr: number;
   totalAnnualLeakageUsd: number;
   updateScoreFromAnswers: (answers: number[]) => void;
+  setGlobalHealthScore: (score: number, findings: string[], rec: string) => void;
   resetHealthCheck: () => void;
 
   // Decision Objects
@@ -219,48 +223,61 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   };
 
   // User Authentication
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    const savedUser = localStorage.getItem('bu_user_session');
-    if (savedUser) {
-      try {
-        return JSON.parse(savedUser);
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
-  });
-
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
-  const login = (email: string, _password?: string, asDemo?: boolean) => {
-    if (asDemo) {
-      setUser(defaultDemoUser);
-      localStorage.setItem('bu_user_session', JSON.stringify(defaultDemoUser));
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userSnap = await getDoc(userDocRef);
+          if (userSnap.exists()) {
+            const userData = userSnap.data() as UserProfile;
+            setUser({ ...userData, isLoggedIn: true, id: firebaseUser.uid });
+          } else {
+            // Fallback if document doesn't exist yet (e.g. midway through registration)
+            setUser({
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+              email: firebaseUser.email || '',
+              role: 'User',
+              companyName: 'Company',
+              industry: 'Other',
+              revenueBracket: 'Unknown',
+              isSandbox: false,
+              isLoggedIn: true,
+              plan: 'Free Health Check'
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const login = async (email: string, password?: string, asDemo?: boolean) => {
+    try {
+      if (asDemo) {
+        setUser(defaultDemoUser);
+        setIsAuthModalOpen(false);
+        return;
+      }
+      if (!password) throw new Error("Password is required");
+      await signInWithEmailAndPassword(auth, email, password);
       setIsAuthModalOpen(false);
-      return;
+    } catch (error: any) {
+      console.error("Login error:", error);
+      alert("Login failed: " + error.message);
     }
-
-    const newUser: UserProfile = {
-      id: `usr-${Date.now()}`,
-      name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-      email,
-      role: 'Chief Executive Officer',
-      companyName: 'PT Mandiri Mitra Perkasa',
-      industry: 'Manufaktur, Pabrikasi & Industri Pengolahan',
-      revenueBracket: 'Rp 50 Miliar - Rp 250 Miliar',
-      isSandbox: false,
-      isLoggedIn: true,
-      plan: 'Transformation Retainer'
-    };
-
-    setUser(newUser);
-    localStorage.setItem('bu_user_session', JSON.stringify(newUser));
-    setIsAuthModalOpen(false);
   };
 
-  const register = (data: {
+  const register = async (data: {
     fullName: string;
     email: string;
     companyName: string;
@@ -270,41 +287,78 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     role: string;
     password?: string;
   }) => {
-    const newUser: UserProfile = {
-      id: `usr-${Date.now()}`,
-      name: data.fullName,
-      email: data.email,
-      role: data.role || 'Managing Director',
-      companyName: data.companyName,
-      industry: data.industry,
-      customIndustry: data.customIndustry,
-      revenueBracket: data.revenueBracket,
-      isSandbox: false,
-      isLoggedIn: true,
-      plan: 'Free Health Check'
-    };
+    try {
+      if (!data.password) throw new Error("Password is required");
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const uid = userCredential.user.uid;
+      const orgId = `org-${Date.now()}`;
 
-    setUser(newUser);
-    localStorage.setItem('bu_user_session', JSON.stringify(newUser));
-    setIsAuthModalOpen(false);
+      // Create tenant organization
+      await setDoc(doc(db, 'organizations', orgId), {
+        id: orgId,
+        name: data.companyName,
+        industry: data.industry,
+        customIndustry: data.customIndustry,
+        revenueBracket: data.revenueBracket,
+        createdAt: new Date().toISOString()
+      });
+
+      // Create user profile
+      const newUserProfile: UserProfile = {
+        id: uid,
+        name: data.fullName,
+        email: data.email,
+        role: data.role || 'Managing Director',
+        companyName: data.companyName,
+        industry: data.industry,
+        customIndustry: data.customIndustry,
+        revenueBracket: data.revenueBracket,
+        isSandbox: false,
+        isLoggedIn: true,
+        plan: 'Free Health Check'
+      };
+
+      await setDoc(doc(db, 'users', uid), newUserProfile);
+      
+      // Create membership
+      await setDoc(doc(db, 'memberships', `${uid}_${orgId}`), {
+        userId: uid,
+        orgId: orgId,
+        role: 'owner',
+        joinedAt: new Date().toISOString()
+      });
+
+      setUser(newUserProfile);
+      setIsAuthModalOpen(false);
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      alert("Registration failed: " + error.message);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('bu_user_session');
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const enterDemoMode = () => {
     setUser(defaultDemoUser);
-    localStorage.setItem('bu_user_session', JSON.stringify(defaultDemoUser));
     setIsAuthModalOpen(false);
   };
 
-  const updateUserProfile = (data: Partial<UserProfile>) => {
+  const updateUserProfile = async (data: Partial<UserProfile>) => {
     if (!user) return;
     const updated = { ...user, ...data };
     setUser(updated);
-    localStorage.setItem('bu_user_session', JSON.stringify(updated));
+    try {
+      await setDoc(doc(db, 'users', user.id), updated, { merge: true });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   // Diagnostics & Scores
@@ -321,6 +375,56 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   const [currentPlan, setCurrentPlan] = useState<'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise'>('Business X-Ray');
   const [isHealthCheckModalOpen, setIsHealthCheckModalOpen] = useState(false);
 
+  useEffect(() => {
+    async function fetchBackendData() {
+      if (user && !user.isSandbox && user.isLoggedIn) {
+        try {
+          const token = await auth.currentUser?.getIdToken();
+          if (token) {
+            const res = await fetch('/api/decisions', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.decisions && data.decisions.length > 0) {
+                // Map backend format to frontend format (rough mapping for now)
+                const mappedDecisions = data.decisions.map((d: any) => ({
+                  id: d.id,
+                  code: d.id.substring(0, 12).toUpperCase(),
+                  title: d.title || 'AI Decision',
+                  domain: 'Operations', // Fallback
+                  problem: d.problemStatement || 'Identified by AI Gateway',
+                  evidence: d.evidenceIds || [],
+                  options: (d.options || []).map((o: any) => ({
+                    label: o.description,
+                    impact: o.financialImpactAbs || 'TBD',
+                    risk: o.riskLevel || 'Low'
+                  })),
+                  financialImpact: 'Varies',
+                  confidence: d.confidence || 90,
+                  recommendation: d.recommendation || '',
+                  authority: d.approvalAuthority || 'Manager',
+                  status: d.status || 'Pending Review',
+                  timestamp: new Date().toLocaleTimeString(),
+                  agent: 'AI Gateway'
+                }));
+                setDecisionObjects(mappedDecisions);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching decisions from backend:", error);
+        }
+      } else {
+        // Fallback to initialDecisions for demo
+        setDecisionObjects(initialDecisions);
+      }
+    }
+    fetchBackendData();
+  }, [user]);
+
   const criticalSignals = [
     'Procurement single-supplier dependency (>60% spend on 2 vendors)',
     'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
@@ -330,6 +434,18 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
 
   const totalAnnualLeakageIdr = 1450000000;
   const totalAnnualLeakageUsd = 96000;
+
+  const setGlobalHealthScore = (score: number, findings: string[], rec: string) => {
+    setOverallScore(score);
+    setHasCompletedHealthCheck(true);
+    localStorage.setItem('bu_score', score.toString());
+    // Update the first dimension with the findings as a hack for demo
+    const updated = [...dimensions];
+    updated[0].score = score;
+    updated[0].findings = findings.join(' | ');
+    updated[0].bottleneck = rec;
+    setDimensions(updated);
+  };
 
   const updateScoreFromAnswers = (answers: number[]) => {
     const sum = answers.reduce((a, b) => a + b, 0);
@@ -410,6 +526,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         totalAnnualLeakageIdr,
         totalAnnualLeakageUsd,
         updateScoreFromAnswers,
+        setGlobalHealthScore,
         resetHealthCheck,
         decisionObjects,
         approveDecision,
@@ -439,3 +556,4 @@ export function useBuildUp() {
   }
   return context;
 }
+

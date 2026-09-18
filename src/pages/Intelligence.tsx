@@ -16,8 +16,17 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useBuildUp, DecisionObject } from '../context/BuildUpContext';
+import { PremiumLock } from '../components/PremiumLock';
 
 export function Intelligence() {
+  return (
+    <PremiumLock featureName="Business Context Graph" requiredPlan="Score Pro">
+      <IntelligenceContent />
+    </PremiumLock>
+  );
+}
+
+function IntelligenceContent() {
   const { decisionObjects, approveDecision, escalateDecision } = useBuildUp();
   const [selectedDomain, setSelectedDomain] = useState<string>('All');
   const [activeDecision, setActiveDecision] = useState<DecisionObject>(decisionObjects[0]);
@@ -291,3 +300,4 @@ export function Intelligence() {
     </div>
   );
 }
+

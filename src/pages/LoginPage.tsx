@@ -35,7 +35,7 @@ export function LoginPage() {
   return (
     <div className="min-h-screen bg-brand-navy text-slate-100 flex flex-col justify-between font-sans selection:bg-brand-gold/30">
       {/* Topbar */}
-      <header className="px-6 py-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/40">
+      <header className="px-6 py-4 flex items-center justify-between border-b border-brand-border/80 bg-brand-surface/40">
         <Link to="/">
           <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} />
         </Link>
@@ -52,14 +52,14 @@ export function LoginPage() {
 
       {/* Main Form Container */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-md bg-brand-navy/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+        <div className="w-full max-w-md bg-brand-navy/90 border border-brand-border rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 text-brand-gold mb-3">
               <Lock className="w-6 h-6" />
             </div>
-            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Portal Klien Terenkripsi</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Executive Command Center</h1>
             <p className="text-xs text-brand-textMuted mt-1.5">
-              Akses khusus untuk Dewan Direksi, Komisaris, dan Tim Eksekutif
+              Akses aman terenkripsi untuk Dewan Direksi, Komisaris, dan Pimpinan Bisnis
             </p>
           </div>
 
@@ -80,7 +80,7 @@ export function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="direksi@perusahaan-anda.com"
-                  className="w-full pl-9 pr-3.5 py-3 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                  className="w-full pl-9 pr-3.5 py-3 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 />
               </div>
             </div>
@@ -95,7 +95,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-9 pr-3.5 py-3 bg-slate-950 border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
+                  className="w-full pl-9 pr-3.5 py-3 bg-brand-surface border border-brand-border rounded-xl text-xs sm:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
                 />
               </div>
             </div>
@@ -118,7 +118,7 @@ export function LoginPage() {
 
           {/* Divider */}
           <div className="relative my-6 flex items-center justify-center">
-            <div className="border-t border-slate-800 w-full" />
+            <div className="border-t border-brand-border w-full" />
             <span className="bg-brand-navy px-3 text-[11px] font-bold text-brand-textMuted uppercase tracking-widest absolute">
               Atau Evaluasi
             </span>
@@ -145,8 +145,9 @@ export function LoginPage() {
 
       {/* Footer */}
       <footer className="py-4 text-center text-[11px] text-brand-textMuted border-t border-slate-900">
-        © 2026 BuildUp — AI-Native Business Transformation Partner. Enkripsi 256-Bit Bank-Grade.
+        © 2026 BuildUp — AI-Native Business Transformation Intelligence. Enkripsi 256-Bit Bank-Grade.
       </footer>
     </div>
   );
 }
+

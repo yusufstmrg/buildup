@@ -1,0 +1,11 @@
+specVersion: "v1alpha"
+serviceId: "buildup-data-connect"
+location: "asia-southeast1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "buildup_db"
+      cloudSql:
+        instanceId: "buildup-pg-instance"
+connectorDirs: ["./connector"]

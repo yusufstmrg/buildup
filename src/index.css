@@ -3,35 +3,97 @@
 @tailwind utilities;
 
 @layer base {
+  /* ========== LIGHT MODE (Default) ========== */
+  /* Palet biru-slate profesional yang bersih, kontras tinggi */
   :root {
-    --bg-deep: #ffffff;
-    --bg-navy: #f8fafc;
-    --bg-surface: #f1f5f9;
-    --bg-card: #ffffff;
-    --border: #e2e8f0;
-    --border-light: #cbd5e1;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --gold: #b4860b; 
-    --gold-light: #d4af37;
-    --gold-dark: #8c6a08;
+    --bg-deep:      #f0f4f8;       /* background utama: abu-abu biru lembut */
+    --bg-navy:      #e8edf5;       /* navbar/section alt: lebih gelap sedikit */
+    --bg-surface:   #dde3ef;       /* surface/section: jelas berbeda dari bg */
+    --bg-card:      #ffffff;       /* card: putih bersih agar menonjol */
+    --border:       #b8c5d9;       /* border standar: cukup kontras */
+    --border-light: #cdd7e8;       /* border ringan */
+    --text-main:    #0d1829;       /* teks utama: navy sangat gelap, kontras max */
+    --text-muted:   #3a4f6b;       /* teks muted: biru tua yang terbaca */
+    --gold:         #8a6500;       /* gold light-mode: cukup gelap agar terbaca */
+    --gold-light:   #b88800;       /* gold lighter */
+    --gold-dark:    #5e4400;       /* gold darker */
   }
+
+  /* ========== DARK MODE ========== */
+  /* Palet navy premium yang elegan */
   .dark {
-    --bg-deep: #04080F;
-    --bg-navy: #060D17;
-    --bg-surface: #0B1726;
-    --bg-card: #102238;
-    --border: #1E3550;
-    --border-light: #2A4A6F;
-    --text-main: #ffffff;
-    --text-muted: #94a3b8;
-    --gold: #D4AF37;
-    --gold-light: #F7E7A9;
-    --gold-dark: #9E7D20;
+    --bg-deep:      #050a14;       /* background utama: navy paling gelap */
+    --bg-navy:      #081220;       /* navbar/header: gelap */
+    --bg-surface:   #0e1c30;       /* section alt: sedikit lebih terang */
+    --bg-card:      #13253e;       /* card: lebih terang dari surface */
+    --border:       #1e3656;       /* border: visible tapi subtle */
+    --border-light: #2c4d79;       /* border light: sedikit lebih terang */
+    --text-main:    #f0f4fc;       /* teks utama: hampir putih, kontras max */
+    --text-muted:   #a8bdd4;       /* teks muted: abu-biru yang terbaca */
+    --gold:         #E5B83B;       /* gold dark-mode: cerah tapi elegan */
+    --gold-light:   #F9D876;       /* gold lighter */
+    --gold-dark:    #B88918;       /* gold darker */
   }
+}
+
+/* Smooth scroll untuk semua anchor navigation */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--bg-deep);
   color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== LIGHT MODE OVERRIDES ===== */
+/* Pastikan komponen yang pakai class bg-brand-deep dst terbaca di light mode */
+.light .text-gold-gradient,
+:root .text-gold-gradient {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-gold-gradient {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Light mode: fix element yg pakai warna dark-hardcoded */
+:root .bg-brand-deep,
+.light .bg-brand-deep {
+  background-color: var(--bg-deep);
+}
+
+/* Pastikan select & input terbaca di light mode */
+:root select,
+:root input[type="range"] {
+  color: var(--text-main);
+  background-color: var(--bg-navy);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+.bg-radial-grid {
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 32px 32px;
 }

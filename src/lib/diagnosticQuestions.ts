@@ -97,7 +97,7 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
     id: 'q_sales_1',
     dimensionId: 'sales',
     category: {
-      id: 'PENJUALAN & MARJIN HARGA',
+      id: 'PENJUALAN & MARGIN HARGA',
       en: 'SALES & PRICING MARGIN',
       zh: '销售漏斗与定价利润率',
       ja: '営業パイプライン・価格マージン',
@@ -111,7 +111,7 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
       ar: 'ما مدى انضباط التحكم في الخصومات ومتابعة الصفقات وحماية هوامش الربح؟'
     },
     description: {
-      id: 'Mendeteksi kebocoran marjin akibat diskon tanpa izin, follow-up prospek lambat, dan piutang macet penjualan.',
+      id: 'Mendeteksi kebocoran margin akibat diskon tanpa izin, follow-up prospek lambat, dan piutang macet penjualan.',
       en: 'Evaluates revenue predictability, pricing discipline, and sales leakage.',
       zh: '识别擅自越权打折、商机跟进脱节及潜在线索流失导致的毛利回落。',
       ja: '過度な値引き、案件放置、失注原因の未分析による利益流出を測定します。',
@@ -140,7 +140,7 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
       },
       {
         text: {
-          id: 'CRM / Sales Modul ERP aktif; target omzet dipantau, tapi belum ada proteksi batas marjin otomatis',
+          id: 'CRM / Sales Modul ERP aktif; target omzet dipantau, tapi belum ada proteksi batas margin otomatis',
           en: 'CRM/ERP in place with targets, but no automated margin floor guardrails',
           zh: '已上线CRM/ERP销售模块；监控回款目标，但未设置自动化毛利下限锁',
           ja: 'CRM/ERP導入済——売上目標は管理されているが、最低利益率の自動制約なし',
@@ -150,7 +150,7 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
       },
       {
         text: {
-          id: 'Governance Pipeline Ketat — otorisasi diskon berjenjang dan kalkulasi marjin per pesanan sudah baku',
+          id: 'Governance Pipeline Ketat — otorisasi diskon berjenjang dan kalkulasi margin per pesanan sudah baku',
           en: 'Governed sales pipeline with conversion metrics and formal margin approval thresholds',
           zh: '严格的管线治理——具备多级折扣审批流，每笔订单均测算毛利率',
           ja: '厳格なパイプライン統制——多段階値引き承認と案件利益率検証が定着',
@@ -160,7 +160,7 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
       },
       {
         text: {
-          id: 'Revenue Intelligence Terkoneksi — rekomendasi harga dinamis AI, prediksi churn, dan peringatan marjin bocor',
+          id: 'Revenue Intelligence Terkoneksi — rekomendasi harga dinamis AI, prediksi churn, dan peringatan margin bocor',
           en: 'Connected Revenue Intelligence — automated quote optimization, follow-up, and margin leak alerts',
           zh: '智能收入中枢——AI动态报价建议、客户流失预测与毛利偏离实时警报',
           ja: 'インテリジェント・レベニュー——AIによる最適価格算出・解約予兆検知・利益流出即時警告',
@@ -631,6 +631,83 @@ export const QUICK_SCREENING_QUESTIONS: DiagnosticQuestion[] = [
         score: 5
       }
     ]
+  },
+  {
+    id: 'q_data_1',
+    dimensionId: 'data_ai',
+    category: {
+      id: 'KEMATANGAN DATA & KESIAPAN AI',
+      en: 'DATA MATURITY & AI READINESS',
+      zh: '数据成熟度与人工智能准备',
+      ja: 'データ成熟度・AI対応準備',
+      ar: 'نضج البيانات وجاهزية الذكاء الاصطناعي'
+    },
+    question: {
+      id: 'Seberapa mutakhir infrastruktur data Anda dalam menghasilkan wawasan prediktif dan otomatisasi keputusan?',
+      en: 'How advanced is your data infrastructure in generating predictive insights and decision automation?',
+      zh: '贵公司的数据基础设施在生成预测性洞察与决策自动化方面的先进程度如何？',
+      ja: '予測インサイトと意思決定の自動化を生み出すデータインフラの高度化はどの程度ですか？',
+      ar: 'ما مدى تطور البنية التحتية لبياناتك في توليد رؤى تنبؤية وأتمتة القرارات؟'
+    },
+    description: {
+      id: 'Mengevaluasi kebersihan data, tata kelola, dan pemanfaatan AI untuk mengkapitalisasi aset data.',
+      en: 'Evaluates data hygiene, governance, and the utilization of AI to capitalize on enterprise data assets.',
+      zh: '评估数据卫生、数据治理以及利用人工智能将企业数据资产资本化的能力。',
+      ja: 'データハイジーン、ガバナンス、企業データ資産を活用するためのAI利用度を評価します。',
+      ar: 'تقييم نظافة البيانات، وحوكمتها، واستخدام الذكاء الاصطناعي للاستفادة من أصول البيانات.'
+    },
+    options: [
+      {
+        text: {
+          id: 'Data terfragmentasi di berbagai file lokal; tidak ada standar format, rentan kesalahan.',
+          en: 'Data is fragmented across local files; lacks format standards and is highly error-prone.',
+          zh: '数据分散在本地文件中；缺乏格式标准，且极易出错。',
+          ja: 'データはローカルファイルに断片化されており、フォーマット基準がなく、エラーが発生しやすい。',
+          ar: 'البيانات مجزأة في ملفات محلية؛ تفتقر إلى معايير التنسيق ومعرضة للأخطاء بشكل كبير.'
+        },
+        score: 1
+      },
+      {
+        text: {
+          id: 'Data terpusat tapi masih banyak sampah (dirty data); hanya digunakan untuk pelaporan reaktif.',
+          en: 'Centralized but contains dirty data; primarily used for reactive, historical reporting.',
+          zh: '数据集中但包含大量脏数据；主要用于被动式的历史报表。',
+          ja: '集中化されているがノイズデータを含み、主に事後対応の過去レポーティングに使用される。',
+          ar: 'مركزية ولكنها تحتوي على بيانات غير نظيفة؛ تستخدم بشكل أساسي للتقارير التاريخية التفاعلية.'
+        },
+        score: 2
+      },
+      {
+        text: {
+          id: 'Data Warehouse beroperasi; dashboard BI divisualisasikan, tapi belum memiliki kapabilitas prediktif.',
+          en: 'Data Warehouse is active; BI dashboards are well-visualized, but lacks predictive modeling.',
+          zh: '数据仓库运行中；商业智能(BI)仪表板可视化良好，但缺乏预测建模能力。',
+          ja: 'データウェアハウス稼働中。BIダッシュボードは可視化されているが、予測モデリング機能がない。',
+          ar: 'مستودع البيانات نشط؛ لوحات معلومات ذكاء الأعمال مرئية جيدًا، لكنها تفتقر إلى النمذجة التنبؤية.'
+        },
+        score: 3
+      },
+      {
+        text: {
+          id: 'Manajemen Data Terstruktur — pipeline data bersih dengan model analitik prediktif berjalan aktif.',
+          en: 'Structured Data Management — clean data pipelines running active predictive analytic models.',
+          zh: '结构化数据管理——运行活跃预测性分析模型的干净数据流水线。',
+          ja: '構造化データ管理——クリーンなデータパイプラインと、アクティブな予測分析モデルの稼働。',
+          ar: 'إدارة منظمة للبيانات — مسارات بيانات نظيفة تعمل بنماذج تحليلات تنبؤية نشطة.'
+        },
+        score: 4
+      },
+      {
+        text: {
+          id: 'AI-Powered Data Fabric — agen AI secara otonom mendeteksi anomali, memberi rekomendasi, & mengeksekusi aksi.',
+          en: 'AI-Powered Data Fabric — autonomous AI agents detect anomalies, recommend, and execute actions.',
+          zh: 'AI驱动的数据编织——自主AI代理检测异常、提供建议并自动执行操作。',
+          ja: 'AI駆動データファブリック——自律型AIエージェントが異常検知、推奨事項提示、実行を自動で行う。',
+          ar: 'نسيج بيانات مدعوم بالذكاء الاصطناعي — يكتشف وكلاء الذكاء الاصطناعي الانحرافات، ويوصون، وينفذون الإجراءات.'
+        },
+        score: 5
+      }
+    ]
   }
 ];
 
@@ -648,7 +725,7 @@ export interface ERPConnectorSpec {
   isPopularInID: boolean;
 }
 
-export const ERP_CONNECTORS: ERPConnectorSpec[] = [
+export const ERP_CONNECTORS: ERPConnectorSpec[] = [    
   {
     id: 'sap_s4hana',
     name: 'SAP S/4HANA & SAP ECC 6.0',
@@ -801,7 +878,7 @@ export const ERP_CONNECTORS: ERPConnectorSpec[] = [
   },
   {
     id: 'bca_klikbca_bisnis',
-    name: 'KlikBCA Bisnis & Cash Management API',
+    name: 'Corporate Bank Feeds (BCA, Mandiri, BNI, BRI)',
     category: 'Cash & Banking API',
     description: {
       id: 'Koneksi API perbankan langsung ke rekening giro korporat BCA, Mandiri, BRI, dan BNI untuk rekonsiliasi kas.',
@@ -860,3 +937,7 @@ export const ERP_CONNECTORS: ERPConnectorSpec[] = [
     isPopularInID: true
   }
 ];
+
+
+
+

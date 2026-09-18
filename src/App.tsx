@@ -5,12 +5,14 @@ import { ThemeProvider } from './context/ThemeContext';
 import { HealthCheckModal } from './components/HealthCheckModal';
 import { AuthModal } from './components/AuthModal';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { CmsProvider } from './context/CmsContext';
+import { AdminBar } from './components/admin/AdminBar';
+import { ThemePanel } from './components/admin/ThemePanel';
+import { SectionManager } from './components/admin/SectionManager';
+import { PricingManager } from './components/admin/PricingManager';
 
 // Public Institutional Pages
 import { LandingPage } from './pages/LandingPage';
-import { AboutPage } from './pages/AboutPage';
-import { PricingPage } from './pages/PricingPage';
-import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 
@@ -26,21 +28,34 @@ import { ControlEngine } from './pages/ControlEngine';
 import { MonetizationHub } from './pages/MonetizationHub';
 import { AdminDashboard } from './pages/AdminDashboard';
 
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
+  constructor(props: any) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error: any) { return { hasError: true, error }; }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{padding: 20, color: 'red'}}><h1>Something went wrong.</h1><pre>{String(this.state.error)}</pre></div>;
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
+    <ErrorBoundary>
     <ThemeProvider defaultTheme="light">
       <BuildUpProvider>
-        <BrowserRouter>
+        <CmsProvider><BrowserRouter>
         {/* Global Modals */}
         <HealthCheckModal />
         <AuthModal />
+        <AdminBar />
+        <ThemePanel />
+        <SectionManager />
+        <PricingManager />
 
         <Routes>
           {/* Public Enterprise Transformation Portal */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -67,8 +82,11 @@ export default function App() {
           {/* Catch-all fallback redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
+              </BrowserRouter>
+        </CmsProvider>
       </BuildUpProvider>
     </ThemeProvider>
+    </ErrorBoundary>
   );
 }
+

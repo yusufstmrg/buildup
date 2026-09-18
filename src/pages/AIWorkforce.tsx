@@ -21,6 +21,7 @@ import {
   Terminal
 } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
+import { PremiumLock } from '../components/PremiumLock';
 
 interface AgentRole {
   name: string;
@@ -85,7 +86,7 @@ const initialAgents: AgentRole[] = [
     sampleResponse: '99.4% of GL entries reconciled automatically. 3 manual journal entries flagged for missing supporting invoices totaling Rp 42.500.000. Reversal audit trail generated for Controller sign-off.'
   },
   { 
-    name: 'AI Risk & Internal Control', 
+    name: 'AI Risk & Control', 
     role: 'Continuous Testing & SoD Audit', 
     icon: ShieldAlert, 
     status: 'Active', 
@@ -183,6 +184,14 @@ const initialAgents: AgentRole[] = [
 ];
 
 export function AIWorkforce() {
+  return (
+    <PremiumLock featureName="AI Workforce Hub" requiredPlan="Transformation Retainer">
+      <AIWorkforceContent />
+    </PremiumLock>
+  );
+}
+
+function AIWorkforceContent() {
   const [agents, setAgents] = useState<AgentRole[]>(initialAgents);
   const [activeAgent, setActiveAgent] = useState<AgentRole>(initialAgents[1]); // AI CFO
   const [chatInput, setChatInput] = useState('');
@@ -392,3 +401,5 @@ export function AIWorkforce() {
     </div>
   );
 }
+
+
