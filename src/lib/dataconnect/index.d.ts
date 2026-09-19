@@ -48,6 +48,21 @@ export interface CreateOrganizationVariables {
   uid: string;
 }
 
+export interface DataConnector_Key {
+  id: UUIDString;
+  __typename?: 'DataConnector_Key';
+}
+
+export interface DecisionObject_Key {
+  id: UUIDString;
+  __typename?: 'DecisionObject_Key';
+}
+
+export interface Evidence_Key {
+  id: UUIDString;
+  __typename?: 'Evidence_Key';
+}
+
 export interface GetBusinessGenomeData {
   businessGenomes: ({
     id: UUIDString;
@@ -123,9 +138,19 @@ export interface Membership_Key {
   __typename?: 'Membership_Key';
 }
 
+export interface Metric_Key {
+  id: UUIDString;
+  __typename?: 'Metric_Key';
+}
+
 export interface Organization_Key {
   id: UUIDString;
   __typename?: 'Organization_Key';
+}
+
+export interface OutcomeLedgerRecord_Key {
+  id: UUIDString;
+  __typename?: 'OutcomeLedgerRecord_Key';
 }
 
 export interface UpdateGenomeMetricData {
@@ -143,6 +168,11 @@ export interface UpdateGenomeMetricVariables {
 export interface User_Key {
   id: string;
   __typename?: 'User_Key';
+}
+
+export interface WorkflowTask_Key {
+  id: UUIDString;
+  __typename?: 'WorkflowTask_Key';
 }
 
 interface CreateOrganizationRef {

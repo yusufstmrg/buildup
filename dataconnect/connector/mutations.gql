@@ -1,10 +1,10 @@
 # Mutations
 
-mutation CreateOrganization($name: String!, $uid: String!) @auth(level: USER) @transaction {
+mutation CreateOrganization($name: String!, $uid: String @retired) @auth(level: USER) @transaction {
   org: organization_insert(data: { name: $name })
   mem: membership_insert(data: {
     organizationId_expr: "response.org.id",
-    userId: $uid,
+    userId_expr: "auth.uid",
     role: "OWNER"
   })
 }
@@ -15,7 +15,13 @@ mutation UpdateGenomeMetric(
   $metricKey: String!, 
   $metricValue: Float!, 
   $provenance: String
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  query @redact {
+    membership(key: { organizationId: $orgId, userId_expr: "auth.uid" }) 
+      @check(expr: "this != null", message: "Unauthorized") {
+      role
+    }
+  }
   businessGenome_insert(data: {
     organizationId: $orgId,
     dimension: $dimension,
@@ -30,15 +36,21 @@ mutation CreateInitiative(
   $title: String!,
   $description: String,
   $department: String!,
-  $ownerId: String!,
+  $ownerId: String @retired,
   $expectedRoi: Float
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  query @redact {
+    membership(key: { organizationId: $orgId, userId_expr: "auth.uid" }) 
+      @check(expr: "this != null", message: "Unauthorized") {
+      role
+    }
+  }
   initiative_insert(data: {
     organizationId: $orgId,
     title: $title,
     description: $description,
     department: $department,
-    ownerId: $ownerId,
+    ownerId_expr: "auth.uid",
     status: "PROPOSED",
     expectedRoi: $expectedRoi
   })
