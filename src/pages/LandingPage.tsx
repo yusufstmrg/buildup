@@ -11,6 +11,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { ERPConnectorsSection } from '../components/ERPConnectorsSection';
 import { useBuildUp } from '../context/BuildUpContext';
 import { AboutSection } from '../components/AboutSection';
+import { TestimonialsSection } from '../components/TestimonialsSection';
 import { PricingSection } from '../components/PricingSection';
 import { ContactSection } from '../components/ContactSection';
 import { EditableText } from '../components/admin/EditableText';
@@ -127,8 +128,8 @@ export function LandingPage() {
               <section key="calculator" id="calculator" className="py-24 bg-brand-surface relative overflow-hidden border-t border-brand-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl font-black text-brand-textMain mb-4">Calculate Your Value Leakage</h2>
-                    <p className="text-brand-textMuted">Estimate how much cash is trapped in inefficient operations and disjointed systems.</p>
+                    <h2 className="text-3xl font-black text-brand-textMain mb-4"><EditableText id="calc.title" default="Calculate Your Value Leakage" /></h2>
+                    <p className="text-brand-textMuted"><EditableText id="calc.subtitle" default="Estimate how much cash is trapped in inefficient operations and disjointed systems." /></p>
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div className="bg-brand-card border border-brand-border rounded-2xl p-8 shadow-sm">
@@ -170,8 +171,8 @@ export function LandingPage() {
               <section key="workforce" id="workforce" className="py-24 bg-brand-deep border-t border-brand-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl font-black text-brand-textMain mb-4">BuildUp AI Workforce</h2>
-                    <p className="text-brand-textMuted">12 Specialized Roles executing routines 24/7 across your systems.</p>
+                    <h2 className="text-3xl font-black text-brand-textMain mb-4"><EditableText id="workforce.title" default="BuildUp AI Workforce" /></h2>
+                    <p className="text-brand-textMuted"><EditableText id="workforce.subtitle" default="12 Specialized Roles executing routines 24/7 across your systems." /></p>
                   </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {[
@@ -205,6 +206,8 @@ export function LandingPage() {
 
           case 'pricing':
             return <PricingSection key="pricing" />;
+          case 'testimonials':
+            return <TestimonialsSection key="testimonials" />;
           case 'about':
             return <AboutSection key="about" />;
           case 'contact':
@@ -225,5 +228,7 @@ export function LandingPage() {
     </div>
   );
 }
+
+
 
 

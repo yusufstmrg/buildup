@@ -1,12 +1,8 @@
 # Mutations
 
 mutation CreateOrganization($name: String!, $uid: String @retired) @auth(level: USER) @transaction {
-  org: organization_insert(data: { name: $name })
-  mem: membership_insert(data: {
-    organizationId_expr: "response.org.id",
-    userId_expr: "auth.uid",
-    role: "OWNER"
-  })
+    org: organization_insert(data: { name: $name })
+    mem: membership_insert(data: { organizationId_expr: "response.org.id", userId_expr: "auth.uid", role: "OWNER" })
 }
 
 mutation UpdateGenomeMetric(
