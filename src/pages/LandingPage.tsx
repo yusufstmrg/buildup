@@ -54,13 +54,10 @@ export function LandingPage() {
               <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} />
             </button>
             <nav className="hidden xl:flex items-center gap-1 pl-4 border-l border-brand-border text-xs font-semibold tracking-wide">
-              <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Home</button>
-              <button onClick={() => smoothScrollTo('about')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">About Us</button>
-              <button onClick={() => smoothScrollTo('connectors')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Platform & Connectors</button>
-              <button onClick={() => smoothScrollTo('workforce')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">AI Workforce</button>
-              <button onClick={() => smoothScrollTo('pricing')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Pricing & Tiers</button>
-              <button onClick={() => smoothScrollTo('contact')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Contact Us</button>
-            </nav>
+                {(state.navItems || []).map(item => (
+                  <button key={item.id} onClick={() => smoothScrollTo(item.target)} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">{item.label}</button>
+                ))}
+              </nav>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-2.5">
@@ -175,21 +172,8 @@ export function LandingPage() {
                     <p className="text-brand-textMuted"><EditableText id="workforce.subtitle" default="12 Specialized Roles executing routines 24/7 across your systems." /></p>
                   </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {[
-                        { title: 'AI CEO', desc: 'Sintesis gambaran besar, prioritas strategis, dan persetujuan keputusan berdampak tinggi.' },
-                        { title: 'AI CFO', desc: 'Pemodelan keuangan kompleks, proyeksi kas real-time, dan alokasi modal optimal.' },
-                        { title: 'AI Controller', desc: 'Rekonsiliasi harian otomatis, deteksi kebocoran pengeluaran, dan audit trail.' },
-                        { title: 'AI Procurement', desc: 'Negosiasi vendor, optimasi HPP, dan manajemen rantai pasok cerdas.' },
-                        { title: 'AI CRO (Revenue)', desc: 'Skoring prospek, prediksi penagihan, dan strategi diskon dinamis.' },
-                        { title: 'AI COO', desc: 'Orkestrasi proses lintas departemen, pemantauan SLA, dan penyeimbangan beban.' },
-                        { title: 'AI Risk & Control', desc: 'Identifikasi kerentanan fraud, pencegahan denda, dan stres-tes skenario.' },
-                        { title: 'AI HR', desc: 'Prediksi churn karyawan, analisis beban kerja, dan optimasi kompensasi.' },
-                        { title: 'AI Tax', desc: 'Analisis kewajiban pajak, identifikasi penghematan legal (tax shield).' },
-                        { title: 'AI Legal', desc: 'Review draf kontrak otomatis, ekstraksi klausal risiko, dan pemantauan regulasi.' },
-                        { title: 'AI Audit', desc: 'Pengujian kepatuhan 100% sampel (bukan acak) secara terus-menerus.' },
-                        { title: 'AI Strategy', desc: 'Analisis lanskap kompetitor, tren makroekonomi, dan simulasi ekspansi.' }
-                      ].map(role => (
-                        <div key={role.title} className="bg-brand-card hover:bg-brand-surface hover:-translate-y-1 transition-all border border-brand-border p-5 rounded-2xl flex items-start gap-4 shadow-lg group">
+                      {(state.workforceRoles || []).map((role, idx) => (
+                        <div key={idx} className="bg-brand-card hover:bg-brand-surface hover:-translate-y-1 transition-all border border-brand-border p-5 rounded-2xl flex items-start gap-4 shadow-lg group">
                           <div className="p-3 bg-brand-navy rounded-xl border border-brand-gold/20 group-hover:border-brand-gold transition-colors">
                             <BrainCircuit className="w-6 h-6 text-brand-gold" />
                           </div>
@@ -228,6 +212,8 @@ export function LandingPage() {
     </div>
   );
 }
+
+
 
 
 

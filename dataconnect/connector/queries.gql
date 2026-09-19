@@ -3,6 +3,7 @@
 query GetUserOrganizations($uid: String @retired) @auth(level: USER) {
   memberships(where: { userId: { eq_expr: "auth.uid" } }) {
     role
+
     organization {
       id @retired
       name

@@ -2,6 +2,17 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { db } from '../firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
+export interface NavItem {
+  id: string;
+  label: string;
+  target: string;
+}
+
+export interface WorkforceRole {
+  title: string;
+  desc: string;
+}
+
 export interface CmsState {
   content: Record<string, string>;
   visibleSections: Record<string, boolean>;
@@ -10,6 +21,8 @@ export interface CmsState {
   faqs: FaqItem[];
   aboutStages: AboutStage[];
   aboutComparisons: AboutComparison[];
+  navItems: NavItem[];
+  workforceRoles: WorkforceRole[];
   themeOverrides?: Partial<ThemeOverrides>;
   editMode: boolean;
 }
@@ -58,6 +71,8 @@ interface CmsContextProps {
   setFaqs: (faqs: FaqItem[]) => void;
   setAboutStages: (stages: AboutStage[]) => void;
   setAboutComparisons: (comparisons: AboutComparison[]) => void;
+  setNavItems: (items: NavItem[]) => void;
+  setWorkforceRoles: (roles: WorkforceRole[]) => void;
   setThemeOverrides: (overrides: Partial<ThemeOverrides>) => void;
   toggleEditMode: (enabled: boolean) => void;
 }
@@ -104,6 +119,28 @@ const defaultState: CmsState = {
     { num: '01', title: 'Diagnostic Triage', desc: 'Pemindaian 8 dimensi...' },
     { num: '02', title: 'Root-Cause Discovery', desc: 'Menggali kelemahan...' },
     { num: '03', title: 'Orkestrasi', desc: 'Orkestrasi eksekusi multi-sistem secara otomatis.' }
+  ],
+    navItems: [
+    { id: 'home', label: 'Home', target: 'home' },
+    { id: 'about', label: 'About Us', target: 'about' },
+    { id: 'connectors', label: 'Platform & Connectors', target: 'connectors' },
+    { id: 'workforce', label: 'AI Workforce', target: 'workforce' },
+    { id: 'pricing', label: 'Pricing & Tiers', target: 'pricing' },
+    { id: 'contact', label: 'Contact Us', target: 'contact' }
+  ],
+  workforceRoles: [
+    { title: 'AI CEO', desc: 'Sintesis gambaran besar, prioritas strategis, dan persetujuan keputusan berdampak tinggi.' },
+    { title: 'AI CFO', desc: 'Pemodelan keuangan kompleks, proyeksi kas real-time, dan alokasi modal optimal.' },
+    { title: 'AI Controller', desc: 'Rekonsiliasi harian otomatis, deteksi kebocoran pengeluaran, dan audit trail.' },
+    { title: 'AI Procurement', desc: 'Negosiasi vendor, optimasi HPP, dan manajemen rantai pasok cerdas.' },
+    { title: 'AI CRO (Revenue)', desc: 'Skoring prospek, prediksi penagihan, dan strategi diskon dinamis.' },
+    { title: 'AI COO', desc: 'Orkestrasi proses lintas departemen, pemantauan SLA, dan penyeimbangan beban.' },
+    { title: 'AI Risk & Control', desc: 'Identifikasi kerentanan fraud, pencegahan denda, dan stres-tes skenario.' },
+    { title: 'AI HR', desc: 'Prediksi churn karyawan, analisis beban kerja, dan optimasi kompensasi.' },
+    { title: 'AI Tax', desc: 'Analisis kewajiban pajak, identifikasi penghematan legal (tax shield).' },
+    { title: 'AI Legal', desc: 'Review draf kontrak otomatis, ekstraksi klausal risiko, dan pemantauan regulasi.' },
+    { title: 'AI Audit', desc: 'Pengujian kepatuhan 100% sampel (bukan acak) secara terus-menerus.' },
+    { title: 'AI Strategy', desc: 'Analisis lanskap kompetitor, tren makroekonomi, dan simulasi ekspansi.' }
   ],
   aboutComparisons: [
     { feature: 'Model Pelayanan', traditional: 'Presentasi statis', buildup: 'Sistem operasi 24/7' },
@@ -206,7 +243,9 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setPricing, setFaqs, setAboutStages, setAboutComparisons, setThemeOverrides, toggleEditMode }}>
+    <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setPricing, setFaqs, setAboutStages, setAboutComparisons,
+    setNavItems: (items) => { const ns = {...state, navItems: items}; setState(ns); syncToFirestore(ns); },
+    setWorkforceRoles: (roles) => { const ns = {...state, workforceRoles: roles}; setState(ns); syncToFirestore(ns); }, setThemeOverrides, toggleEditMode }}>
       {children}
     </CmsContext.Provider>
   );
@@ -217,5 +256,8 @@ export const useCms = () => {
   if (!ctx) throw new Error('useCms must be used within CmsProvider');
   return ctx;
 };
+
+
+
 
 
