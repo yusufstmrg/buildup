@@ -24,7 +24,7 @@ export function PricingSection() {
   }, []);
 
   const getPriceIdr = (monthlyIdr: number) => {
-    return monthlyIdr;
+    return isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
   };
   
   const getBilledYearlyIdr = (monthlyIdr: number) => {
@@ -32,7 +32,7 @@ export function PricingSection() {
   };
 
   const getPriceUsd = (monthlyUsd: number) => {
-    return monthlyUsd;
+    return isAnnual ? monthlyUsd * 0.8 : monthlyUsd;
   };
   
   const getBilledYearlyUsd = (monthlyUsd: number) => {
@@ -40,7 +40,7 @@ export function PricingSection() {
   };
 
   const formatPrice = (value: number) => {
-    if (value === 0) return "Waived";
+    if (value === 0) return "Free";
     if (value >= 1000000000) {
       return "Rp " + (value / 1000000000).toFixed(2).replace(".", ",") + " Miliar";
     }

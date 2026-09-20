@@ -80,7 +80,7 @@ export function LandingPage() {
         switch (section) {
           case 'hero':
             return (
-              <section key="hero" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
+              <section key="hero" id="hero" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                   <div className="text-center max-w-4xl mx-auto space-y-6">
                     <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-brand-navy border border-brand-gold/30 text-xs font-bold text-brand-gold shadow-gold-sm tracking-wider uppercase">
@@ -94,7 +94,7 @@ export function LandingPage() {
                       <EditableText id="hero.subtitle" default={t('heroSubtitle')} className="w-full bg-transparent text-center focus:outline-none focus:ring-1 focus:ring-brand-gold rounded-lg p-2 resize-none block" />
                     </p>
                     <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                      <button onClick={() => smoothScrollTo('connectors')} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
+                      <button onClick={() => window.location.href='/login'} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
                         Explore The OS <ArrowRight className="w-4 h-4" />
                       </button>
                       <button onClick={() => setIsHealthCheckModalOpen(true)} className="px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border font-bold text-sm transition-all flex items-center gap-2">
@@ -126,7 +126,7 @@ export function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center max-w-3xl mx-auto mb-16">
                     <h2 className="text-3xl font-black text-brand-textMain mb-4"><EditableText id="calc.title" default="Calculate Your Value Leakage" /></h2>
-                    <p className="text-brand-textMuted"><EditableText id="calc.subtitle" default="Estimate how much cash is trapped in inefficient operations and disjointed systems." /></p>
+                    <p className="text-brand-textMuted"><EditableText id="calc.subtitle" default="Simulasi ini menghitung potensi kerugian finansial (Value Leakage) yang tidak disadari akibat inefisiensi operasional, proses manual, dan sistem yang tidak terintegrasi. Masukkan estimasi omzet Anda untuk melihat seberapa besar uang yang bisa diselamatkan oleh AI Workforce kami." /></p>
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div className="bg-brand-card border border-brand-border rounded-2xl p-8 shadow-sm">
@@ -212,6 +212,9 @@ export function LandingPage() {
     </div>
   );
 }
+
+
+
 
 
 

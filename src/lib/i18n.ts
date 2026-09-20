@@ -1,4 +1,4 @@
-export type Language = 'id' | 'en' | 'zh' | 'ja' | 'ar' | 'es';
+export type Language = 'id' | 'en' | 'zh' | 'ja' | 'ar' | 'es' | 'de' | 'ru';
 
 export const SUPPORTED_LANGUAGES: { code: Language; name: string; flag: string }[] = [
   { code: 'id', name: 'Indonesia', flag: '🇮🇩' },
@@ -7,6 +7,8 @@ export const SUPPORTED_LANGUAGES: { code: Language; name: string; flag: string }
   { code: 'ja', name: '日本語', flag: '🇯🇵' },
   { code: 'ar', name: 'العربية', flag: '🇸🇦' },
   { code: 'es', name: 'Español', flag: '🇪🇸' }
+  ,{ code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ru', name: 'Русский', flag: '🇷🇺' }
 ];
 
 export interface IndustryOption {
@@ -25,7 +27,7 @@ export const COMPREHENSIVE_INDUSTRIES: IndustryOption[] = [
 
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
   id: {
-    tagline: 'AI-Powered Business Transformation Intelligence � Direct Internal System Connectivity',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: 'Sistem Transformasi Bisnis Berbasis AI · Konektivitas ERP Langsung',
     heroTitle: 'Transformasi Bisnis Cerdas untuk Korporasi & Konglomerasi yang Sedang Berkembang',
     heroSubtitle: 'Hubungkan ERP, akuntansi, rantai pasok, dan silo operasional Anda ke dalam sistem operasi bisnis cerdas yang terpadu. Tutup kebocoran modal kerja, kelola risiko kepatuhan, dan tingkatkan EBITDA secara berkelanjutan.',
@@ -97,10 +99,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     emailLabel: 'Email Korporat',
     passwordLabel: 'Kata Sandi',
     fullNameLabel: 'Nama Lengkap Eksekutif',
-    executiveRoleLabel: 'Jabatan / Peran'
+    executiveRoleLabel: 'Jabatan / Peran',
+    erpHeading: 'Automated 2-Way Sync with Global ERPs',
+    erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
   },
+
   en: {
-    tagline: 'AI-Powered Business Transformation Intelligence � Direct Internal System Connectivity',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: 'AI-Powered Business Transformation Intelligence � Direct Internal System Connectivity',
     heroTitle: 'Intelligent Business Transformation for Growing Enterprises',
     heroSubtitle: 'Connect your ERP and silos into a unified OS. Plug working capital leaks.',
@@ -172,10 +177,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     emailLabel: 'Email',
     passwordLabel: 'Password',
     fullNameLabel: 'Full Name',
-    executiveRoleLabel: 'Job Title'
+    executiveRoleLabel: 'Job Title',
+    erpHeading: 'Automated 2-Way Sync with Global ERPs',
+    erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
   },
+
   zh: {
-    tagline: 'AI原生商业转型智能',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: '直接 ERP 连接',
     heroTitle: '为成长型企业提供的智能商业转型',
     heroSubtitle: '将您的ERP与孤岛连接。',
@@ -247,10 +255,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     emailLabel: '电子邮件',
     passwordLabel: '密码',
     fullNameLabel: '全名',
-    executiveRoleLabel: '职位'
+    executiveRoleLabel: '职位',
+    erpHeading: 'Automated 2-Way Sync with Global ERPs',
+    erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
   },
+
   ja: {
-    tagline: 'AIネイティブのビジネス変革インテリジェンス',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: '直接ERP接続',
     heroTitle: '成長企業向けインテリジェントビジネス変革',
     heroSubtitle: 'サイロ化されたデータを統合ビジネスOSに接続し、運転資金の漏れを防ぎます。',
@@ -322,10 +333,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     emailLabel: 'メールアドレス',
     passwordLabel: 'パスワード',
     fullNameLabel: '氏名',
-    executiveRoleLabel: '役職'
+    executiveRoleLabel: '役職',
+    erpHeading: 'Automated 2-Way Sync with Global ERPs',
+    erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
   },
+
   ar: {
-    tagline: 'ذكاء التحول التجاري الأصلي للذكاء الاصطناعي',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: 'اتصال مباشر بتخطيط موارد المؤسسات',
     heroTitle: 'تحول أعمال ذكي للشركات النامية والمجموعات',
     heroSubtitle: 'اربط أنظمة تخطيط موارد المؤسسات والمحاسبة وسلسلة التوريد في نظام تشغيل أعمال موحد وذكي.',
@@ -397,10 +411,13 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     emailLabel: 'البريد الإلكتروني',
     passwordLabel: 'كلمة المرور',
     fullNameLabel: 'الاسم',
-    executiveRoleLabel: 'المسمى الوظيفي'
+    executiveRoleLabel: 'المسمى الوظيفي',
+    erpHeading: 'Automated 2-Way Sync with Global ERPs',
+    erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
   },
+
   es: {
-    tagline: 'Inteligencia Nativa de IA para la Transformación Empresarial',
+    tagline: 'AI-Native Business Transformation Intelligence · Direct Internal System Connectivity',
     heroBadge: 'Inteligencia de Transformación · Conectividad ERP Directa',
     heroTitle: 'Transformación Empresarial Inteligente',
     heroSubtitle: 'Conecte su ERP y silos en un sistema operativo unificado e inteligente.',
@@ -474,7 +491,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     fullNameLabel: 'Nombre Completo',
     executiveRoleLabel: 'Cargo / Rol'
   }
+,
+  de: { ...TRANSLATIONS?.en || {} },
+  ru: { ...TRANSLATIONS?.en || {} }
 };
-
-
-
