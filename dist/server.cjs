@@ -864,11 +864,9 @@ app.get("/api/billing/entitlement", requireAuth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-if (process.env.NODE_ENV !== "production" || process.env.PREVIEW_SERVER === "true") {
-  app.listen(port, "0.0.0.0", () => {
-    console.log(`[BuildUp] preview server listening on ${port}`);
-  });
-}
+app.listen(port, "0.0.0.0", () => {
+  console.log(`[BuildUp] preview server listening on ${port}`);
+});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildup_api
