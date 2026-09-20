@@ -7,6 +7,18 @@ import { onRequest } from "firebase-functions/v2/https";
 const app = express();
 app.use(express.json());
 
+const port = Number(process.env.PORT || 3000);
+const clientDist = path.resolve(process.cwd(), "dist");
+
+// Serve the built Vite client when the preview starts the API entrypoint directly.
+app.use(express.static(clientDist));
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api/")) return next();
+  res.sendFile(path.join(clientDist, "index.html"), (error) => {
+    if (error) next(error);
+  });
+});
+
 // API routes
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "BuildUp OS Backend Running" });
@@ -20,16 +32,6 @@ app.post("/api/auth/sync", requireAuth, async (req: AuthRequest, res) => {
     res.json({ success: true, user });
   } catch (error: any) {
     console.error("User sync error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Admin Route for Command Center
-app.get("/api/admin/users", requireAdmin, async (req: AuthRequest, res) => {
-  try {
-    const users = await getAllUsers();
-    res.json({ users });
-  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -75,7 +77,7 @@ app.post("/api/ai/health-check", requireAuth, async (req: AuthRequest, res) => {
       score: analysis.score,
       findings: analysis.findings,
       rootCauses: analysis.rootCauses || []
-    });
+});
 
     res.json({ success: true, analysis });
   } catch (error: any) {
@@ -286,3 +288,9 @@ app.get("/api/billing/entitlement", requireAuth, async (req: AuthRequest, res) =
     res.status(500).json({ error: error.message });
   }
 });
+
+if (process.env.NODE_ENV !== "production" || process.env.PREVIEW_SERVER === "true") {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`[BuildUp] preview server listening on ${port}`);
+  });
+}

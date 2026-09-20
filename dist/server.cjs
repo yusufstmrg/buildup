@@ -614,6 +614,7 @@ __export(server_exports, {
 });
 module.exports = __toCommonJS(server_exports);
 var import_express = __toESM(require("express"), 1);
+var import_path = __toESM(require("path"), 1);
 
 // src/middleware/auth.ts
 init_firebase_admin();
@@ -632,30 +633,21 @@ var requireAuth = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };
-var requireAdmin = async (req, res, next) => {
-  await requireAuth(req, res, async () => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    try {
-      const { adminDb: adminDb2 } = await Promise.resolve().then(() => (init_firebase_admin(), firebase_admin_exports));
-      const userSnap = await adminDb2.collection("users").doc(req.user.uid).get();
-      if (!userSnap.exists || userSnap.data()?.role !== "admin") {
-        return res.status(403).json({ error: "Forbidden: Admin access required" });
-      }
-      next();
-    } catch (err) {
-      console.error("Admin check failed:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-  });
-};
 
 // server.ts
 init_users();
 var import_https = require("firebase-functions/v2/https");
 var app = (0, import_express.default)();
 app.use(import_express.default.json());
+var port = Number(process.env.PORT || 3e3);
+var clientDist = import_path.default.resolve(process.cwd(), "dist");
+app.use(import_express.default.static(clientDist));
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api/")) return next();
+  res.sendFile(import_path.default.join(clientDist, "index.html"), (error) => {
+    if (error) next(error);
+  });
+});
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "BuildUp OS Backend Running" });
 });
@@ -666,14 +658,6 @@ app.post("/api/auth/sync", requireAuth, async (req, res) => {
     res.json({ success: true, user });
   } catch (error) {
     console.error("User sync error:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-app.get("/api/admin/users", requireAdmin, async (req, res) => {
-  try {
-    const users = await getAllUsers();
-    res.json({ users });
-  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -880,6 +864,11 @@ app.get("/api/billing/entitlement", requireAuth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+if (process.env.NODE_ENV !== "production" || process.env.PREVIEW_SERVER === "true") {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`[BuildUp] preview server listening on ${port}`);
+  });
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildup_api
