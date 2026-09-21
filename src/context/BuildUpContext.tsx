@@ -526,6 +526,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         user,
         isLoggedIn: !!user?.isLoggedIn,
         isSandbox: !!user?.isSandbox,
+        isAuthLoading,
         login,
         register,
         logout,
