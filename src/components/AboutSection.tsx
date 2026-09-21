@@ -43,7 +43,7 @@ export function AboutSection() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-brand-textMain leading-tight">
-            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="bg-gradient-to-r from-amber-600 to-amber-500 dark:from-brand-gold dark:to-amber-500 bg-clip-text text-transparent">AI-Native Business Transformation Intelligence &bull; Direct Internal System Connectivity</span>
+            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="text-[#D4AF37] font-black drop-shadow-md">AI-Native Business Transformation Intelligence · Direct Internal System Connectivity</span>
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-brand-textMuted leading-relaxed max-w-3xl mx-auto">
@@ -68,6 +68,28 @@ export function AboutSection() {
         </div>
       </section>
 
+            {/* Founder Doctrine */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-brand-border bg-brand-deep">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
+          <div className="w-full md:w-1/3 flex justify-center">
+            <div className="relative">
+              <div className="absolute inset-0 bg-brand-gold/20 rounded-full blur-2xl"></div>
+              <img src="/founder.png" alt="Yusuf B. Situmorang" className="relative z-10 w-64 h-auto object-cover rounded-2xl border-4 border-brand-gold/30 shadow-2xl" />
+            </div>
+          </div>
+          <div className="w-full md:w-2/3">
+            <h2 className="text-xl font-bold text-brand-gold uppercase tracking-widest mb-6">Founder Doctrine &middot; Core Transformation Values</h2>
+            <blockquote className="text-2xl sm:text-3xl font-medium text-brand-textMain leading-relaxed mb-8 italic">
+              "Understand the business as one system. Find what matters. Automate what can be automated. Escalate what requires expertise. Measure what changed. Repeat until the business is materially stronger."
+            </blockquote>
+            <div>
+              <p className="text-lg font-bold text-brand-textMain">Yusuf B. Situmorang</p>
+              <p className="text-sm text-brand-gold font-medium">Founder & Chief Architect, BuildUp</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Comparative Matrix: Traditional vs BuildUp */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-brand-border bg-brand-surface">
         <div className="max-w-6xl mx-auto">
@@ -81,7 +103,7 @@ export function AboutSection() {
           </div>
 
           <div className="space-y-4">
-            {comparisonPoints.map((item, idx) => (
+            {(comparisonPoints || []).map((item, idx) => (
               <div 
                 key={idx} 
                 className="grid grid-cols-1 md:grid-cols-12 gap-4 p-5 rounded-2xl bg-brand-navy/80 border border-brand-border hover:border-brand-border transition-colors items-center"
@@ -91,12 +113,12 @@ export function AboutSection() {
                     {item.feature}
                   </span>
                 </div>
-                <div className="md:col-span-4 p-3 rounded-xl bg-red-500/10 dark:bg-red-950/20 border border-red-500/20 dark:border-red-900/30 text-xs text-brand-textMuted">
-                  <span className="font-bold text-red-600 dark:text-red-400 block mb-1">Konsultan Tradisional (Big 4):</span>
+                <div className="md:col-span-4 p-3 rounded-xl bg-slate-800/40 border border-slate-700 text-xs text-brand-textMuted">
+                  <span className="font-bold text-slate-400 block mb-1">Konsultan Tradisional (Big 4):</span>
                   {item.traditional}
                 </div>
-                <div className="md:col-span-5 p-3.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/25 border border-emerald-500/30 dark:border-emerald-500/40 text-xs text-emerald-950 dark:text-emerald-100 shadow-sm">
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mb-1">
+                <div className="md:col-span-5 p-3.5 rounded-xl bg-brand-gold/10 border border-brand-gold/30 text-xs text-brand-textMain shadow-sm">
+                  <span className="font-bold text-brand-gold flex items-center gap-1.5 mb-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     BuildUp AI-Native Partner:
                   </span>
@@ -126,7 +148,7 @@ export function AboutSection() {
 
         <div className="max-w-5xl mx-auto mt-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {nineStages.map((stage, index) => (
+            {(nineStages || []).map((stage, index) => (
               <div 
                 key={stage.num} 
                 className="relative bg-brand-navy/80 backdrop-blur-md border border-brand-border p-6 rounded-2xl transition-all shadow-lg hover:shadow-brand-gold/10 hover:border-brand-gold/40 flex flex-col h-full group"
@@ -158,7 +180,7 @@ export function AboutSection() {
             </div>
 
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-brand-gold text-xs font-bold mb-4">
                 <ShieldCheck className="w-4 h-4" />
                 <span>Standar Keamanan Korporat & Perbankan</span>
               </div>
@@ -239,6 +261,9 @@ export function AboutSection() {
     </section>
   );
 }
+
+
+
 
 
 

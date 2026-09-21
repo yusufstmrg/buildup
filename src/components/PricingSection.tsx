@@ -24,7 +24,7 @@ export function PricingSection() {
   }, []);
 
   const getPriceIdr = (monthlyIdr: number) => {
-    return monthlyIdr;
+    return isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
   };
   
   const getBilledYearlyIdr = (monthlyIdr: number) => {
@@ -32,7 +32,7 @@ export function PricingSection() {
   };
 
   const getPriceUsd = (monthlyUsd: number) => {
-    return monthlyUsd;
+    return isAnnual ? monthlyUsd * 0.8 : monthlyUsd;
   };
   
   const getBilledYearlyUsd = (monthlyUsd: number) => {
@@ -40,7 +40,7 @@ export function PricingSection() {
   };
 
   const formatPrice = (value: number) => {
-    if (value === 0) return "Waived";
+    if (value === 0) return "Free";
     if (value >= 1000000000) {
       return "Rp " + (value / 1000000000).toFixed(2).replace(".", ",") + " Miliar";
     }
@@ -106,7 +106,7 @@ export function PricingSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {packages.map((pkg) => (
+          {(packages || []).map((pkg) => (
             <div
               key={pkg.id}
               className={"relative bg-brand-surface border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 " + (pkg.isPopular ? "border-brand-gold border-2 shadow-[0_0_30px_rgba(234,179,8,0.1)] scale-[1.02] z-10" : "border-brand-border hover:border-brand-gold/40")}
@@ -217,7 +217,7 @@ export function PricingSection() {
           </div>
           
           <Accordion.Root type="single" collapsible className="space-y-4">
-            {faqs.map((faq, i) => (
+            {(faqs || []).map((faq, i) => (
               <Accordion.Item key={i} value={"faq-" + i} className="bg-brand-surface border border-brand-border rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-gold/50">
                 <Accordion.Header>
                   <Accordion.Trigger className="w-full flex items-center justify-between p-6 text-left hover:bg-brand-navy/50 transition-colors group">
@@ -236,5 +236,6 @@ export function PricingSection() {
     </section>
   );
 }
+
 
 

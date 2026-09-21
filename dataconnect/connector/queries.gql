@@ -1,19 +1,29 @@
 # Queries
 
-query GetUserOrganizations($uid: String!) @auth(level: USER) {
-  memberships(where: { userId: { eq: $uid } }) {
-    id
+query GetUserOrganizations($uid: String @retired) @auth(level: USER) {
+  memberships(where: { userId: { eq_expr: "auth.uid" } }) {
     role
+
     organization {
-      id
+      id @retired
       name
       createdAt
     }
   }
 }
 
+# The following queries filter records by joining with the Membership table
+# to ensure the current user (auth.uid) belongs to the requested organization.
+
 query GetBusinessProfile($orgId: UUID!) @auth(level: USER) {
-  businessProfiles(where: { organizationId: { eq: $orgId } }) {
+  businessProfiles(where: { 
+    organizationId: { eq: $orgId },
+    organization: {
+      memberships_on_organization: {
+        exist: { userId: { eq_expr: "auth.uid" } }
+      }
+    }
+  }) {
     id
     industry
     revenueRange
@@ -23,7 +33,14 @@ query GetBusinessProfile($orgId: UUID!) @auth(level: USER) {
 }
 
 query GetBusinessGenome($orgId: UUID!) @auth(level: USER) {
-  businessGenomes(where: { organizationId: { eq: $orgId } }) {
+  businessGenomes(where: { 
+    organizationId: { eq: $orgId },
+    organization: {
+      memberships_on_organization: {
+        exist: { userId: { eq_expr: "auth.uid" } }
+      }
+    }
+  }) {
     id
     dimension
     metricKey
@@ -35,7 +52,17 @@ query GetBusinessGenome($orgId: UUID!) @auth(level: USER) {
 }
 
 query GetInitiatives($orgId: UUID!) @auth(level: USER) {
-  initiatives(where: { organizationId: { eq: $orgId } }, orderBy: { expectedRoi: DESC }) {
+  initiatives(
+    where: { 
+      organizationId: { eq: $orgId },
+      organization: {
+        memberships_on_organization: {
+          exist: { userId: { eq_expr: "auth.uid" } }
+        }
+      }
+    }, 
+    orderBy: { expectedRoi: DESC }
+  ) {
     id
     title
     description

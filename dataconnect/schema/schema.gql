@@ -3,6 +3,8 @@
 type Organization @table {
   id: UUID! @default(expr: "uuidV4()")
   name: String!
+  industry: String
+  revenueBracket: String
   createdAt: Timestamp! @default(expr: "request.time")
   updatedAt: Timestamp! @default(expr: "request.time")
 }
@@ -14,8 +16,7 @@ type User @table {
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
-type Membership @table {
-  id: UUID! @default(expr: "uuidV4()")
+type Membership @table(key: ["organization", "user"]) {
   organization: Organization!
   user: User!
   role: String! # e.g., "OWNER", "EXECUTIVE", "ANALYST"
@@ -61,4 +62,64 @@ type Initiative @table {
   expectedRoi: Float
   department: String!
   owner: User!
+}
+
+type DataConnector @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  type: String!
+  name: String!
+  status: String! # disconnected, connecting, connected, error, syncing
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type Metric @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  name: String!
+  category: String!
+  value: Float!
+  unit: String!
+  confidenceScore: Float! @default(value: 1.0)
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+type Evidence @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  type: String!
+  title: String!
+  storageUrl: String
+  classification: String!
+  uploadedAt: Timestamp! @default(expr: "request.time")
+}
+
+type DecisionObject @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  title: String!
+  domain: String!
+  problemContext: String!
+  recommendation: String!
+  confidence: Float!
+  status: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+type WorkflowTask @table {
+  id: UUID! @default(expr: "uuidV4()")
+  initiative: Initiative!
+  title: String!
+  status: String!
+}
+
+type OutcomeLedgerRecord @table {
+  id: UUID! @default(expr: "uuidV4()")
+  organization: Organization!
+  initiative: Initiative!
+  metric: Metric!
+  type: String!
+  amount: Float!
+  confidence: Float!
+  recordedAt: Timestamp! @default(expr: "request.time")
 }

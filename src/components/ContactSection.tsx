@@ -4,15 +4,19 @@ import { useBuildUp } from '../context/BuildUpContext';
 import { ExecutiveVerification } from '../components/ExecutiveVerification';
 
 const industries = [
-  { id: 'fin', name: { id: 'Perbankan & Jasa Keuangan', en: 'Banking & Financial Services' } },
-  { id: 'mfg', name: { id: 'Manufaktur & Otomotif', en: 'Manufacturing & Automotive' } },
-  { id: 'ret', name: { id: 'Ritel & FMCG', en: 'Retail & FMCG' } },
-  { id: 'log', name: { id: 'Logistik & Supply Chain', en: 'Logistics & Supply Chain' } },
-  { id: 'eng', name: { id: 'Energi & Pertambangan', en: 'Energy & Mining' } },
-  { id: 'hth', name: { id: 'Kesehatan & Farmasi', en: 'Healthcare & Pharmaceuticals' } },
-  { id: 'prop', name: { id: 'Properti & Konstruksi', en: 'Property & Construction' } },
-  { id: 'other', name: { id: 'Lainnya (Tuliskan Spesifik)', en: 'Other (Please Specify)' } }
-];
+    { id: 'fin', name: { id: 'Perbankan & Jasa Keuangan', en: 'Banking & Financial Services' } },
+    { id: 'mfg', name: { id: 'Manufaktur & Otomotif', en: 'Manufacturing & Automotive' } },
+    { id: 'ret', name: { id: 'Ritel & FMCG', en: 'Retail & FMCG' } },
+    { id: 'log', name: { id: 'Logistik & Supply Chain', en: 'Logistics & Supply Chain' } },
+    { id: 'eng', name: { id: 'Energi & Pertambangan', en: 'Energy & Mining' } },
+    { id: 'hth', name: { id: 'Kesehatan & Farmasi', en: 'Healthcare & Pharmaceuticals' } },
+    { id: 'prop', name: { id: 'Properti & Konstruksi', en: 'Property & Construction' } },
+    { id: 'tech', name: { id: 'Teknologi & SaaS', en: 'Technology & SaaS' } },
+    { id: 'fnb', name: { id: 'Makanan & Minuman (F&B)', en: 'Food & Beverage' } },
+    { id: 'edu', name: { id: 'Pendidikan', en: 'Education' } },
+    { id: 'agri', name: { id: 'Pertanian & Agribisnis', en: 'Agriculture & Agribusiness' } },
+    { id: 'other', name: { id: 'Lainnya (Tuliskan Spesifik)', en: 'Other (Please Specify)' } }
+  ];
 
 export function ContactSection() {
   const { language } = useBuildUp();
@@ -27,7 +31,7 @@ export function ContactSection() {
   const [selectedIndustry, setSelectedIndustry] = useState('fin');
   const [customIndustry, setCustomIndustry] = useState('');
   const [revenueScale, setRevenueScale] = useState('');
-  const [primaryChallenge, setPrimaryChallenge] = useState('Kebocoran Margin & Inefisiensi Biaya');
+  const [primaryChallenge, setPrimaryChallenge] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,7 +172,8 @@ export function ContactSection() {
                       className="w-full px-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold appearance-none"
                     >
                         <option value="">Pilih Kisaran</option>
-                        <option value="< Rp 1 Miliar">&lt; Rp 1 Miliar / thn</option>
+                        <option value="< Rp 500 Juta">&lt; Rp 500 Juta / thn</option>
+                          <option value="Rp 500 Juta - Rp 1 Miliar">Rp 500 Juta - Rp 1 Miliar / thn</option>
                         <option value="Rp 1 Miliar - Rp 10 Miliar">Rp 1 Miliar - Rp 10 Miliar / thn</option>
                         <option value="Rp 10 Miliar - Rp 50 Miliar">Rp 10 Miliar - Rp 50 Miliar / thn</option>
                         <option value="Rp 50 Miliar - Rp 100 Miliar">Rp 50 Miliar - Rp 100 Miliar / thn</option>
@@ -178,17 +183,24 @@ export function ContactSection() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-brand-textMuted mb-1">Fokus Tantangan Utama</label>
-                    <select
-                      value={primaryChallenge}
-                      onChange={(e) => setPrimaryChallenge(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-brand-surface border border-brand-border rounded-xl text-xs md:text-sm text-brand-textMain focus:outline-none focus:border-brand-gold"
-                    >
-                      <option value="Kebocoran Margin & Inefisiensi Biaya">Kebocoran Margin & Inefisiensi Biaya</option>
-                      <option value="Piutang Lambat (DSO) & Defisit Kas">Piutang Lambat (DSO) & Defisit Kas</option>
-                      <option value="Kepatuhan Pajak, SP2DK & Rekonsiliasi Faktur">Kepatuhan Pajak, SP2DK & Rekonsiliasi</option>
-                      <option value="Pencegahan Fraud & Segregation of Duties (SoD)">Pencegahan Fraud & Audit Internal</option>
-                      <option value="Integrasi ERP & Business Context Graph">Integrasi Data ERP & AI Workforce</option>
-                    </select>
+                    
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {['Kebocoran Margin & Inefisiensi', 'Piutang Lambat & Defisit Kas', 'Kepatuhan Pajak & Rekonsiliasi', 'Pencegahan Fraud & Audit', 'Integrasi Data ERP & AI Workforce'].map(opt => (
+                          <label key={opt} className="flex items-center gap-2 text-xs text-brand-textMain cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              checked={primaryChallenge.includes(opt)}
+                              onChange={(e) => {
+                                if (e.target.checked) setPrimaryChallenge([...primaryChallenge, opt]);
+                                else setPrimaryChallenge(primaryChallenge.filter(i => i !== opt));
+                              }}
+                              className="w-4 h-4 rounded border-brand-border text-brand-gold focus:ring-brand-gold bg-brand-navy"
+                            />
+                            {opt}
+                          </label>
+                        ))}
+                      </div>
+
                   </div>
                 </div>
 
@@ -244,7 +256,7 @@ export function ContactSection() {
                 className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Hubungi via WhatsApp Resmi (+62 811-1999-2026)</span>
+                <span>Hubungi Tim Kami (+62 811-1999-2026)</span>
               </a>
             </div>
 
@@ -289,4 +301,5 @@ export function ContactSection() {
     </section>
   );
 }
+
 

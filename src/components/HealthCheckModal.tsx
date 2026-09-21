@@ -183,7 +183,7 @@ export function HealthCheckModal() {
         aiResult = await res.json();
       } else {
         // Fallback for non-logged-in users (demo)
-        await new Promise(resolve => setTimeout(resolve, 2500));
+        await new Promise(resolve => setTimeout(resolve, 4500));
         aiResult = {
           analysis: {
             score: 68,
@@ -241,7 +241,7 @@ export function HealthCheckModal() {
         }
       }}
     >
-      <div className="bg-brand-surface border border-brand-gold/30 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden relative my-6 animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-brand-surface border border-brand-gold/30 w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200 flex flex-col">
         
         {/* Top Accent Line */}
         <div className="h-1.5 bg-gradient-to-r from-brand-goldDark via-brand-gold to-brand-goldLight" />
@@ -644,6 +644,8 @@ export function HealthCheckModal() {
     </div>
   );
 }
+
+
 
 
 

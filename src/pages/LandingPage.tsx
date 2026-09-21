@@ -11,6 +11,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { ERPConnectorsSection } from '../components/ERPConnectorsSection';
 import { useBuildUp } from '../context/BuildUpContext';
 import { AboutSection } from '../components/AboutSection';
+import { TestimonialsSection } from '../components/TestimonialsSection';
 import { PricingSection } from '../components/PricingSection';
 import { ContactSection } from '../components/ContactSection';
 import { EditableText } from '../components/admin/EditableText';
@@ -53,13 +54,10 @@ export function LandingPage() {
               <BuildUpLogo size="md" variant="horizontal" showSubtitle={true} />
             </button>
             <nav className="hidden xl:flex items-center gap-1 pl-4 border-l border-brand-border text-xs font-semibold tracking-wide">
-              <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Home</button>
-              <button onClick={() => smoothScrollTo('about')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">About Us</button>
-              <button onClick={() => smoothScrollTo('connectors')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Platform & Connectors</button>
-              <button onClick={() => smoothScrollTo('workforce')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">AI Workforce</button>
-              <button onClick={() => smoothScrollTo('pricing')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Pricing & Tiers</button>
-              <button onClick={() => smoothScrollTo('contact')} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">Contact Us</button>
-            </nav>
+                {(state.navItems || []).map(item => (
+                  <button key={item.id} onClick={() => smoothScrollTo(item.target)} className="hover:text-brand-gold hover:bg-brand-surface px-3 py-2 rounded-lg transition-all text-brand-textMuted">{item.label}</button>
+                ))}
+              </nav>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-2.5">
@@ -82,7 +80,7 @@ export function LandingPage() {
         switch (section) {
           case 'hero':
             return (
-              <section key="hero" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
+              <section key="hero" id="hero" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                   <div className="text-center max-w-4xl mx-auto space-y-6">
                     <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-brand-navy border border-brand-gold/30 text-xs font-bold text-brand-gold shadow-gold-sm tracking-wider uppercase">
@@ -96,7 +94,7 @@ export function LandingPage() {
                       <EditableText id="hero.subtitle" default={t('heroSubtitle')} className="w-full bg-transparent text-center focus:outline-none focus:ring-1 focus:ring-brand-gold rounded-lg p-2 resize-none block" />
                     </p>
                     <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                      <button onClick={() => smoothScrollTo('connectors')} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
+                      <button onClick={() => window.location.href='/login'} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
                         Explore The OS <ArrowRight className="w-4 h-4" />
                       </button>
                       <button onClick={() => setIsHealthCheckModalOpen(true)} className="px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border font-bold text-sm transition-all flex items-center gap-2">
@@ -127,8 +125,8 @@ export function LandingPage() {
               <section key="calculator" id="calculator" className="py-24 bg-brand-surface relative overflow-hidden border-t border-brand-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl font-black text-brand-textMain mb-4">Calculate Your Value Leakage</h2>
-                    <p className="text-brand-textMuted">Estimate how much cash is trapped in inefficient operations and disjointed systems.</p>
+                    <h2 className="text-3xl font-black text-brand-textMain mb-4"><EditableText id="calc.title" default="Calculate Your Value Leakage" /></h2>
+                    <p className="text-brand-textMuted"><EditableText id="calc.subtitle" default="Simulasi ini menghitung potensi kerugian finansial (Value Leakage) yang tidak disadari akibat inefisiensi operasional, proses manual, dan sistem yang tidak terintegrasi. Masukkan estimasi omzet Anda untuk melihat seberapa besar uang yang bisa diselamatkan oleh AI Workforce kami." /></p>
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div className="bg-brand-card border border-brand-border rounded-2xl p-8 shadow-sm">
@@ -170,25 +168,12 @@ export function LandingPage() {
               <section key="workforce" id="workforce" className="py-24 bg-brand-deep border-t border-brand-border">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl font-black text-brand-textMain mb-4">BuildUp AI Workforce</h2>
-                    <p className="text-brand-textMuted">12 Specialized Roles executing routines 24/7 across your systems.</p>
+                    <h2 className="text-3xl font-black text-brand-textMain mb-4"><EditableText id="workforce.title" default="BuildUp AI Workforce" /></h2>
+                    <p className="text-brand-textMuted"><EditableText id="workforce.subtitle" default="12 Specialized Roles executing routines 24/7 across your systems." /></p>
                   </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {[
-                        { title: 'AI CEO', desc: 'Sintesis gambaran besar, prioritas strategis, dan persetujuan keputusan berdampak tinggi.' },
-                        { title: 'AI CFO', desc: 'Pemodelan keuangan kompleks, proyeksi kas real-time, dan alokasi modal optimal.' },
-                        { title: 'AI Controller', desc: 'Rekonsiliasi harian otomatis, deteksi kebocoran pengeluaran, dan audit trail.' },
-                        { title: 'AI Procurement', desc: 'Negosiasi vendor, optimasi HPP, dan manajemen rantai pasok cerdas.' },
-                        { title: 'AI CRO (Revenue)', desc: 'Skoring prospek, prediksi penagihan, dan strategi diskon dinamis.' },
-                        { title: 'AI COO', desc: 'Orkestrasi proses lintas departemen, pemantauan SLA, dan penyeimbangan beban.' },
-                        { title: 'AI Risk & Control', desc: 'Identifikasi kerentanan fraud, pencegahan denda, dan stres-tes skenario.' },
-                        { title: 'AI HR', desc: 'Prediksi churn karyawan, analisis beban kerja, dan optimasi kompensasi.' },
-                        { title: 'AI Tax', desc: 'Analisis kewajiban pajak, identifikasi penghematan legal (tax shield).' },
-                        { title: 'AI Legal', desc: 'Review draf kontrak otomatis, ekstraksi klausal risiko, dan pemantauan regulasi.' },
-                        { title: 'AI Audit', desc: 'Pengujian kepatuhan 100% sampel (bukan acak) secara terus-menerus.' },
-                        { title: 'AI Strategy', desc: 'Analisis lanskap kompetitor, tren makroekonomi, dan simulasi ekspansi.' }
-                      ].map(role => (
-                        <div key={role.title} className="bg-brand-card hover:bg-brand-surface hover:-translate-y-1 transition-all border border-brand-border p-5 rounded-2xl flex items-start gap-4 shadow-lg group">
+                      {(state.workforceRoles || []).map((role, idx) => (
+                        <div key={idx} className="bg-brand-card hover:bg-brand-surface hover:-translate-y-1 transition-all border border-brand-border p-5 rounded-2xl flex items-start gap-4 shadow-lg group">
                           <div className="p-3 bg-brand-navy rounded-xl border border-brand-gold/20 group-hover:border-brand-gold transition-colors">
                             <BrainCircuit className="w-6 h-6 text-brand-gold" />
                           </div>
@@ -205,6 +190,8 @@ export function LandingPage() {
 
           case 'pricing':
             return <PricingSection key="pricing" />;
+          case 'testimonials':
+            return <TestimonialsSection key="testimonials" />;
           case 'about':
             return <AboutSection key="about" />;
           case 'contact':
@@ -225,5 +212,12 @@ export function LandingPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
 
 
