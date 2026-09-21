@@ -19,6 +19,7 @@ import { useCms } from '../context/CmsContext';
 
 export function LandingPage() {
   const { 
+    user,
     setIsHealthCheckModalOpen, 
     currency, 
     setCurrency, 
