@@ -1,31 +1,37 @@
 {
-    "hosting":  {
-                    "site":  "buildup-os",
-                    "public":  "dist",
-                    "ignore":  [
-                                   "firebase.json",
-                                   "**/.*",
-                                   "**/node_modules/**"
-                               ],
-                    "rewrites":  [
-                                     {
-                                         "source":  "/api/**",
-                                         "function":  "buildup_api",
-                                         "region":  "asia-southeast1"
-                                     },
-                                     {
-                                         "source":  "**",
-                                         "destination":  "/index.html"
-                                     }
-                                 ]
-                },
-    "dataconnect":  {
-                        "source":  "dataconnect"
-                    },
-    "functions":  {
-                      "source":  "functions",
-                      "ignore":  [
-                                     "node_modules"
-                                 ]
-                  }
+  "hosting": {
+    "site": "buildup-os",
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "function": "buildup_api",
+        "region": "asia-southeast1"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  },
+  "functions": {
+    "source": "functions",
+    "ignore": [
+      "node_modules"
+    ]
+  },
+  "firestore": [
+    {
+      "target": "mydb",
+      "rules": "firestore.rules"
+    }
+  ]
 }

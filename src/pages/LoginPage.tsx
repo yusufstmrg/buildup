@@ -13,18 +13,21 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
       setError('Silakan masukkan email korporat Anda.');
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
-      login(email, password);
-      setIsLoading(false);
+    try {
+      await login(email, password);
       navigate('/app');
-    }, 400);
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDemo = () => {

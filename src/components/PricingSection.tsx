@@ -27,17 +27,13 @@ export function PricingSection() {
     return isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
   };
   
-  const getBilledYearlyIdr = (monthlyIdr: number) => {
-    return monthlyIdr * 12;
-  };
+  const getBilledYearlyIdr = (monthlyIdr: number) => { return monthlyIdr * 12 * 0.8; };
 
   const getPriceUsd = (monthlyUsd: number) => {
     return isAnnual ? monthlyUsd * 0.8 : monthlyUsd;
   };
   
-  const getBilledYearlyUsd = (monthlyUsd: number) => {
-    return monthlyUsd * 12;
-  };
+  const getBilledYearlyUsd = (monthlyUsd: number) => { return monthlyUsd * 12 * 0.8; };
 
   const formatPrice = (value: number) => {
     if (value === 0) return "Free";
@@ -123,7 +119,7 @@ export function PricingSection() {
                 
                 <div className="mb-6">
                   {pkg.priceIdr === 0 ? (
-                    <div className="text-4xl font-black text-brand-textMain">Waived</div>
+                    <div className="text-4xl font-black text-brand-textMain">Free</div>
                   ) : (
                     <>
                       <div className="flex items-end gap-1">

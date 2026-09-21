@@ -178,7 +178,7 @@ export function HealthCheckModal() {
         });
         if (!res.ok) {
           const err = await res.json();
-          throw new Error(err.error || 'Diagnostic failed');
+          throw new Error(err.error || err.message || 'Diagnostic failed');
         }
         aiResult = await res.json();
       } else {
@@ -213,9 +213,9 @@ export function HealthCheckModal() {
     } catch (e: any) {
       console.error("Diagnostic error:", e);
       setCalculatedScore(40);
-      setGlobalHealthScore(40, ['Kesalahan koneksi / API Key belum diatur'], 'Pastikan API Key / Kredensial Vertex AI sudah diatur dengan benar di backend.');
-      setAiFindings(['Sistem gagal memproses data operasional Anda karena kendala API.', `Pesan Error: ${e.message}`]);
-      setAiRecommendation('Pastikan API Key / Kredensial Vertex AI sudah diatur dengan benar di backend.');
+      setGlobalHealthScore(40, ['Kesalahan koneksi / API Key belum diatur'], 'Aktifkan Email/Password Auth di Firebase Console, lalu Login kembali untuk mendapatkan analisis nyata.');
+      setAiFindings(['Error Backend AI:', e.message || 'Terjadi kesalahan sistem.']);
+      setAiRecommendation('Aktifkan Email/Password Auth di Firebase Console, lalu Login kembali untuk mendapatkan analisis nyata.');
     }
 
     setErpScanProgress(100);
@@ -233,7 +233,7 @@ export function HealthCheckModal() {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brand-deep/85 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:pt-10 sm:p-4 bg-brand-deep/85 backdrop-blur-md overflow-y-auto"
       onClick={(e) => {
         // Dismiss when clicking directly on backdrop
         if (e.target === e.currentTarget) {
@@ -241,7 +241,7 @@ export function HealthCheckModal() {
         }
       }}
     >
-      <div className="bg-brand-surface border border-brand-gold/30 w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200 flex flex-col">
+      <div className="bg-brand-surface border border-brand-gold/30 w-full max-w-3xl rounded-2xl shadow-2xl relative flex flex-col animate-in fade-in zoom-in-95 duration-200">
         
         {/* Top Accent Line */}
         <div className="h-1.5 bg-gradient-to-r from-brand-goldDark via-brand-gold to-brand-goldLight" />

@@ -8,7 +8,7 @@ export interface DecisionObject {
   id: string;
   code: string;
   title: string;
-  domain: 'Procurement' | 'Finance' | 'Operations' | 'Sales' | 'Tax & Compliance' | 'Risk';
+  domain: 'Procurement' | 'Finance' | 'Operations' | 'Sales' | 'Tax & Compliance' | 'Lainnya' | 'Risk';
   problem: string;
   evidence: string[];
   options: { label: string; impact: string; risk: 'Low' | 'Medium' | 'High' }[];
@@ -43,6 +43,8 @@ export interface UserProfile {
   connectedERP?: string;
   isSandbox: boolean;
   isLoggedIn: boolean;
+  isAuthLoading: boolean;
+  login: (email: string, password?: string, asDemo?: boolean) => Promise<void>;
   plan: 'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise';
 }
 
@@ -56,8 +58,10 @@ interface BuildUpContextType {
   // Authentication & Org State
   user: UserProfile | null;
   isLoggedIn: boolean;
+  isAuthLoading: boolean;
+  login: (email: string, password?: string, asDemo?: boolean) => Promise<void>;
   isSandbox: boolean;
-  login: (email: string, password?: string, asDemo?: boolean) => void;
+  
   register: (data: {
     fullName: string;
     email: string;
@@ -225,6 +229,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   // User Authentication
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
   useEffect(() => {
@@ -256,24 +261,29 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         }
       } else {
         setUser(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+        }
+        setIsAuthLoading(false);
+      });
+      return () => unsubscribe();
+    }, []);
 
   const login = async (email: string, password?: string, asDemo?: boolean) => {
     try {
+      setIsAuthLoading(true);
       if (asDemo) {
         setUser(defaultDemoUser);
         setIsAuthModalOpen(false);
+        setIsAuthLoading(false);
         return;
       }
       if (!password) throw new Error("Password is required");
       await signInWithEmailAndPassword(auth, email, password);
       setIsAuthModalOpen(false);
+      // Let onAuthStateChanged handle setIsAuthLoading(false)
     } catch (error: any) {
+      setIsAuthLoading(false);
       console.error("Login error:", error);
-      alert("Login failed: " + error.message);
+      throw error; // Throw so the component can show the error
     }
   };
 
@@ -288,22 +298,23 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     password?: string;
   }) => {
     try {
+      setIsAuthLoading(true);
       if (!data.password) throw new Error("Password is required");
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const uid = userCredential.user.uid;
       const orgId = `org-${Date.now()}`;
 
-      // Create tenant organization
+      const safeCustomIndustry = data.customIndustry || "";
+      
       await setDoc(doc(db, 'organizations', orgId), {
         id: orgId,
         name: data.companyName,
         industry: data.industry,
-        customIndustry: data.customIndustry,
+        customIndustry: safeCustomIndustry,
         revenueBracket: data.revenueBracket,
         createdAt: new Date().toISOString()
       });
 
-      // Create user profile
       const newUserProfile: UserProfile = {
         id: uid,
         name: data.fullName,
@@ -311,7 +322,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         role: data.role || 'Managing Director',
         companyName: data.companyName,
         industry: data.industry,
-        customIndustry: data.customIndustry,
+        customIndustry: safeCustomIndustry,
         revenueBracket: data.revenueBracket,
         isSandbox: false,
         isLoggedIn: true,
@@ -320,7 +331,6 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
 
       await setDoc(doc(db, 'users', uid), newUserProfile);
       
-      // Create membership
       await setDoc(doc(db, 'memberships', `${uid}_${orgId}`), {
         userId: uid,
         orgId: orgId,
@@ -330,9 +340,11 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
 
       setUser(newUserProfile);
       setIsAuthModalOpen(false);
+      // Let onAuthStateChanged handle setIsAuthLoading(false)
     } catch (error: any) {
-      console.error("Registration error:", error);
-      alert("Registration failed: " + error.message);
+      setIsAuthLoading(false);
+      console.error("Register error:", error);
+      throw error;
     }
   };
 
@@ -371,7 +383,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   });
   const [dimensions, setDimensions] = useState<HealthDimension[]>(initialDimensions);
   const [decisionObjects, setDecisionObjects] = useState<DecisionObject[]>(initialDecisions);
-  const [currency, setCurrency] = useState<'IDR' | 'USD'>('IDR');
+  const [currency, setCurrency] = useState<'IDR' | 'USD'>('USD');
   const [currentPlan, setCurrentPlan] = useState<'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise'>('Business X-Ray');
   const [isHealthCheckModalOpen, setIsHealthCheckModalOpen] = useState(false);
 

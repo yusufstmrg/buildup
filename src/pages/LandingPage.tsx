@@ -32,11 +32,37 @@ export function LandingPage() {
   const [headcount, setHeadcount] = useState(75);
   const [industry, setIndustry] = useState('Distribution & Trading');
 
-  const estimatedLeakageIdr = (revenue * 1000000000) * 0.048;
+    const revenueBase = revenue * 1000000000;
+  // Standard Value Leakage Calculation based on Industry Benchmarks
+  let leakageRate = 0.048;
+  let dsoImpact = revenueBase * 0.015;
+  let inventoryImpact = revenueBase * 0.012;
+  let procurementImpact = revenueBase * 0.021;
+  let laborInefficiency = revenueBase * 0.018;
+  let complianceRisks = revenueBase * 0.004;
+  
+  if (industry.includes('Retail') || industry.includes('Trading')) {
+    inventoryImpact = revenueBase * 0.025;
+    procurementImpact = revenueBase * 0.025;
+    laborInefficiency = revenueBase * 0.012;
+    leakageRate = 0.061;
+  } else if (industry.includes('Service') || industry.includes('Technology')) {
+    inventoryImpact = 0;
+    dsoImpact = revenueBase * 0.028;
+    laborInefficiency = revenueBase * 0.022;
+    complianceRisks = revenueBase * 0.008;
+    leakageRate = 0.049;
+  }
+  
+  const estimatedLeakageIdr = dsoImpact + inventoryImpact + procurementImpact + laborInefficiency + complianceRisks;
   const recoverableSavingsIdr = estimatedLeakageIdr * 0.68;
 
   // Smooth scroll helper
   const smoothScrollTo = useCallback((sectionId: string) => {
+    if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     const el = document.getElementById(sectionId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -80,7 +106,7 @@ export function LandingPage() {
         switch (section) {
           case 'hero':
             return (
-              <section key="hero" id="hero" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
+              <section key="hero" id="home" className="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden bg-radial-grid">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                   <div className="text-center max-w-4xl mx-auto space-y-6">
                     <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-brand-navy border border-brand-gold/30 text-xs font-bold text-brand-gold shadow-gold-sm tracking-wider uppercase">
@@ -95,7 +121,7 @@ export function LandingPage() {
                     </p>
                     <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
                       <button onClick={() => window.location.href='/login'} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
-                        Explore The OS <ArrowRight className="w-4 h-4" />
+                        {t('exploreOs')} <ArrowRight className="w-4 h-4" />
                       </button>
                       <button onClick={() => setIsHealthCheckModalOpen(true)} className="px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border font-bold text-sm transition-all flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-brand-gold" /> Run Paid Diagnostic
@@ -132,32 +158,65 @@ export function LandingPage() {
                     <div className="bg-brand-card border border-brand-border rounded-2xl p-8 shadow-sm">
                       <h3 className="text-lg font-bold text-brand-textMain mb-6 flex items-center gap-2"><Sliders className="w-5 h-5 text-brand-gold" /> Inputs</h3>
                       <div className="space-y-6">
-                        <div>
-                          <label className="block text-sm font-semibold text-brand-textMuted mb-2">Annual Revenue (Billion IDR): {revenue}B</label>
+                                                  <div>
+                            <label className="block text-sm font-semibold text-brand-textMuted mb-2">{t("industryLabel")}</label>
+                            <select value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full bg-brand-surface/50 border border-brand-border rounded-xl px-4 py-2 text-sm text-brand-textMain outline-none focus:border-brand-gold/50">
+                              <option value="Distribution & Trading">Distribution & Trading</option>
+                              <option value="Retail & FMCG">Retail & FMCG</option>
+                              <option value="Manufacturing">Manufacturing</option>
+                              <option value="Service & Technology">Service & Technology</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-brand-textMuted mb-2">{t("revenueLabel")} {revenue}B</label>
                           <input type="range" min="10" max="1000" value={revenue} onChange={(e) => setRevenue(Number(e.target.value))} className="w-full h-2 bg-brand-surface rounded-lg appearance-none cursor-pointer accent-brand-gold" />
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-brand-textMuted mb-2">Total Headcount: {headcount}</label>
+                          <label className="block text-sm font-semibold text-brand-textMuted mb-2">{t("headcountLabel")} {headcount}</label>
                           <input type="range" min="10" max="1000" value={headcount} onChange={(e) => setHeadcount(Number(e.target.value))} className="w-full h-2 bg-brand-surface rounded-lg appearance-none cursor-pointer accent-brand-gold" />
                         </div>
                       </div>
                     </div>
-                    <div className="bg-brand-navy border border-brand-border rounded-2xl p-8 shadow-sm relative overflow-hidden">
-                      <h3 className="text-lg font-bold text-brand-textMain mb-6 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-brand-gold" /> Expected Recovery</h3>
-                      <div className="space-y-6">
-                        <div>
-                          <p className="text-sm font-semibold text-brand-textMuted mb-1">Estimated Annual Leakage (4.8%)</p>
-                          <p className="text-3xl font-black text-brand-textMain">{formatMoney(estimatedLeakageIdr)}</p>
+                    
+                      <div className="bg-brand-navy border border-brand-border rounded-2xl p-8 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-bl-full pointer-events-none"></div>
+                        <h3 className="text-lg font-bold text-brand-textMain mb-6 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-brand-gold" /> Value Leakage Calculator</h3>
+                        
+                        <div className="space-y-5 flex-1">
+                          <div className="bg-brand-deep/50 rounded-xl p-4 border border-brand-border/50">
+                              <p className="text-xs font-semibold text-brand-textMuted mb-1 uppercase tracking-wider">{t("totalLeakage")}</p>
+                              <p className="text-2xl font-black text-brand-textMain">{formatMoney(estimatedLeakageIdr)}</p>
+                              
+                              <div className="mt-3 pt-3 border-t border-brand-border/30 space-y-2">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] text-brand-textMuted">{t("dsoLeakage")}</span>
+                                  <span className="text-[10px] font-mono text-brand-textMain">{formatMoney(dsoImpact)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] text-brand-textMuted">{t("procurementLeakage")}</span>
+                                  <span className="text-[10px] font-mono text-brand-textMain">{formatMoney(procurementImpact)}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-[10px] text-brand-textMuted">{t("inventoryLeakage")}</span>
+                                  <span className="text-[10px] font-mono text-brand-textMain">{formatMoney(inventoryImpact)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          
+                          <div className="bg-brand-surface rounded-xl p-5 border border-brand-gold/30 shadow-[0_0_15px_rgba(212,175,55,0.05)]">
+                            <p className="text-xs font-semibold text-brand-textMuted mb-1 uppercase tracking-wider">{t("recoverable")}</p>
+                            <p className="text-3xl font-black text-brand-gold text-gold-gradient">{formatMoney(recoverableSavingsIdr)}</p>
+                            <p className="text-[10px] text-brand-gold/70 mt-1 font-medium">{t("recoverableDesc")}</p>
+                          </div>
                         </div>
-                        <div className="pt-4 border-t border-brand-border">
-                          <p className="text-sm font-semibold text-brand-textMuted mb-1">Recoverable via BuildUp (68%)</p>
-                          <p className="text-4xl font-black text-brand-gold text-gold-gradient">{formatMoney(recoverableSavingsIdr)}</p>
-                        </div>
+                        
+                        <button onClick={() => setIsHealthCheckModalOpen(true)} className="mt-6 w-full py-3 bg-brand-deep hover:bg-brand-surface border border-brand-border hover:border-brand-gold transition-all text-xs font-bold rounded-xl flex items-center justify-center gap-2 text-brand-textMain">
+                           <Sparkles className="w-3.5 h-3.5 text-brand-gold" /> {t("recalculate")}
+                        </button>
                       </div>
-                    </div>
+</div>
                   </div>
-                </div>
-              </section>
+                </section>
             );
 
           case 'connectors':
@@ -206,7 +265,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
           <BuildUpLogo size="sm" variant="horizontal" showSubtitle={false} className="mb-4 opacity-50 grayscale" />
           <p className="mb-2">© 2026 BuildUp. All rights reserved.</p>
-          <p className="font-medium">AI-Native Business Transformation Intelligence.</p>
+          <p className="font-medium">{t("footerText")}</p>
         </div>
       </footer>
     </div>

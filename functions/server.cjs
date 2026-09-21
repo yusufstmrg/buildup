@@ -35,152 +35,575 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// src/services/ai.ts
-var ai_exports = {};
-__export(ai_exports, {
-  generateHealthCheckAnalysis: () => generateHealthCheckAnalysis,
-  generateStrategicAnalysis: () => generateStrategicAnalysis,
-  getAIClient: () => getAIClient
+// firebase-applet-config.json
+var firebase_applet_config_default;
+var init_firebase_applet_config = __esm({
+  "firebase-applet-config.json"() {
+    firebase_applet_config_default = {
+      projectId: "gen-lang-client-0028648175",
+      appId: "1:490067374105:web:8e301c121f04817f603a88",
+      apiKey: "AIzaSyDaLMtBGwq4XkFBQkd-n_qif98lpj6v1IQ",
+      authDomain: "gen-lang-client-0028648175.firebaseapp.com",
+      firestoreDatabaseId: "ai-studio-buildup-17db4bc9-297c-40db-a893-24ea684ff654",
+      storageBucket: "gen-lang-client-0028648175.firebasestorage.app",
+      messagingSenderId: "490067374105",
+      measurementId: "",
+      oAuthClientId: "490067374105-ohfeu30hce2b2gi6uaav1m2cp4i3dknv.apps.googleusercontent.com",
+      recaptchaSiteKey: ""
+    };
+  }
+});
+
+// src/lib/firebase-admin.ts
+var firebase_admin_exports = {};
+__export(firebase_admin_exports, {
+  adminAuth: () => adminAuth,
+  adminDb: () => adminDb
+});
+var import_app, import_auth, import_firestore, adminAuth, adminDb;
+var init_firebase_admin = __esm({
+  "src/lib/firebase-admin.ts"() {
+    "use strict";
+    import_app = require("firebase-admin/app");
+    import_auth = require("firebase-admin/auth");
+    import_firestore = require("firebase-admin/firestore");
+    init_firebase_applet_config();
+    if (!(0, import_app.getApps)().length) {
+      (0, import_app.initializeApp)({
+        projectId: firebase_applet_config_default.projectId
+      });
+    }
+    adminAuth = (0, import_auth.getAuth)();
+    adminDb = (0, import_firestore.getFirestore)((0, import_app.getApps)()[0], firebase_applet_config_default.firestoreDatabaseId || "(default)");
+  }
+});
+
+// src/db/users.ts
+var users_exports = {};
+__export(users_exports, {
+  createOrganization: () => createOrganization,
+  getAllUsers: () => getAllUsers,
+  getOrCreateUser: () => getOrCreateUser,
+  getOrganizationsForUser: () => getOrganizationsForUser
+});
+async function getOrCreateUser(uid, email, name) {
+  const userRef = adminDb.collection("users").doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) {
+    const newUser = {
+      id: uid,
+      email,
+      name,
+      createdAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    await userRef.set(newUser);
+    return newUser;
+  }
+  return userSnap.data();
+}
+async function getAllUsers() {
+  const snapshot = await adminDb.collection("users").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+async function createOrganization(orgId, name, ownerUid) {
+  const orgRef = adminDb.collection("organizations").doc(orgId);
+  const orgData = {
+    id: orgId,
+    name,
+    createdAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await orgRef.set(orgData);
+  const membershipRef = adminDb.collection("memberships").doc(`${ownerUid}_${orgId}`);
+  await membershipRef.set({
+    userId: ownerUid,
+    orgId,
+    role: "owner",
+    joinedAt: (/* @__PURE__ */ new Date()).toISOString()
+  });
+  return orgData;
+}
+async function getOrganizationsForUser(uid) {
+  const membershipsSnap = await adminDb.collection("memberships").where("userId", "==", uid).get();
+  if (membershipsSnap.empty) return [];
+  const orgIds = membershipsSnap.docs.map((doc) => doc.data().orgId);
+  const orgs = await Promise.all(
+    orgIds.map(async (orgId) => {
+      const orgDoc = await adminDb.collection("organizations").doc(orgId).get();
+      return orgDoc.data();
+    })
+  );
+  return orgs.filter(Boolean);
+}
+var init_users = __esm({
+  "src/db/users.ts"() {
+    "use strict";
+    init_firebase_admin();
+  }
+});
+
+// src/db/genome.ts
+var genome_exports = {};
+__export(genome_exports, {
+  getBusinessGenome: () => getBusinessGenome,
+  updateBusinessGenome: () => updateBusinessGenome
+});
+async function getBusinessGenome(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("genomes").orderBy("version", "desc").limit(1).get();
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].data();
+}
+async function updateBusinessGenome(orgId, updates) {
+  const current = await getBusinessGenome(orgId);
+  const newVersion = current ? current.version + 1 : 1;
+  const newGenome = {
+    orgId,
+    version: newVersion,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    businessModel: updates.businessModel || current?.businessModel || "",
+    coreWorkflows: updates.coreWorkflows || current?.coreWorkflows || [],
+    keyRisks: updates.keyRisks || current?.keyRisks || [],
+    strategicObjectives: updates.strategicObjectives || current?.strategicObjectives || [],
+    supplyChainStructure: updates.supplyChainStructure || current?.supplyChainStructure,
+    competitors: updates.competitors || current?.competitors,
+    marketPosition: updates.marketPosition || current?.marketPosition
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("genomes").doc(`v${newVersion}`).set(newGenome);
+  return newGenome;
+}
+var init_genome = __esm({
+  "src/db/genome.ts"() {
+    "use strict";
+    init_firebase_admin();
+  }
+});
+
+// src/db/commercial.ts
+var commercial_exports = {};
+__export(commercial_exports, {
+  getEntitlement: () => getEntitlement,
+  logMetering: () => logMetering
+});
+async function getEntitlement(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("entitlements").limit(1).get();
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].data();
+}
+async function logMetering(orgId, resourceType, quantity, costEstimate) {
+  const log = {
+    id: `log_${crypto.randomUUID()}`,
+    orgId,
+    resourceType,
+    quantity,
+    costEstimate,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("metering_logs").doc(log.id).set(log);
+}
+var crypto;
+var init_commercial = __esm({
+  "src/db/commercial.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/services/gateway.ts
+var gateway_exports = {};
+__export(gateway_exports, {
+  getAIClient: () => getAIClient,
+  runAITask: () => runAITask
 });
 function getAIClient() {
   if (!aiClient) {
     const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT || process.env.GCP_PROJECT || "gen-lang-client-0028648175";
     const location = process.env.GOOGLE_CLOUD_LOCATION || "asia-southeast1";
     if (process.env.GEMINI_API_KEY) {
-      console.log("Initializing BuildUp AI Gateway via API Key.");
       aiClient = new import_genai.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     } else {
-      console.log(`Initializing BuildUp AI Gateway via Vertex AI on project: ${projectId}`);
       aiClient = new import_genai.GoogleGenAI({
-        vertexai: {
-          project: projectId,
-          location
-        }
+        vertexai: true,
+        project: projectId,
+        location
       });
     }
   }
   return aiClient;
 }
-async function generateStrategicAnalysis(scenario, companyContext) {
+async function runAITask(orgId, taskType, payload) {
+  const startTime = Date.now();
   const ai = getAIClient();
-  const prompt = `
-You are the elite "BuildUp AI Executive", an uncompromising, razor-sharp Business Intelligence engine for a mid-market conglomerate.
-Analyze the following business scenario and provide a highly structured, actionable strategic response.
-Focus ruthlessly on EBITDA expansion, working capital optimization, cash flow protection, and compliance.
-Do not use fluff or generic advice. Be specific, mathematical, and decisive.
-
-Company Context:
-Industry: ${companyContext.industry || "Unknown"}
-Revenue: ${companyContext.revenue || "Unknown"}
-Employees: ${companyContext.employeeCount || "Unknown"}
-
-User Scenario / Query:
-"${scenario}"
+  const genome = await getBusinessGenome(orgId);
+  const model = taskType === "strategic_analysis" || taskType === "decision_proposal" ? "gemini-2.5-pro" : "gemini-2.5-flash";
+  const systemContext = `
+You are the elite "BuildUp AI Executive".
+Company Context (from Business Genome):
+Business Model: ${genome?.businessModel || "Unknown"}
+Core Workflows: ${genome?.coreWorkflows?.join(", ") || "Unknown"}
+Strategic Objectives: ${genome?.strategicObjectives?.join(", ") || "Unknown"}
+Key Risks: ${genome?.keyRisks?.join(", ") || "Unknown"}
 `;
+  let prompt = "";
+  let responseSchema = null;
+  if (taskType === "strategic_analysis") {
+    prompt = `${systemContext}
+Analyze scenario: ${payload.scenario}`;
+    responseSchema = {
+      type: import_genai.Type.OBJECT,
+      properties: {
+        executiveSummary: { type: import_genai.Type.STRING },
+        financialImpact: {
+          type: import_genai.Type.OBJECT,
+          properties: {
+            ebitdaImpact: { type: import_genai.Type.STRING },
+            cashflowImpact: { type: import_genai.Type.STRING }
+          }
+        },
+        recommendedActions: {
+          type: import_genai.Type.ARRAY,
+          items: {
+            type: import_genai.Type.OBJECT,
+            properties: {
+              department: { type: import_genai.Type.STRING },
+              action: { type: import_genai.Type.STRING },
+              priority: { type: import_genai.Type.STRING }
+            }
+          }
+        }
+      }
+    };
+  } else if (taskType === "health_check") {
+    prompt = `${systemContext}
+Perform health check on this data:
+${payload.fileData}`;
+    responseSchema = {
+      type: import_genai.Type.OBJECT,
+      properties: {
+        score: { type: import_genai.Type.INTEGER },
+        findings: { type: import_genai.Type.ARRAY, items: { type: import_genai.Type.STRING } },
+        rootCauses: {
+          type: import_genai.Type.ARRAY,
+          items: {
+            type: import_genai.Type.OBJECT,
+            properties: {
+              symptom: { type: import_genai.Type.STRING },
+              cause: { type: import_genai.Type.STRING },
+              driver: { type: import_genai.Type.STRING },
+              confidence: { type: import_genai.Type.NUMBER }
+            }
+          }
+        }
+      }
+    };
+  } else if (taskType === "decision_proposal") {
+    prompt = `${systemContext}
+Propose structured decision for: ${payload.problem}`;
+    responseSchema = {
+      type: import_genai.Type.OBJECT,
+      properties: {
+        title: { type: import_genai.Type.STRING },
+        domain: { type: import_genai.Type.STRING },
+        problemContext: { type: import_genai.Type.STRING },
+        recommendation: { type: import_genai.Type.STRING },
+        confidence: { type: import_genai.Type.NUMBER },
+        approvalAuthority: { type: import_genai.Type.STRING },
+        options: {
+          type: import_genai.Type.ARRAY,
+          items: {
+            type: import_genai.Type.OBJECT,
+            properties: {
+              label: { type: import_genai.Type.STRING },
+              financialImpact: { type: import_genai.Type.STRING },
+              risk: { type: import_genai.Type.STRING },
+              effort: { type: import_genai.Type.STRING }
+            }
+          }
+        }
+      }
+    };
+  }
+  let result = null;
+  let status = "success";
+  let usage = { promptTokens: 0, completionTokens: 0 };
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model,
       contents: prompt,
       config: {
         temperature: 0.2,
         responseMimeType: "application/json",
-        responseSchema: {
-          type: import_genai.Type.OBJECT,
-          properties: {
-            executiveSummary: {
-              type: import_genai.Type.STRING,
-              description: "A 2-3 sentence ruthless summary of the situation and the required strategic posture."
-            },
-            financialImpact: {
-              type: import_genai.Type.OBJECT,
-              properties: {
-                ebitdaImpact: { type: import_genai.Type.STRING, description: "Estimated impact on EBITDA (e.g., 'Risk of 2.4% contraction' or 'Potential $1.2M gain')" },
-                cashflowImpact: { type: import_genai.Type.STRING, description: "Estimated impact on Cash Flow and Working Capital" }
-              },
-              required: ["ebitdaImpact", "cashflowImpact"]
-            },
-            recommendedActions: {
-              type: import_genai.Type.ARRAY,
-              items: {
-                type: import_genai.Type.OBJECT,
-                properties: {
-                  department: { type: import_genai.Type.STRING, description: "e.g., Procurement, Finance, Operations" },
-                  action: { type: import_genai.Type.STRING, description: "The specific, immediate action to take" },
-                  priority: { type: import_genai.Type.STRING, description: "CRITICAL, HIGH, or MEDIUM" }
-                },
-                required: ["department", "action", "priority"]
-              },
-              description: "3-5 immediate operational directives."
-            },
-            riskAssessment: {
-              type: import_genai.Type.ARRAY,
-              items: {
-                type: import_genai.Type.OBJECT,
-                properties: {
-                  risk: { type: import_genai.Type.STRING },
-                  severity: { type: import_genai.Type.STRING, description: "HIGH, MEDIUM, LOW" }
-                },
-                required: ["risk", "severity"]
-              }
-            }
-          },
-          required: ["executiveSummary", "financialImpact", "recommendedActions", "riskAssessment"]
-        }
+        responseSchema
       }
     });
     if (response.text) {
-      return JSON.parse(response.text);
-    }
-    throw new Error("Failed to generate strategic analysis.");
-  } catch (error) {
-    console.error("AI Gateway Execution Error:", error);
-    throw error;
-  }
-}
-async function generateHealthCheckAnalysis(fileData) {
-  const ai = getAIClient();
-  const prompt = `
-You are the elite "BuildUp AI Executive", an uncompromising Business Intelligence engine.
-A prospective client has uploaded their financial data or context file for a 'Health Check'.
-Here is the extracted text from their file:
----
-${fileData.substring(0, 5e3)}
----
-Analyze this data ruthlessly. Estimate a 'Business Health Score' from 0 to 100 based on standard metrics (liquidity, profitability, efficiency).
-If the data is unclear or insufficient, make a highly educated, aggressive guess assuming typical SME inefficiencies, and give a score between 45 and 75.
-Also, provide 3 key findings (value leakages) and 1 immediate recommendation.
-
-Return ONLY a JSON object with this exact structure (no markdown formatting around it, just raw JSON):
-{
-  "score": 68,
-  "findings": ["Finding 1", "Finding 2", "Finding 3"],
-  "recommendation": "Recommendation text here"
-}
-`;
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 0.1,
-        responseMimeType: "application/json"
+      result = JSON.parse(response.text);
+      if (response.usageMetadata) {
+        usage.promptTokens = response.usageMetadata.promptTokenCount || 0;
+        usage.completionTokens = response.usageMetadata.candidatesTokenCount || 0;
       }
-    });
-    if (response.text) {
-      return JSON.parse(response.text);
+    } else {
+      throw new Error("Empty response from model");
     }
-    throw new Error("Failed to generate health check analysis.");
   } catch (error) {
-    console.error("AI Health Check Error:", error);
+    status = "error";
+    console.error("Gateway AI Error:", error);
     throw error;
+  } finally {
+    const runId = `run_${crypto2.randomUUID()}`;
+    const agentRun = {
+      id: runId,
+      orgId,
+      taskType,
+      modelUsed: model,
+      promptTokens: usage.promptTokens,
+      completionTokens: usage.completionTokens,
+      costEstimate: 0,
+      // In production, calculate based on model pricing
+      durationMs: Date.now() - startTime,
+      status,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    adminDb.collection("organizations").doc(orgId).collection("agent_runs").doc(runId).set(agentRun).catch(console.error);
+    const { logMetering: logMetering2 } = await Promise.resolve().then(() => (init_commercial(), commercial_exports));
+    logMetering2(orgId, "AI_Tokens", usage.promptTokens + usage.completionTokens, 0).catch(console.error);
   }
+  return result;
 }
-var import_genai, aiClient;
-var init_ai = __esm({
-  "src/services/ai.ts"() {
+var import_genai, crypto2, aiClient;
+var init_gateway = __esm({
+  "src/services/gateway.ts"() {
     "use strict";
     import_genai = require("@google/genai");
+    init_genome();
+    init_firebase_admin();
+    crypto2 = __toESM(require("crypto"), 1);
     aiClient = null;
+  }
+});
+
+// src/db/diagnostics.ts
+var diagnostics_exports = {};
+__export(diagnostics_exports, {
+  getDiagnostics: () => getDiagnostics,
+  saveDiagnostic: () => saveDiagnostic
+});
+async function saveDiagnostic(orgId, data) {
+  const id = `diag_${crypto3.randomUUID()}`;
+  const diagnostic = {
+    ...data,
+    id,
+    orgId,
+    createdAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("diagnostics").doc(id).set(diagnostic);
+  return diagnostic;
+}
+async function getDiagnostics(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("diagnostics").orderBy("createdAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var crypto3;
+var init_diagnostics = __esm({
+  "src/db/diagnostics.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto3 = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/db/metrics.ts
+var metrics_exports = {};
+__export(metrics_exports, {
+  getMetric: () => getMetric,
+  getMetrics: () => getMetrics,
+  upsertMetric: () => upsertMetric
+});
+async function upsertMetric(orgId, metric) {
+  const fullMetric = {
+    ...metric,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("metrics").doc(metric.id).set(fullMetric);
+  return fullMetric;
+}
+async function getMetrics(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("metrics").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+async function getMetric(orgId, metricId) {
+  const doc = await adminDb.collection("organizations").doc(orgId).collection("metrics").doc(metricId).get();
+  if (!doc.exists) return null;
+  return doc.data();
+}
+var init_metrics = __esm({
+  "src/db/metrics.ts"() {
+    "use strict";
+    init_firebase_admin();
+  }
+});
+
+// src/db/evidence.ts
+var evidence_exports = {};
+__export(evidence_exports, {
+  getAllEvidence: () => getAllEvidence,
+  getEvidenceRecord: () => getEvidenceRecord,
+  uploadEvidenceRecord: () => uploadEvidenceRecord
+});
+async function uploadEvidenceRecord(orgId, evidence) {
+  const id = `evd_${crypto4.randomUUID()}`;
+  const fullEvidence = {
+    ...evidence,
+    id,
+    orgId,
+    uploadedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("evidence").doc(id).set(fullEvidence);
+  return fullEvidence;
+}
+async function getEvidenceRecord(orgId, evidenceId) {
+  const doc = await adminDb.collection("organizations").doc(orgId).collection("evidence").doc(evidenceId).get();
+  if (!doc.exists) return null;
+  return doc.data();
+}
+async function getAllEvidence(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("evidence").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var crypto4;
+var init_evidence = __esm({
+  "src/db/evidence.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto4 = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/db/decisions.ts
+var decisions_exports = {};
+__export(decisions_exports, {
+  createDecision: () => createDecision,
+  getDecisions: () => getDecisions,
+  updateDecisionStatus: () => updateDecisionStatus
+});
+async function createDecision(orgId, data) {
+  const id = `dec_${crypto5.randomUUID()}`;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const decision = {
+    ...data,
+    id,
+    orgId,
+    status: "Pending",
+    createdAt: now,
+    updatedAt: now
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("decisions").doc(id).set(decision);
+  return decision;
+}
+async function updateDecisionStatus(orgId, decisionId, status) {
+  await adminDb.collection("organizations").doc(orgId).collection("decisions").doc(decisionId).update({
+    status,
+    updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}
+async function getDecisions(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("decisions").orderBy("createdAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var crypto5;
+var init_decisions = __esm({
+  "src/db/decisions.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto5 = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/db/initiatives.ts
+var initiatives_exports = {};
+__export(initiatives_exports, {
+  createInitiative: () => createInitiative,
+  getInitiatives: () => getInitiatives
+});
+async function createInitiative(orgId, data) {
+  const id = `init_${crypto6.randomUUID()}`;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const initiative = {
+    ...data,
+    id,
+    orgId,
+    status: "Planning",
+    tasks: [],
+    createdAt: now,
+    updatedAt: now
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("initiatives").doc(id).set(initiative);
+  return initiative;
+}
+async function getInitiatives(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("initiatives").orderBy("createdAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var crypto6;
+var init_initiatives = __esm({
+  "src/db/initiatives.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto6 = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/db/outcomes.ts
+var outcomes_exports = {};
+__export(outcomes_exports, {
+  getOutcomes: () => getOutcomes,
+  recordOutcome: () => recordOutcome
+});
+async function recordOutcome(orgId, data) {
+  const id = `out_${crypto7.randomUUID()}`;
+  const outcome = {
+    ...data,
+    id,
+    orgId,
+    recordedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  await adminDb.collection("organizations").doc(orgId).collection("outcomes").doc(id).set(outcome);
+  return outcome;
+}
+async function getOutcomes(orgId) {
+  const snapshot = await adminDb.collection("organizations").doc(orgId).collection("outcomes").orderBy("recordedAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var crypto7;
+var init_outcomes = __esm({
+  "src/db/outcomes.ts"() {
+    "use strict";
+    init_firebase_admin();
+    crypto7 = __toESM(require("crypto"), 1);
+  }
+});
+
+// src/db/knowledge.ts
+var knowledge_exports = {};
+__export(knowledge_exports, {
+  getBenchmarks: () => getBenchmarks,
+  getKnowledgeGraph: () => getKnowledgeGraph
+});
+async function getKnowledgeGraph() {
+  const nodesSnap = await adminDb.collection("knowledge_nodes").get();
+  const edgesSnap = await adminDb.collection("knowledge_edges").get();
+  return {
+    nodes: nodesSnap.docs.map((d) => d.data()),
+    edges: edgesSnap.docs.map((d) => d.data())
+  };
+}
+async function getBenchmarks(industry) {
+  const snapshot = await adminDb.collection("benchmarks").where("industry", "==", industry).get();
+  return snapshot.docs.map((doc) => doc.data());
+}
+var init_knowledge = __esm({
+  "src/db/knowledge.ts"() {
+    "use strict";
+    init_firebase_admin();
   }
 });
 
@@ -192,33 +615,8 @@ __export(server_exports, {
 module.exports = __toCommonJS(server_exports);
 var import_express = __toESM(require("express"), 1);
 
-// src/lib/firebase-admin.ts
-var import_app = require("firebase-admin/app");
-var import_auth = require("firebase-admin/auth");
-
-// firebase-applet-config.json
-var firebase_applet_config_default = {
-  projectId: "gen-lang-client-0028648175",
-  appId: "1:490067374105:web:8e301c121f04817f603a88",
-  apiKey: "AIzaSyDaLMtBGwq4XkFBQkd-n_qif98lpj6v1IQ",
-  authDomain: "gen-lang-client-0028648175.firebaseapp.com",
-  firestoreDatabaseId: "ai-studio-buildup-17db4bc9-297c-40db-a893-24ea684ff654",
-  storageBucket: "gen-lang-client-0028648175.firebasestorage.app",
-  messagingSenderId: "490067374105",
-  measurementId: "",
-  oAuthClientId: "490067374105-ohfeu30hce2b2gi6uaav1m2cp4i3dknv.apps.googleusercontent.com",
-  recaptchaSiteKey: ""
-};
-
-// src/lib/firebase-admin.ts
-if (!(0, import_app.getApps)().length) {
-  (0, import_app.initializeApp)({
-    projectId: firebase_applet_config_default.projectId
-  });
-}
-var adminAuth = (0, import_auth.getAuth)();
-
 // src/middleware/auth.ts
+init_firebase_admin();
 var requireAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -234,93 +632,27 @@ var requireAuth = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };
-
-// src/db/index.ts
-var import_node_postgres = require("drizzle-orm/node-postgres");
-var import_pg = require("pg");
-
-// src/db/schema.ts
-var schema_exports = {};
-__export(schema_exports, {
-  healthChecks: () => healthChecks,
-  organizations: () => organizations,
-  users: () => users
-});
-var import_pg_core = require("drizzle-orm/pg-core");
-var users = (0, import_pg_core.pgTable)("users", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  uid: (0, import_pg_core.text)("uid").notNull().unique(),
-  // Firebase Auth UID
-  email: (0, import_pg_core.text)("email").notNull(),
-  name: (0, import_pg_core.text)("name"),
-  companyName: (0, import_pg_core.text)("company_name"),
-  role: (0, import_pg_core.text)("role").default("user"),
-  // 'user', 'admin'
-  plan: (0, import_pg_core.text)("plan").default("Free"),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
-});
-var organizations = (0, import_pg_core.pgTable)("organizations", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  name: (0, import_pg_core.text)("name").notNull(),
-  industry: (0, import_pg_core.text)("industry"),
-  revenue: (0, import_pg_core.text)("revenue"),
-  employeeCount: (0, import_pg_core.integer)("employee_count"),
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
-});
-var healthChecks = (0, import_pg_core.pgTable)("health_checks", {
-  id: (0, import_pg_core.serial)("id").primaryKey(),
-  userId: (0, import_pg_core.integer)("user_id").references(() => users.id).notNull(),
-  score: (0, import_pg_core.integer)("score").notNull(),
-  dsoDays: (0, import_pg_core.integer)("dso_days"),
-  revenueLeakage: (0, import_pg_core.text)("revenue_leakage"),
-  status: (0, import_pg_core.text)("status").default("completed"),
-  // completed, pending
-  createdAt: (0, import_pg_core.timestamp)("created_at").defaultNow()
-});
-
-// src/db/index.ts
-var createPool = () => {
-  if (!global._postgresPool) {
-    global._postgresPool = new import_pg.Pool({
-      host: process.env.SQL_HOST,
-      user: process.env.SQL_USER,
-      password: process.env.SQL_PASSWORD,
-      database: process.env.SQL_DB_NAME,
-      max: 10,
-      connectionTimeoutMillis: 15e3
-    });
-    global._postgresPool.on("error", (err) => {
-      console.error("Unexpected error on idle SQL pool client:", err);
-    });
-  }
-  return global._postgresPool;
+var requireAdmin = async (req, res, next) => {
+  await requireAuth(req, res, async () => {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    try {
+      const { adminDb: adminDb2 } = await Promise.resolve().then(() => (init_firebase_admin(), firebase_admin_exports));
+      const userSnap = await adminDb2.collection("users").doc(req.user.uid).get();
+      if (!userSnap.exists || userSnap.data()?.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden: Admin access required" });
+      }
+      next();
+    } catch (err) {
+      console.error("Admin check failed:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
 };
-var pool = createPool();
-var db = (0, import_node_postgres.drizzle)(pool, { schema: schema_exports });
-
-// src/db/users.ts
-async function getOrCreateUser(uid, email, name) {
-  try {
-    const result = await db.insert(users).values({ uid, email, name: name || "BuildUp User" }).onConflictDoUpdate({
-      target: users.uid,
-      set: { email }
-    }).returning();
-    return result[0];
-  } catch (error) {
-    console.error("Database query failed:", error);
-    throw new Error(`Database query failed. Please try again later. ${error?.message || ""}`);
-  }
-}
-async function getAllUsers() {
-  try {
-    return await db.select().from(users);
-  } catch (error) {
-    console.error("Database query failed:", error);
-    throw new Error(`Database query failed. ${error?.message || ""}`);
-  }
-}
 
 // server.ts
+init_users();
 var import_https = require("firebase-functions/v2/https");
 var app = (0, import_express.default)();
 app.use(import_express.default.json());
@@ -330,43 +662,54 @@ app.get("/api/health", (req, res) => {
 app.post("/api/auth/sync", requireAuth, async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
-    const user = await getOrCreateUser(req.user.uid, req.user.email || "", req.user.name);
+    const user = await getOrCreateUser(req.user.uid, req.user.email || "", req.user.name || "");
     res.json({ success: true, user });
   } catch (error) {
     console.error("User sync error:", error);
     res.status(500).json({ error: error.message });
   }
 });
-app.get("/api/admin/users", requireAuth, async (req, res) => {
+app.get("/api/admin/users", requireAdmin, async (req, res) => {
   try {
-    const users2 = await getAllUsers();
-    res.json({ users: users2 });
+    const users = await getAllUsers();
+    res.json({ users });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-app.post("/api/ai/strategic-analysis", async (req, res) => {
+app.post("/api/ai/strategic-analysis", requireAuth, async (req, res) => {
   try {
-    const { scenario, companyContext } = req.body;
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { scenario } = req.body;
     if (!scenario) {
       return res.status(400).json({ error: "Scenario is required." });
     }
-    const { generateStrategicAnalysis: generateStrategicAnalysis2 } = await Promise.resolve().then(() => (init_ai(), ai_exports));
-    const analysis = await generateStrategicAnalysis2(scenario, companyContext || {});
+    const { runAITask: runAITask2 } = await Promise.resolve().then(() => (init_gateway(), gateway_exports));
+    const analysis = await runAITask2(orgId, "strategic_analysis", { scenario });
     res.json({ success: true, analysis });
   } catch (error) {
     console.error("AI Generation error:", error);
     res.status(500).json({ error: error.message || "Failed to generate AI analysis." });
   }
 });
-app.post("/api/ai/health-check", async (req, res) => {
+app.post("/api/ai/health-check", requireAuth, async (req, res) => {
   try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
     const { fileData } = req.body;
     if (!fileData) {
       return res.status(400).json({ error: "File data is required." });
     }
-    const { generateHealthCheckAnalysis: generateHealthCheckAnalysis2 } = await Promise.resolve().then(() => (init_ai(), ai_exports));
-    const analysis = await generateHealthCheckAnalysis2(fileData);
+    const { runAITask: runAITask2 } = await Promise.resolve().then(() => (init_gateway(), gateway_exports));
+    const analysis = await runAITask2(orgId, "health_check", { fileData });
+    const { saveDiagnostic: saveDiagnostic2 } = await Promise.resolve().then(() => (init_diagnostics(), diagnostics_exports));
+    await saveDiagnostic2(orgId, {
+      type: "health_check",
+      score: analysis.score,
+      findings: analysis.findings,
+      rootCauses: analysis.rootCauses || []
+    });
     res.json({ success: true, analysis });
   } catch (error) {
     console.error("AI Generation error:", error);
@@ -374,6 +717,169 @@ app.post("/api/ai/health-check", async (req, res) => {
   }
 });
 var buildup_api = (0, import_https.onRequest)({ region: "asia-southeast1", memory: "1GiB" }, app);
+async function getOrgIdForRequest(uid) {
+  const { getOrganizationsForUser: getOrganizationsForUser2 } = await Promise.resolve().then(() => (init_users(), users_exports));
+  const orgs = await getOrganizationsForUser2(uid);
+  return orgs.length > 0 ? orgs[0].id : null;
+}
+app.get("/api/genome", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getBusinessGenome: getBusinessGenome2 } = await Promise.resolve().then(() => (init_genome(), genome_exports));
+    const genome = await getBusinessGenome2(orgId);
+    res.json({ genome });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/metrics", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getMetrics: getMetrics2 } = await Promise.resolve().then(() => (init_metrics(), metrics_exports));
+    const metrics = await getMetrics2(orgId);
+    res.json({ metrics });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/connectors", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { adminDb: adminDb2 } = await Promise.resolve().then(() => (init_firebase_admin(), firebase_admin_exports));
+    const snapshot = await adminDb2.collection("organizations").doc(orgId).collection("connectors").get();
+    const connectors = snapshot.docs.map((doc) => doc.data());
+    res.json({ connectors });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.post("/api/evidence", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { uploadEvidenceRecord: uploadEvidenceRecord2 } = await Promise.resolve().then(() => (init_evidence(), evidence_exports));
+    const evidence = await uploadEvidenceRecord2(orgId, req.body);
+    res.json({ evidence });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/diagnostics", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getDiagnostics: getDiagnostics2 } = await Promise.resolve().then(() => (init_diagnostics(), diagnostics_exports));
+    const diagnostics = await getDiagnostics2(orgId);
+    res.json({ diagnostics });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.post("/api/decisions/propose", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { problem } = req.body;
+    if (!problem) return res.status(400).json({ error: "Problem context is required" });
+    const { runAITask: runAITask2 } = await Promise.resolve().then(() => (init_gateway(), gateway_exports));
+    const proposal = await runAITask2(orgId, "decision_proposal", { problem });
+    const { createDecision: createDecision2 } = await Promise.resolve().then(() => (init_decisions(), decisions_exports));
+    const decision = await createDecision2(orgId, proposal);
+    res.json({ success: true, decision });
+  } catch (error) {
+    console.error("Decision proposal error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/decisions", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getDecisions: getDecisions2 } = await Promise.resolve().then(() => (init_decisions(), decisions_exports));
+    const decisions = await getDecisions2(orgId);
+    res.json({ decisions });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.post("/api/initiatives", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { createInitiative: createInitiative2 } = await Promise.resolve().then(() => (init_initiatives(), initiatives_exports));
+    const initiative = await createInitiative2(orgId, req.body);
+    res.json({ success: true, initiative });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/initiatives", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getInitiatives: getInitiatives2 } = await Promise.resolve().then(() => (init_initiatives(), initiatives_exports));
+    const initiatives = await getInitiatives2(orgId);
+    res.json({ initiatives });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.post("/api/outcomes/record", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { recordOutcome: recordOutcome2 } = await Promise.resolve().then(() => (init_outcomes(), outcomes_exports));
+    const outcome = await recordOutcome2(orgId, req.body);
+    res.json({ success: true, outcome });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/outcomes", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getOutcomes: getOutcomes2 } = await Promise.resolve().then(() => (init_outcomes(), outcomes_exports));
+    const outcomes = await getOutcomes2(orgId);
+    res.json({ outcomes });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/knowledge", requireAuth, async (req, res) => {
+  try {
+    const { getKnowledgeGraph: getKnowledgeGraph2 } = await Promise.resolve().then(() => (init_knowledge(), knowledge_exports));
+    const graph = await getKnowledgeGraph2();
+    res.json({ graph });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/benchmarks", requireAuth, async (req, res) => {
+  try {
+    const industry = req.query.industry;
+    if (!industry) return res.status(400).json({ error: "Industry query param required" });
+    const { getBenchmarks: getBenchmarks2 } = await Promise.resolve().then(() => (init_knowledge(), knowledge_exports));
+    const benchmarks = await getBenchmarks2(industry);
+    res.json({ benchmarks });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/billing/entitlement", requireAuth, async (req, res) => {
+  try {
+    const orgId = await getOrgIdForRequest(req.user.uid);
+    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const { getEntitlement: getEntitlement2 } = await Promise.resolve().then(() => (init_commercial(), commercial_exports));
+    const entitlement = await getEntitlement2(orgId);
+    res.json({ entitlement });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   buildup_api

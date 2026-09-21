@@ -74,7 +74,7 @@ var init_firebase_admin = __esm({
       });
     }
     adminAuth = (0, import_auth.getAuth)();
-    adminDb = (0, import_firestore.getFirestore)();
+    adminDb = (0, import_firestore.getFirestore)((0, import_app.getApps)()[0], firebase_applet_config_default.firestoreDatabaseId || "(default)");
   }
 });
 
