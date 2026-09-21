@@ -12,9 +12,10 @@ import {
   Activity, 
   DollarSign, 
   Clock, 
-  Layers,
+  Search,
   ArrowRight,
-  Filter
+  Filter,
+  BarChart3
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useBuildUp } from '../context/BuildUpContext';
