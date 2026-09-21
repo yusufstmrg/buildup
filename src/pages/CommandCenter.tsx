@@ -21,18 +21,9 @@ import { useBuildUp } from '../context/BuildUpContext';
 import { Link } from 'react-router-dom';
 import { PremiumLock } from '../components/PremiumLock';
 
-const chartData = [
-  { week: 'W1', revenue: 4200, margin: 1250, cash: 3100 },
-  { week: 'W2', revenue: 4800, margin: 1420, cash: 3050 },
-  { week: 'W3', revenue: 4600, margin: 1380, cash: 2900 },
-  { week: 'W4', revenue: 5100, margin: 1600, cash: 3400 },
-  { week: 'W5', revenue: 5400, margin: 1720, cash: 3650 },
-  { week: 'W6', revenue: 5900, margin: 1890, cash: 3950 },
-  { week: 'W7', revenue: 6400, margin: 2150, cash: 4300 },
-];
-
 export function CommandCenter() {
   const { 
+    user,
     overallScore, 
     setIsHealthCheckModalOpen, 
     decisionObjects, 
@@ -41,6 +32,16 @@ export function CommandCenter() {
     formatMoney,
     currency
   } = useBuildUp();
+
+  const chartData = user?.isSandbox ? [
+    { week: 'W1', revenue: 4200, margin: 1250, cash: 3100 },
+    { week: 'W2', revenue: 4800, margin: 1420, cash: 3050 },
+    { week: 'W3', revenue: 4600, margin: 1380, cash: 2900 },
+    { week: 'W4', revenue: 5100, margin: 1600, cash: 3400 },
+    { week: 'W5', revenue: 5400, margin: 1720, cash: 3650 },
+    { week: 'W6', revenue: 5900, margin: 1890, cash: 3950 },
+    { week: 'W7', revenue: 6400, margin: 2150, cash: 4300 },
+  ] : [];
 
   const [activeGraphNode, setActiveGraphNode] = useState<string>('Supplier');
 
@@ -87,17 +88,17 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">BuildUp Score™</div>
           <div className="text-3xl font-black text-gold-gradient tracking-tight mb-2">
-            {overallScore}<span className="text-sm font-normal text-brand-textMuted">/100</span>
+            {user?.isSandbox ? overallScore : '--'}<span className="text-sm font-normal text-brand-textMuted">/100</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> +4 pts in 30d
+              <ArrowUpRight className="w-3.5 h-3.5" /> {user?.isSandbox ? '+4 pts in 30d' : 'Needs Data'}
             </span>
             <button 
               onClick={() => setIsHealthCheckModalOpen(true)}
               className="text-[11px] text-brand-gold hover:underline font-bold"
             >
-              Recalculate →
+              Recalculate ↗
             </button>
           </div>
         </div>
@@ -106,11 +107,11 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Working Capital Freed</div>
           <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
-            {formatMoney(1850000000, 119000)}
+            {user?.isSandbox ? formatMoney(1850000000, 119000) : formatMoney(0, 0)}
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> DSO -17 Days
+              <ArrowUpRight className="w-3.5 h-3.5" /> {user?.isSandbox ? 'DSO -17 Days' : 'DSO -- Days'}
             </span>
             <span className="text-brand-textMuted text-[11px]">AI CFO Active</span>
           </div>
@@ -120,14 +121,14 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Active AI Workflows</div>
           <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
-            18 / 18 <span className="text-xs font-normal text-brand-textMuted">Autonomous</span>
+            {user?.isSandbox ? '18 / 18' : '0 / 18'} <span className="text-xs font-normal text-brand-textMuted">Autonomous</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> 99.4% SLA
+              <CheckCircle2 className="w-3.5 h-3.5" /> {user?.isSandbox ? '99.4% SLA' : '--% SLA'}
             </span>
             <Link to="/workforce" className="text-[11px] text-brand-gold hover:underline font-bold">
-              Inspect →
+              Inspect ↗
             </Link>
           </div>
         </div>
@@ -136,14 +137,14 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Recoverable Leakage</div>
           <div className="text-2xl font-black text-emerald-400 tracking-tight mb-2">
-            {formatMoney(1450000000, 96000)}
+            {user?.isSandbox ? formatMoney(1450000000, 96000) : formatMoney(0, 0)}
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-yellow-400 font-semibold flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" /> 3 Bottlenecks
+              <AlertTriangle className="w-3.5 h-3.5" /> {user?.isSandbox ? '3 Bottlenecks' : '0 Bottlenecks'}
             </span>
             <Link to="/diagnostics" className="text-[11px] text-brand-gold hover:underline font-bold">
-              X-Ray Map →
+              X-Ray Map ↗
             </Link>
           </div>
         </div>
@@ -172,14 +173,14 @@ export function CommandCenter() {
         {/* Graph Nodes */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
           {[
-            { id: 'Customer', label: 'Customer', metric: '2,840 Active', status: 'normal' },
-            { id: 'SalesOrder', label: 'Sales Order', metric: 'Rp 48.2B YTD', status: 'normal' },
-            { id: 'Revenue', label: 'Revenue', metric: '+18.4% YoY', status: 'normal' },
-            { id: 'Inventory', label: 'Inventory', metric: '14d Turn', status: 'normal' },
-            { id: 'Supplier', label: 'Supplier', metric: '65% Top 2 (Alert)', status: 'alert' },
-            { id: 'Purchase', label: 'Purchase Order', metric: 'RFQ Active', status: 'normal' },
-            { id: 'Cash', label: 'Cash / DSO', metric: '61d Drag', status: 'warning' },
-            { id: 'Margin', label: 'Margin / Profit', metric: '14.2% Net', status: 'normal' },
+            { id: 'Customer', label: 'Customer', metric: user?.isSandbox ? '2,840 Active' : '0 Active', status: user?.isSandbox ? 'normal' : 'normal' },
+            { id: 'SalesOrder', label: 'Sales Order', metric: user?.isSandbox ? 'Rp 48.2B YTD' : 'Rp 0', status: user?.isSandbox ? 'normal' : 'normal' },
+            { id: 'Revenue', label: 'Revenue', metric: user?.isSandbox ? '+18.4% YoY' : '-- YoY', status: user?.isSandbox ? 'normal' : 'normal' },
+            { id: 'Inventory', label: 'Inventory', metric: user?.isSandbox ? '14d Turn' : '--d Turn', status: user?.isSandbox ? 'normal' : 'normal' },
+            { id: 'Supplier', label: 'Supplier', metric: user?.isSandbox ? '65% Top 2 (Alert)' : 'Needs Data', status: user?.isSandbox ? 'alert' : 'normal' },
+            { id: 'Purchase', label: 'Purchase Order', metric: user?.isSandbox ? 'RFQ Active' : 'No Data', status: user?.isSandbox ? 'normal' : 'normal' },
+            { id: 'Cash', label: 'Cash / DSO', metric: user?.isSandbox ? '61d Drag' : '--d Drag', status: user?.isSandbox ? 'warning' : 'normal' },
+            { id: 'Margin', label: 'Margin / Profit', metric: user?.isSandbox ? '14.2% Net' : '--% Net', status: user?.isSandbox ? 'normal' : 'normal' },
           ].map((n) => {
             const isSelected = activeGraphNode === n.id;
             return (
@@ -249,28 +250,36 @@ export function CommandCenter() {
           </div>
 
           <div className="h-72 w-full mt-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="goldArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="emeraldArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1E3550" vertical={false} />
-                <XAxis dataKey="week" stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#0B1726', borderColor: '#1E3550', borderRadius: '12px', fontSize: '12px' }}
-                />
-                <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2.5} fillOpacity={1} fill="url(#goldArea)" />
-                <Area type="monotone" dataKey="cash" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#emeraldArea)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="goldArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="emeraldArea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E3550" vertical={false} />
+                  <XAxis dataKey="week" stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="#64748b" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0B1726', borderColor: '#1E3550', borderRadius: '12px', fontSize: '12px' }}
+                  />
+                  <Area type="monotone" dataKey="revenue" stroke="#D4AF37" strokeWidth={2.5} fillOpacity={1} fill="url(#goldArea)" />
+                  <Area type="monotone" dataKey="cash" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#emeraldArea)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-brand-textMuted border-2 border-dashed border-brand-border rounded-xl">
+                <BarChart3 className="w-8 h-8 mb-2 opacity-50" />
+                <p className="text-sm font-semibold">Menunggu Integrasi Data</p>
+                <p className="text-xs max-w-[250px] text-center mt-1">Sistem belum menerima aliran data historis Anda. Hubungkan ERP Anda untuk melihat statistik.</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -290,50 +299,58 @@ export function CommandCenter() {
             </div>
 
             <div className="space-y-3">
-              {decisionObjects.slice(0, 2).map((dec) => (
-                <div key={dec.id} className="p-4 rounded-xl bg-brand-navy border border-brand-border space-y-2.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-brand-gold">{dec.agent}</span>
-                    <span className="text-[10px] text-brand-textMuted">{dec.timestamp}</span>
-                  </div>
-                  
-                  <h3 className="text-xs font-bold text-brand-textMain leading-snug">
-                    {dec.title}
-                  </h3>
+              {decisionObjects.length > 0 ? (
+                decisionObjects.slice(0, 2).map((dec) => (
+                  <div key={dec.id} className="p-4 rounded-xl bg-brand-navy border border-brand-border space-y-2.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-brand-gold">{dec.agent}</span>
+                      <span className="text-[10px] text-brand-textMuted">{dec.timestamp}</span>
+                    </div>
+                    
+                    <h3 className="text-xs font-bold text-brand-textMain leading-snug">
+                      {dec.title}
+                    </h3>
 
-                  <p className="text-[11px] text-brand-textMuted leading-relaxed">
-                    {dec.problem}
-                  </p>
+                    <p className="text-[11px] text-brand-textMuted leading-relaxed">
+                      {dec.problem}
+                    </p>
 
-                  <div className="flex items-center justify-between text-[11px] pt-1 border-t border-brand-border/60">
-                    <span className="text-emerald-400 font-semibold">{dec.financialImpact}</span>
-                    <span className="text-brand-textMuted">{dec.confidence}% Confidence</span>
-                  </div>
+                    <div className="flex items-center justify-between text-[11px] pt-1 border-t border-brand-border/60">
+                      <span className="text-emerald-400 font-semibold">{dec.financialImpact}</span>
+                      <span className="text-brand-textMuted">{dec.confidence}% Confidence</span>
+                    </div>
 
-                  <div className="flex items-center gap-2 pt-1">
-                    {dec.status === 'Pending Review' ? (
-                      <>
-                        <button
-                          onClick={() => approveDecision(dec.id)}
-                          className="flex-1 py-1.5 rounded-lg bg-brand-gold hover:bg-brand-goldDark text-brand-deep font-bold text-[11px] transition-colors"
-                        >
-                          Approve & Execute
-                        </button>
-                        <button
-                          onClick={() => escalateDecision(dec.id)}
-                          className="py-1.5 px-3 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMuted text-[11px] font-semibold transition-colors"
-                        >
-                          Escalate
-                        </button>
-                      </>
-                    ) : (
-                      <div className="w-full py-1 text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 rounded-lg">
-                        Status: {dec.status}
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 pt-1">
+                      {dec.status === 'Pending Review' ? (
+                        <>
+                          <button
+                            onClick={() => approveDecision(dec.id)}
+                            className="flex-1 py-1.5 rounded-lg bg-brand-gold hover:bg-brand-goldDark text-brand-deep font-bold text-[11px] transition-colors"
+                          >
+                            Approve & Execute
+                          </button>
+                          <button
+                            onClick={() => escalateDecision(dec.id)}
+                            className="py-1.5 px-3 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMuted text-[11px] font-semibold transition-colors"
+                          >
+                            Escalate
+                          </button>
+                        </>
+                      ) : (
+                        <div className="w-full py-1 text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 rounded-lg">
+                          Status: {dec.status}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="py-8 flex flex-col items-center justify-center text-brand-textMuted text-center">
+                  <ShieldCheck className="w-8 h-8 mb-2 opacity-50 text-brand-gold" />
+                  <p className="text-xs font-semibold">Belum Ada Keputusan Tertunda</p>
+                  <p className="text-[10px] mt-1 max-w-[200px]">AI Gateway sedang memantau operasi Anda. Keputusan otomatis akan muncul di sini.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 

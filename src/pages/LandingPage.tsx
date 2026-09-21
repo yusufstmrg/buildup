@@ -95,7 +95,11 @@ export function LandingPage() {
               <button onClick={() => setCurrency('USD')} className={`px-2 py-1 rounded font-bold text-[11px] transition-colors ${currency === 'USD' ? 'bg-brand-gold text-white' : 'text-brand-textMuted hover:text-brand-textMain'}`}>USD</button>
             </div>
 
-            <Link to="/login" className="px-3 py-1.5 text-xs font-bold text-brand-textMuted hover:text-brand-textMain hover:bg-brand-surface border border-brand-border rounded-lg transition-all">{t('clientPortalLogin')}</Link>
+            {user ? (
+              <Link to="/app" className="px-3 py-1.5 text-xs font-bold text-slate-950 bg-brand-gold hover:bg-brand-goldLight rounded-lg transition-all">Go to OS</Link>
+            ) : (
+              <Link to="/login" className="px-3 py-1.5 text-xs font-bold text-brand-textMuted hover:text-brand-textMain hover:bg-brand-surface border border-brand-border rounded-lg transition-all">{t('clientPortalLogin')}</Link>
+            )}
           </div>
         </div>
       </header>
@@ -119,11 +123,11 @@ export function LandingPage() {
                     <p className="text-base sm:text-lg text-brand-textMuted max-w-3xl mx-auto font-normal leading-relaxed">
                       <EditableText id="hero.subtitle" default={t('heroSubtitle')} className="w-full bg-transparent text-center focus:outline-none focus:ring-1 focus:ring-brand-gold rounded-lg p-2 resize-none block" />
                     </p>
-                    <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-                      <button onClick={() => window.location.href='/login'} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-white font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
-                        {t('exploreOs')} <ArrowRight className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => setIsHealthCheckModalOpen(true)} className="px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border font-bold text-sm transition-all flex items-center gap-2">
+                      <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link to={user ? "/app" : "/login"} className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldDark text-slate-950 font-bold text-sm transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2">
+                          {t('exploreOs')} <ArrowRight className="w-4 h-4" />
+                        </Link>
+                        <button onClick={() => setIsHealthCheckModalOpen(true)} className="px-6 py-3 rounded-xl bg-brand-surface hover:bg-brand-card text-brand-textMain border border-brand-border font-bold text-sm transition-all flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-brand-gold" /> Run Paid Diagnostic
                       </button>
                     </div>

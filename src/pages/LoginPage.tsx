@@ -7,11 +7,17 @@ import { useBuildUp } from '../context/BuildUpContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login, enterDemoMode, t } = useBuildUp();
+  const { login, enterDemoMode, t, user, isAuthLoading } = useBuildUp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (user && !isAuthLoading) {
+      navigate('/app');
+    }
+  }, [user, isAuthLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

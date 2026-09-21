@@ -277,9 +277,30 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       if (!password) throw new Error("Password is required");
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      
+      const userDocRef = doc(db, 'users', cred.user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data() as UserProfile;
+        setUser({ ...userData, isLoggedIn: true, id: cred.user.uid });
+      } else {
+        setUser({
+          id: cred.user.uid,
+          name: cred.user.displayName || email.split('@')[0] || 'User',
+          email: email,
+          role: 'User',
+          companyName: 'Company',
+          industry: 'Other',
+          revenueBracket: 'Unknown',
+          isSandbox: false,
+          isLoggedIn: true,
+          plan: 'Free Health Check'
+        });
+      }
+
       setIsAuthModalOpen(false);
-      // Let onAuthStateChanged handle setIsAuthLoading(false)
+      setIsAuthLoading(false);
     } catch (error: any) {
       setIsAuthLoading(false);
       console.error("Login error:", error);
@@ -340,7 +361,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
 
       setUser(newUserProfile);
       setIsAuthModalOpen(false);
-      // Let onAuthStateChanged handle setIsAuthLoading(false)
+      setIsAuthLoading(false);
     } catch (error: any) {
       setIsAuthLoading(false);
       console.error("Register error:", error);
@@ -429,23 +450,25 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error("Error fetching decisions from backend:", error);
         }
-      } else {
-        // Fallback to initialDecisions for demo
+      } else if (user?.isSandbox) {
+        // Fallback to initialDecisions for demo only
         setDecisionObjects(initialDecisions);
+      } else {
+        setDecisionObjects([]);
       }
     }
     fetchBackendData();
   }, [user]);
 
-  const criticalSignals = [
+  const criticalSignals = user?.isSandbox ? [
     'Procurement single-supplier dependency (>60% spend on 2 vendors)',
     'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
     'SoD dual-custody authorization violation in ERP approval chain',
     'Unintegrated logistics handoffs causing 14% dispatch delay'
-  ];
+  ] : [];
 
-  const totalAnnualLeakageIdr = 1450000000;
-  const totalAnnualLeakageUsd = 96000;
+  const totalAnnualLeakageIdr = user?.isSandbox ? 1450000000 : 0;
+  const totalAnnualLeakageUsd = user?.isSandbox ? 96000 : 0;
 
   const setGlobalHealthScore = (score: number, findings: string[], rec: string) => {
     setOverallScore(score);
