@@ -497,33 +497,84 @@ export function HealthCheckModal() {
               </div>
 
               {/* Upload sample file alternative */}
-              <div className="p-4 rounded-xl border border-dashed border-brand-border bg-brand-navy/40 hover:border-brand-gold/50 text-center transition-colors">
-                <UploadCloud className="w-7 h-7 text-brand-gold mx-auto mb-2 opacity-80" />
-                <p className="text-xs font-bold text-brand-textMain">
-                  {uploadedFiles.length > 0 ? ` File Terunggah` : 'Atau Drag & Drop Semua File Data Bisnis (Excel/CSV)'}
-                </p>
-                <p className="text-[11px] text-brand-textMuted mt-0.5">
-                  Format didukung: Data Penjualan, Laporan Laba Rugi, Piutang, Inventori, atau Mutasi Bank (Excel/CSV)
-                </p>
+              <div className={`p-4 rounded-xl border border-dashed transition-colors ${uploadedFiles.length > 0 ? 'border-brand-gold/50 bg-brand-gold/5' : 'border-brand-border bg-brand-navy/40 hover:border-brand-gold/50'} text-center`}>
+                {uploadedFiles.length === 0 ? (
+                  <>
+                    <UploadCloud className="w-7 h-7 text-brand-gold mx-auto mb-2 opacity-80" />
+                    <p className="text-xs font-bold text-brand-textMain">
+                      Atau Drag &amp; Drop Semua File Data Bisnis (Excel/CSV)
+                    </p>
+                    <p className="text-[11px] text-brand-textMuted mt-0.5">
+                      Format didukung: Data Penjualan, Laporan Laba Rugi, Piutang, Inventori, atau Mutasi Bank (Excel/CSV)
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-left space-y-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-brand-gold flex items-center gap-1.5">
+                        <UploadCloud className="w-4 h-4" />
+                        {uploadedFiles.length} File Siap Dianalisis
+                      </span>
+                      <label
+                        htmlFor="erp-file-upload"
+                        className="text-[11px] text-brand-textMuted hover:text-brand-gold cursor-pointer underline transition-colors"
+                      >
+                        + Tambah File
+                      </label>
+                    </div>
+                    {uploadedFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center justify-between gap-2 bg-brand-navy px-3 py-2 rounded-lg border border-brand-border">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-brand-gold/15 flex items-center justify-center shrink-0">
+                            <span className="text-[9px] font-black text-brand-gold uppercase">
+                              {file.name.split('.').pop()}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-brand-textMain truncate max-w-[200px]">{file.name}</p>
+                            <p className="text-[10px] text-brand-textMuted">
+                              {file.size > 1024 * 1024
+                                ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+                                : `${Math.round(file.size / 1024)} KB`}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                          className="shrink-0 w-5 h-5 rounded-full bg-red-500/10 hover:bg-red-500/25 flex items-center justify-center text-red-400 transition-colors"
+                          title="Hapus file ini"
+                        >
+                          <span className="text-xs font-bold leading-none">×</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <input
                   type="file"
                   multiple
                   id="erp-file-upload"
                   className="hidden"
                   onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      
-                        setUploadedFiles(Array.from(e.target.files || []));
+                    if (e.target.files && e.target.files.length > 0) {
+                      setUploadedFiles(prev => {
+                        const existing = prev.map(f => f.name);
+                        const newFiles = Array.from(e.target.files!).filter(f => !existing.includes(f.name));
+                        return [...prev, ...newFiles];
+                      });
                     }
                   }}
                 />
-                <label
-                  htmlFor="erp-file-upload"
-                  className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMain border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
-                >
-                  Pilih File Contoh
-                </label>
+                {uploadedFiles.length === 0 && (
+                  <label
+                    htmlFor="erp-file-upload"
+                    className="mt-3 inline-block px-3 py-1.5 rounded-lg bg-brand-card hover:bg-brand-border text-brand-textMain border border-brand-border text-xs font-semibold cursor-pointer transition-colors"
+                  >
+                    Pilih File Contoh
+                  </label>
+                )}
               </div>
+
 
               {/* Progress bar if scanning */}
               {isErpScanning && (
