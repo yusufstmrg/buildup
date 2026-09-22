@@ -12,11 +12,13 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "BuildUp OS Backend Running" });
 });
 
-// Authenticate user and sync to Postgres (Wait, Firestore now!)
+// Authenticate user and sync — also auto-provisions organization on first login
 app.post("/api/auth/sync", requireAuth, async (req: AuthRequest, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
     const user = await getOrCreateUser(req.user.uid, req.user.email || '', req.user.name || '');
+    // Auto-create org silently on first sync
+    await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     res.json({ success: true, user });
   } catch (error: any) {
     console.error("User sync error:", error);
@@ -37,8 +39,7 @@ app.get("/api/admin/users", requireAdmin, async (req: AuthRequest, res) => {
 // AI Strategic Analysis Route (Protected)
 app.post("/api/ai/strategic-analysis", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
 
     const { scenario } = req.body;
     if (!scenario) {
@@ -57,8 +58,7 @@ app.post("/api/ai/strategic-analysis", requireAuth, async (req: AuthRequest, res
 // AI Health Check Route (Protected)
 app.post("/api/ai/health-check", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
 
     const { fileData } = req.body;
     if (!fileData) {
@@ -84,15 +84,23 @@ app.post("/api/ai/health-check", requireAuth, async (req: AuthRequest, res) => {
   }
 });
 
+
 // Export the app as a Firebase Cloud Function (v2)
 export const buildup_api = onRequest({ region: "asia-southeast1", memory: "1GiB" }, app);
 
-// Helper for Canonical Data Platform Routes to get OrgId
-async function getOrgIdForRequest(uid: string): Promise<string | null> {
-  const { getOrganizationsForUser } = await import('./src/db/users.ts');
+// Helper: get existing org OR auto-create one for the user on first use
+async function getOrCreateOrgForUser(uid: string, email?: string, name?: string): Promise<string> {
+  const { getOrganizationsForUser, createOrganization } = await import('./src/db/users.ts');
   const orgs = await getOrganizationsForUser(uid);
-  return orgs.length > 0 ? orgs[0].id : null;
+  if (orgs.length > 0) return orgs[0]!.id;
+
+  // Auto-provision a personal organization for this user
+  const orgName = name ? `${name}'s Organization` : (email ? email.split('@')[0] : 'My Organization');
+  const newOrg = await createOrganization(uid, orgName, uid);
+  console.log(`Auto-created organization ${newOrg.id} for user ${uid}`);
+  return newOrg.id;
 }
+
 
 // ---------------------------------------------------------
 // P1: Canonical Data Platform Endpoints
@@ -100,8 +108,7 @@ async function getOrgIdForRequest(uid: string): Promise<string | null> {
 
 app.get("/api/genome", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getBusinessGenome } = await import('./src/db/genome.ts');
     const genome = await getBusinessGenome(orgId);
     res.json({ genome });
@@ -112,8 +119,7 @@ app.get("/api/genome", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/metrics", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getMetrics } = await import('./src/db/metrics.ts');
     const metrics = await getMetrics(orgId);
     res.json({ metrics });
@@ -124,8 +130,7 @@ app.get("/api/metrics", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/connectors", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { adminDb } = await import('./src/lib/firebase-admin.ts');
     const snapshot = await adminDb.collection('organizations').doc(orgId).collection('connectors').get();
     const connectors = snapshot.docs.map(doc => doc.data());
@@ -137,8 +142,7 @@ app.get("/api/connectors", requireAuth, async (req: AuthRequest, res) => {
 
 app.post("/api/evidence", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { uploadEvidenceRecord } = await import('./src/db/evidence.ts');
     const evidence = await uploadEvidenceRecord(orgId, req.body);
     res.json({ evidence });
@@ -153,8 +157,7 @@ app.post("/api/evidence", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/diagnostics", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getDiagnostics } = await import('./src/db/diagnostics.ts');
     const diagnostics = await getDiagnostics(orgId);
     res.json({ diagnostics });
@@ -165,8 +168,7 @@ app.get("/api/diagnostics", requireAuth, async (req: AuthRequest, res) => {
 
 app.post("/api/decisions/propose", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
 
     const { problem } = req.body;
     if (!problem) return res.status(400).json({ error: "Problem context is required" });
@@ -186,8 +188,7 @@ app.post("/api/decisions/propose", requireAuth, async (req: AuthRequest, res) =>
 
 app.get("/api/decisions", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getDecisions } = await import('./src/db/decisions.ts');
     const decisions = await getDecisions(orgId);
     res.json({ decisions });
@@ -202,8 +203,7 @@ app.get("/api/decisions", requireAuth, async (req: AuthRequest, res) => {
 
 app.post("/api/initiatives", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { createInitiative } = await import('./src/db/initiatives.ts');
     const initiative = await createInitiative(orgId, req.body);
     res.json({ success: true, initiative });
@@ -214,8 +214,7 @@ app.post("/api/initiatives", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/initiatives", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getInitiatives } = await import('./src/db/initiatives.ts');
     const initiatives = await getInitiatives(orgId);
     res.json({ initiatives });
@@ -226,8 +225,7 @@ app.get("/api/initiatives", requireAuth, async (req: AuthRequest, res) => {
 
 app.post("/api/outcomes/record", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { recordOutcome } = await import('./src/db/outcomes.ts');
     const outcome = await recordOutcome(orgId, req.body);
     res.json({ success: true, outcome });
@@ -238,8 +236,7 @@ app.post("/api/outcomes/record", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/outcomes", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getOutcomes } = await import('./src/db/outcomes.ts');
     const outcomes = await getOutcomes(orgId);
     res.json({ outcomes });
@@ -277,8 +274,7 @@ app.get("/api/benchmarks", requireAuth, async (req: AuthRequest, res) => {
 
 app.get("/api/billing/entitlement", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user!.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user!.uid, req.user!.email, req.user!.name);
     const { getEntitlement } = await import('./src/db/commercial.ts');
     const entitlement = await getEntitlement(orgId);
     res.json({ entitlement });
@@ -286,3 +282,4 @@ app.get("/api/billing/entitlement", requireAuth, async (req: AuthRequest, res) =
     res.status(500).json({ error: error.message });
   }
 });
+
