@@ -18,10 +18,14 @@ export function PricingSection() {
     window.scrollTo(0, 0);
   }, []);
 
+  const formatExactPrice = (value: number) => {
+    return "Rp " + Math.round(value).toLocaleString('id-ID');
+  };
+
   const getSaaSPrice = (monthlyIdr: number) => {
     if (monthlyIdr === 0) return "Custom Pricing";
     const actualPrice = isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
-    return formatMoney(actualPrice);
+    return formatExactPrice(actualPrice);
   };
 
   const { saasPlans, diagnosticProducts } = state;
@@ -126,10 +130,10 @@ export function PricingSection() {
                         {isAnnual ? (
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="text-sm font-semibold text-brand-textMuted line-through decoration-brand-textMuted/50">
-                              {formatMoney(plan.priceIdrMonthly)}
+                              {formatExactPrice(plan.priceIdrMonthly)}
                             </span>
                             <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              Hemat {formatMoney(plan.priceIdrMonthly * 12 * 0.2)} / thn
+                              Hemat {formatExactPrice(plan.priceIdrMonthly * 12 * 0.2)} / thn
                             </span>
                           </div>
                         ) : (
