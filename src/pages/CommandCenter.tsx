@@ -27,6 +27,7 @@ export function CommandCenter() {
     user,
     overallScore, 
     hasCompletedHealthCheck,
+    hasPendingDiagnostic,
     setIsHealthCheckModalOpen, 
     decisionObjects, 
     approveDecision, 
@@ -52,7 +53,40 @@ export function CommandCenter() {
 
   return (
     <div className="space-y-6">
-      
+
+      {/* Welcome Banner — shown after sign-up with pending diagnostic */}
+      {hasPendingDiagnostic && (
+        <div className="border border-brand-gold/50 bg-gradient-to-r from-brand-gold/10 via-brand-gold/5 to-transparent rounded-2xl p-5 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-40 h-40 bg-brand-gold/10 rounded-full blur-2xl pointer-events-none -mr-10 -mt-10" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="text-2xl">🔥</div>
+            <div className="flex-1">
+              <div className="text-sm font-black text-brand-gold mb-1">Laporan Diagnosis Anda Sudah Tersimpan!</div>
+              <p className="text-xs text-brand-textMuted">
+                Selamat datang di BuildUp Command Center. Hasil audit bisnis Anda sudah terhubung ke dashboard — lihat BuildUp Score™ dan temuan kritis di bawah.
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-2xl font-black text-gold-gradient">{overallScore}<span className="text-sm font-normal text-brand-textMuted">/100</span></div>
+              <div className="text-[10px] text-brand-textMuted">Business Health Score™</div>
+            </div>
+          </div>
+          {criticalSignals.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-brand-gold/20 space-y-1">
+              {criticalSignals.slice(0, 2).map((signal, i) => (
+                <p key={i} className="text-xs text-brand-textMuted flex items-start gap-2">
+                  <span className="text-amber-400 shrink-0 mt-0.5">⚠</span>
+                  {signal}
+                </p>
+              ))}
+              {criticalSignals.length > 2 && (
+                <p className="text-[10px] text-brand-gold font-semibold">+{criticalSignals.length - 2} temuan lainnya tersimpan di laporan Anda</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

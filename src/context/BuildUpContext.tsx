@@ -79,12 +79,14 @@ interface BuildUpContextType {
   // Score & Diagnostics
   overallScore: number;
   hasCompletedHealthCheck: boolean;
+  hasPendingDiagnostic: boolean;
   dimensions: HealthDimension[];
   criticalSignals: string[];
   totalAnnualLeakageIdr: number;
   totalAnnualLeakageUsd: number;
   updateScoreFromAnswers: (answers: number[]) => void;
   setGlobalHealthScore: (score: number, findings: string[], rec: string) => void;
+  saveDiagnosticToSession: (score: number, findings: string[], rec: string) => void;
   resetHealthCheck: () => void;
 
   // Decision Objects
@@ -359,6 +361,30 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         joinedAt: new Date().toISOString()
       });
 
+      // Restore pending diagnostic from session if exists
+      const pendingRaw = sessionStorage.getItem('bu_pending_diagnostic');
+      if (pendingRaw) {
+        try {
+          const pending = JSON.parse(pendingRaw);
+          await setDoc(doc(db, 'users', uid, 'diagnostics', 'latest'), {
+            ...pending,
+            restoredAt: new Date().toISOString()
+          });
+          // Apply to live state immediately
+          setOverallScore(pending.score);
+          setHasCompletedHealthCheck(true);
+          localStorage.setItem('bu_score', pending.score.toString());
+          setCriticalSignals(pending.findings || []);
+          const leakage = (100 - pending.score) * 25000000;
+          setTotalAnnualLeakageIdr(leakage);
+          setTotalAnnualLeakageUsd(Math.round(leakage / 15000));
+          sessionStorage.removeItem('bu_pending_diagnostic');
+          setHasPendingDiagnostic(true);
+        } catch (e) {
+          console.warn('Could not restore pending diagnostic:', e);
+        }
+      }
+
       setUser(newUserProfile);
       setIsAuthModalOpen(false);
       setIsAuthLoading(false);
@@ -402,6 +428,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   const [hasCompletedHealthCheck, setHasCompletedHealthCheck] = useState<boolean>(() => {
     return !!localStorage.getItem('bu_score');
   });
+  const [hasPendingDiagnostic, setHasPendingDiagnostic] = useState<boolean>(false);
   const [dimensions, setDimensions] = useState<HealthDimension[]>(initialDimensions);
   const [decisionObjects, setDecisionObjects] = useState<DecisionObject[]>(initialDecisions);
   const [currency, setCurrency] = useState<'IDR' | 'USD'>('USD');
@@ -493,6 +520,13 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     setDimensions(updated);
   };
 
+  // Save diagnostic results to sessionStorage for guest users (before sign up)
+  const saveDiagnosticToSession = (score: number, findings: string[], rec: string) => {
+    sessionStorage.setItem('bu_pending_diagnostic', JSON.stringify({
+      score, findings, rec, timestamp: new Date().toISOString()
+    }));
+  };
+
   const updateScoreFromAnswers = (answers: number[]) => {
     const sum = answers.reduce((a, b) => a + b, 0);
     const calculated = Math.round((sum / (answers.length * 5)) * 100);
@@ -568,12 +602,14 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         updateUserProfile,
         overallScore,
         hasCompletedHealthCheck,
+        hasPendingDiagnostic,
         dimensions,
         criticalSignals,
         totalAnnualLeakageIdr,
         totalAnnualLeakageUsd,
         updateScoreFromAnswers,
         setGlobalHealthScore,
+        saveDiagnosticToSession,
         resetHealthCheck,
         decisionObjects,
         approveDecision,

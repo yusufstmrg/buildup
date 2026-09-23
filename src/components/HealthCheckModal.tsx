@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { 
   X, 
   CheckCircle2, 
@@ -14,11 +13,12 @@ import {
   RefreshCw, 
   Check, 
   Layers, 
-  UploadCloud 
+  UploadCloud,
+  Lock
 } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
 import confetti from 'canvas-confetti';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BuildUpLogo } from './BuildUpLogo';
 import { QUICK_SCREENING_QUESTIONS, DiagnosticQuestion, ERP_CONNECTORS } from '../lib/diagnosticQuestions';
 
@@ -28,10 +28,15 @@ export function HealthCheckModal() {
     setIsHealthCheckModalOpen, 
     updateScoreFromAnswers, 
     setGlobalHealthScore,
+    saveDiagnosticToSession,
+    isLoggedIn,
+    setIsAuthModalOpen,
+    setAuthModalMode,
     formatMoney,
     language,
     t
   } = useBuildUp();
+  const navigate = useNavigate();
 
   // Tab mode: 'quick' | 'erp'
   const [activeTab, setActiveTab] = useState<'quick' | 'erp'>('quick');
@@ -260,9 +265,16 @@ Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Rec
       const rec = analysis.recommendation || 'Lanjutkan pemantauan rutin indikator keuangan utama.';
 
       setCalculatedScore(finalScore);
-      setGlobalHealthScore(finalScore, findings, rec);
       setAiFindings(findings);
       setAiRecommendation(rec);
+
+      if (isLoggedIn) {
+        // Logged-in user: apply directly to dashboard
+        setGlobalHealthScore(finalScore, findings, rec);
+      } else {
+        // Guest user: save to session so it persists after sign up
+        saveDiagnosticToSession(finalScore, findings, rec);
+      }
 
     } catch (e: any) {
       console.error("Diagnostic error:", e);
@@ -690,10 +702,11 @@ Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Rec
             </div>
 
             {/* Score Showcase Badge */}
-            <div className="bg-gradient-to-b from-brand-card to-brand-navy border border-brand-border p-6 rounded-2xl text-center relative overflow-hidden">
+            <div className="bg-gradient-to-b from-brand-card to-brand-navy border border-brand-border p-6 rounded-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-48 h-48 bg-brand-gold/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
               <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-                <div>
+                {/* Score */}
+                <div className="text-center md:text-left">
                   <div className="text-6xl md:text-7xl font-black tracking-tighter text-gold-gradient">
                     {calculatedScore}
                     <span className="text-xl md:text-2xl text-brand-textMuted font-normal"> / 100</span>
@@ -705,49 +718,132 @@ Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Rec
 
                 <div className="h-20 w-px bg-brand-border hidden md:block" />
 
-                  <div className="text-left space-y-2 max-w-sm">
-                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
-                      <AlertTriangle className="w-4 h-4" />
-                      <span>Temuan Kunci Nilai Bocor (Leakage)</span>
-                    </div>
-                    {aiFindings.map((finding, index) => (
-                      <p key={index} className="text-xs text-brand-textMuted leading-relaxed">
-                        • {finding}
+                {/* Findings */}
+                <div className="text-left space-y-2 max-w-sm w-full">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-400 mb-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Temuan Kunci Nilai Bocor (Leakage)</span>
+                  </div>
+
+                  {/* Finding #1 — Always visible */}
+                  {aiFindings[0] && (
+                    <p className="text-xs text-brand-textMuted leading-relaxed">
+                      • {aiFindings[0]}
+                    </p>
+                  )}
+
+                  {/* Finding #2 — Blurred for guests */}
+                  {aiFindings[1] && (
+                    <div className="relative">
+                      <p className={`text-xs leading-relaxed transition-all ${!isLoggedIn ? 'blur-sm select-none text-brand-textMuted' : 'text-brand-textMuted'}`}>
+                        • {aiFindings[1]}
                       </p>
-                    ))}
-                    <p className="text-xs text-emerald-400 font-semibold mt-2">
+                      {!isLoggedIn && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="flex items-center gap-1 text-[10px] font-bold text-brand-gold bg-brand-navy/90 px-2 py-0.5 rounded-full border border-brand-gold/30">
+                            <Lock className="w-2.5 h-2.5" /> Daftar untuk membuka
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Finding #3 — Blurred for guests */}
+                  {aiFindings[2] && (
+                    <div className="relative">
+                      <p className={`text-xs leading-relaxed transition-all ${!isLoggedIn ? 'blur-sm select-none text-brand-textMuted' : 'text-brand-textMuted'}`}>
+                        • {aiFindings[2]}
+                      </p>
+                      {!isLoggedIn && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="flex items-center gap-1 text-[10px] font-bold text-brand-gold bg-brand-navy/90 px-2 py-0.5 rounded-full border border-brand-gold/30">
+                            <Lock className="w-2.5 h-2.5" /> Daftar untuk membuka
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Recommendation — Blurred for guests */}
+                  <div className="relative mt-1">
+                    <p className={`text-xs font-semibold mt-2 transition-all ${!isLoggedIn ? 'blur-sm select-none text-emerald-400' : 'text-emerald-400'}`}>
                       Rekomendasi Utama: {aiRecommendation}
                     </p>
+                    {!isLoggedIn && (
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-brand-navy/90 px-2 py-0.5 rounded-full border border-emerald-400/30">
+                          <Lock className="w-2.5 h-2.5" /> Daftar untuk melihat rekomendasi lengkap
+                        </span>
+                      </div>
+                    )}
                   </div>
+                </div>
               </div>
             </div>
 
-            {/* Next Steps CTA */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                to="/pricing"
-                onClick={handleClose}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-gold hover:opacity-95 text-slate-950 text-xs font-black tracking-wide shadow-gold-sm transition-all text-center flex items-center justify-center gap-2"
-              >
-                <span>{t('modalBookConsult')}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              
-              <Link
-                to="/app"
-                onClick={handleClose}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-surface text-brand-textMain border border-brand-border text-xs font-bold transition-all text-center"
-              >
-                {t('modalExplorePlatform')}
-              </Link>
-
-              <button
-                onClick={handleClose}
-                className="w-full sm:w-auto px-4 py-3 rounded-xl text-brand-textMuted hover:text-brand-textMain text-xs font-semibold"
-              >
-                {t('modalClose')}
-              </button>
-            </div>
+            {/* CTA Section — Different for guest vs logged-in */}
+            {!isLoggedIn ? (
+              /* GUEST: Sign Up Wall */
+              <div className="border border-brand-gold/40 bg-gradient-to-r from-brand-gold/5 to-brand-gold/10 rounded-2xl p-5 text-center space-y-3">
+                <div className="text-sm font-black text-brand-textMain">
+                  🔐 Simpan Hasil & Lihat Laporan Audit Penuh
+                </div>
+                <p className="text-xs text-brand-textMuted max-w-xs mx-auto">
+                  Bergabung <strong className="text-brand-textMain">gratis</strong> untuk membuka semua temuan, rekomendasi aksi, dan menyimpan hasil audit ke Command Center Anda.
+                </p>
+                <button
+                  onClick={() => {
+                    setIsHealthCheckModalOpen(false);
+                    setAuthModalMode('register');
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-gold hover:opacity-95 text-slate-950 text-sm font-black tracking-wide shadow-gold-sm transition-all flex items-center justify-center gap-2 mx-auto"
+                >
+                  <span>Daftar Gratis — Simpan Hasil Saya</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <p className="text-[10px] text-brand-textMuted">
+                  Sudah punya akun?{' '}
+                  <button
+                    onClick={() => {
+                      setIsHealthCheckModalOpen(false);
+                      setAuthModalMode('login');
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="text-brand-gold hover:underline font-semibold"
+                  >
+                    Masuk sekarang
+                  </button>
+                </p>
+              </div>
+            ) : (
+              /* LOGGED-IN: Go to Dashboard */
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  onClick={() => {
+                    setIsHealthCheckModalOpen(false);
+                    navigate('/app');
+                  }}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-gold hover:opacity-95 text-slate-950 text-xs font-black tracking-wide shadow-gold-sm transition-all text-center flex items-center justify-center gap-2"
+                >
+                  <span>Lihat di Command Center</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+                <Link
+                  to="/pricing"
+                  onClick={handleClose}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-surface text-brand-textMain border border-brand-border text-xs font-bold transition-all text-center"
+                >
+                  {t('modalBookConsult')}
+                </Link>
+                <button
+                  onClick={handleClose}
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl text-brand-textMuted hover:text-brand-textMain text-xs font-semibold"
+                >
+                  {t('modalClose')}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
