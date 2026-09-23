@@ -21,6 +21,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useBuildUp } from '../context/BuildUpContext';
 import { Link } from 'react-router-dom';
 import { PremiumLock } from '../components/PremiumLock';
+import { ContextualUpgradeWidget } from '../components/dashboard/ContextualUpgradeWidget';
 
 export function CommandCenter() {
   const { 
@@ -120,8 +121,13 @@ export function CommandCenter() {
         </div>
       </div>
 
-      {/* KPI Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        
+        {/* Main Dashboard Column */}
+        <div className="xl:col-span-3 space-y-6">
+          
+          {/* KPI Cards Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Score Card */}
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
@@ -408,7 +414,15 @@ export function CommandCenter() {
 
       </div>
 
+        </div>{/* Close Main Dashboard Column */}
+
+        {/* Upgrade Center Column */}
+        <div className="xl:col-span-1">
+          <ContextualUpgradeWidget />
+        </div>
+      
+      </div>{/* Close root grid */}
+
     </div>
   );
 }
-

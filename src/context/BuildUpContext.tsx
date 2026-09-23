@@ -48,12 +48,31 @@ export interface UserProfile {
   plan: 'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise';
 }
 
+export interface UsageMetric {
+  used: number;
+  limit: number;
+  label: string;
+}
+
+export interface UserSubscriptionInfo {
+  planId: 'snapshot' | 'health-check' | 'starter' | 'business' | 'growth' | 'scale';
+  planName: string;
+  metrics: {
+    aiInsights: UsageMetric;
+    integrations: UsageMetric;
+    workflows: UsageMetric;
+  };
+}
+
 interface BuildUpContextType {
   // Language & i18n
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: keyof typeof TRANSLATIONS['id']) => string;
   industries: IndustryOption[];
+
+  // User Subscription
+  subscription: UserSubscriptionInfo;
 
   // Authentication & Org State
   user: UserProfile | null;
@@ -584,6 +603,16 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     return `Rp ${idr.toLocaleString('id-ID')}`;
   };
 
+  const [subscription] = useState<UserSubscriptionInfo>({
+    planId: 'snapshot',
+    planName: 'Health Snapshot™ (Free)',
+    metrics: {
+      aiInsights: { used: 3, limit: 3, label: 'AI Business Insights' },
+      integrations: { used: 0, limit: 1, label: 'System Integrations' },
+      workflows: { used: 0, limit: 0, label: 'Automated Workflows' }
+    }
+  });
+
   return (
     <BuildUpContext.Provider
       value={{
@@ -591,6 +620,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         setLanguage,
         t,
         industries: COMPREHENSIVE_INDUSTRIES,
+        subscription,
         user,
         isLoggedIn: !!user?.isLoggedIn,
         isSandbox: !!user?.isSandbox,
