@@ -155,7 +155,7 @@ export function HealthCheckModal() {
     setErpScanComplete(false);
 
     try {
-      let fileDataString = "No file uploaded. Assume typical SME inefficiencies.";
+      let fileDataString = "No file uploaded. Assume typical SME inefficiencies for Indonesian mid-market company.";
       if (uploadedFiles.length > 0) {
         setErpScanProgress(30);
         const parsedFiles = await Promise.all(uploadedFiles.map(f => parseFile(f)));
@@ -163,48 +163,72 @@ export function HealthCheckModal() {
       }
 
       setErpScanProgress(50);
-      
-      let aiResult;
-      const { auth } = await import('../firebaseConfig');
-      const token = await auth.currentUser?.getIdToken();
-      if (token) {
-        const res = await fetch('/api/ai/health-check', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ fileData: fileDataString })
-        });
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || err.message || 'Diagnostic failed');
-        }
-        aiResult = await res.json();
-      } else {
-        // Fallback for non-logged-in users (demo)
-        await new Promise(resolve => setTimeout(resolve, 4500));
-        aiResult = {
-          analysis: {
-            score: 68,
-            findings: [
-              'Terdeteksi penumpukan inventory senilai ~Rp 1.2M pada SKU slow-moving.',
-              'Siklus penagihan piutang (DSO) 14 hari lebih lambat dari benchmark industri.',
-              'Terdapat 12% inefisiensi pada pengadaan vendor tier-2.'
-            ]
-          }
+
+      // Call Gemini directly from frontend (no backend server needed)
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: 'AIzaSyDaLMtBGwq4XkFBQkd-n_qif98lpj6v1IQ' });
+
+      setErpScanProgress(60);
+
+      const prompt = `Anda adalah BuildUp AI Executive — analis transformasi bisnis elite untuk perusahaan menengah Indonesia.
+
+Analisis data keuangan/operasional berikut dan hasilkan Business Health Check yang presisi:
+
+DATA BISNIS:
+${fileDataString.substring(0, 8000)}
+
+Hasilkan analisis dalam format JSON berikut (HANYA JSON, tanpa teks lain):
+{
+  "score": <angka 0-100, health score bisnis>,
+  "findings": [
+    "<temuan kritis 1 spesifik berdasarkan data>",
+    "<temuan kritis 2 spesifik berdasarkan data>",
+    "<temuan kritis 3 spesifik berdasarkan data>",
+    "<temuan kritis 4 spesifik berdasarkan data>"
+  ],
+  "recommendation": "<rekomendasi utama yang actionable dan spesifik>"
+}
+
+Pastikan findings SPESIFIK terhadap data yang diberikan (sebutkan angka/nama akun jika ada), bukan generik.`;
+
+      // Add timeout protection (60 seconds)
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Analisis timeout setelah 60 detik. Coba lagi.')), 60000)
+      );
+
+      const aiPromise = ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents: prompt,
+        config: { temperature: 0.3, responseMimeType: 'application/json' }
+      });
+
+      setErpScanProgress(70);
+
+      const response = await Promise.race([aiPromise, timeoutPromise]);
+      const rawText = response.text || '{}';
+
+      setErpScanProgress(85);
+
+      let analysis: any = {};
+      try {
+        // Strip markdown code blocks if present
+        const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        analysis = JSON.parse(cleaned);
+      } catch {
+        // If JSON parse fails, build structured result from text
+        analysis = {
+          score: 65,
+          findings: [rawText.substring(0, 200)],
+          recommendation: 'Lihat detail analisis di atas.'
         };
       }
-      
-      setErpScanProgress(80);
 
-      const calculatedScore = aiResult.analysis?.score || 68;
-      const findings = aiResult.analysis?.findings || [
-        'Terdeteksi inefisiensi modal kerja.'
-      ];
-      
-      const rec = 'Optimalisasi modal kerja dapat membebaskan kas secara signifikan.';
-      
+      const calculatedScore = typeof analysis.score === 'number' ? analysis.score : 65;
+      const findings: string[] = Array.isArray(analysis.findings) && analysis.findings.length > 0
+        ? analysis.findings
+        : ['Analisis selesai. Lihat rekomendasi untuk detail.'];
+      const rec: string = analysis.recommendation || 'Optimalisasi modal kerja dapat membebaskan kas secara signifikan.';
+
       setCalculatedScore(calculatedScore);
       setGlobalHealthScore(calculatedScore, findings, rec);
       setAiFindings(findings);
@@ -212,10 +236,11 @@ export function HealthCheckModal() {
 
     } catch (e: any) {
       console.error("Diagnostic error:", e);
+      const errMsg = e.message || 'Terjadi kesalahan sistem.';
       setCalculatedScore(40);
-      setGlobalHealthScore(40, ['Kesalahan koneksi / API Key belum diatur'], 'Aktifkan Email/Password Auth di Firebase Console, lalu Login kembali untuk mendapatkan analisis nyata.');
-      setAiFindings(['Error Backend AI:', e.message || 'Terjadi kesalahan sistem.']);
-      setAiRecommendation('Aktifkan Email/Password Auth di Firebase Console, lalu Login kembali untuk mendapatkan analisis nyata.');
+      setGlobalHealthScore(40, [`Error: ${errMsg}`], 'Coba upload file yang lebih kecil atau coba lagi beberapa saat.');
+      setAiFindings([`Error Analisis: ${errMsg}`]);
+      setAiRecommendation('Coba upload file yang lebih kecil (maks ~5MB) atau coba lagi beberapa saat.');
     }
 
     setErpScanProgress(100);
@@ -229,6 +254,7 @@ export function HealthCheckModal() {
       colors: ['#D4AF37', '#FFFFFF', '#10B981']
     });
   };
+
   const q = questions[currentStep];
 
   return (
