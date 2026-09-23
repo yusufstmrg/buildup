@@ -182,7 +182,7 @@ export function HealthCheckModal() {
       const keyPart2 = '48_fKvvF2A8AZgk';
       const keyPart3 = 'K35ukKAuT3hA6K8IWd7_7g';
       const GEMINI_API_KEY = keyPart1 + keyPart2 + keyPart3;
-      const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+      const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent';
 
       const prompt = `Anda adalah analis keuangan bisnis. Lakukan Business Health Check DASAR untuk data berikut.
 

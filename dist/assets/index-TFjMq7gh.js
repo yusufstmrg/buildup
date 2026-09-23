@@ -3719,7 +3719,7 @@ ${Xn.substring(0,3e3)}
 
 --- FILE BERIKUTNYA ---
 
-`),W(40)),W(55);const ar="AQ.Ab8RN6IhKf8re"+"48_fKvvF2A8AZgk"+"K35ukKAuT3hA6K8IWd7_7g",jr="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",Yn=`Anda adalah analis keuangan bisnis. Lakukan Business Health Check DASAR untuk data berikut.
+`),W(40)),W(55);const ar="AQ.Ab8RN6IhKf8re"+"48_fKvvF2A8AZgk"+"K35ukKAuT3hA6K8IWd7_7g",jr="https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",Yn=`Anda adalah analis keuangan bisnis. Lakukan Business Health Check DASAR untuk data berikut.
 
 DATA:
 ${Ue.substring(0,6e3)}

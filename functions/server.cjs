@@ -234,7 +234,7 @@ async function runAITask(orgId, taskType, payload) {
   const startTime = Date.now();
   const ai = getAIClient();
   const genome = await getBusinessGenome(orgId);
-  const model = taskType === "strategic_analysis" || taskType === "decision_proposal" ? "gemini-2.5-pro" : "gemini-2.5-flash";
+  const model = taskType === "strategic_analysis" || taskType === "decision_proposal" ? "gemini-3.6-pro" : "gemini-3.6-flash";
   const systemContext = `
 You are the elite "BuildUp AI Executive".
 Company Context (from Business Genome):
