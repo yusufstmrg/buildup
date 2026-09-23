@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { X, Lock, Building2, Mail, User, ShieldCheck, ArrowRight, Sparkles, CheckCircle2, ChevronDown } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
@@ -16,6 +17,7 @@ export function AuthModal() {
     language,
     t
   } = useBuildUp();
+  const navigate = useNavigate();
 
   // Form State
   const [email, setEmail] = useState('');
@@ -31,47 +33,47 @@ export function AuthModal() {
 
   if (!isAuthModalOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      try {
-        if (authModalMode === 'login') {
-          if (!email) {
-            setErrorMessage('Silakan masukkan email korporat Anda.');
-            setIsSubmitting(false);
-            return;
-          }
-          login(email, password);
-        } else {
-          if (!email || !companyName || !fullName) {
-            setErrorMessage('Lengkapi nama, email, dan nama perusahaan Anda.');
-            setIsSubmitting(false);
-            return;
-          }
-          const industryName = selectedIndustry === 'other' 
-            ? (customIndustry || 'Sektor Lainnya') 
-            : (industries.find(i => i.id === selectedIndustry)?.name[language] || selectedIndustry);
-
-          register({
-            fullName,
-            email,
-            companyName,
-            industry: industryName,
-            customIndustry: selectedIndustry === 'other' ? customIndustry : undefined,
-            revenueBracket,
-            role: executiveRole,
-            password
-          });
+    try {
+      if (authModalMode === 'login') {
+        if (!email) {
+          setErrorMessage('Silakan masukkan email korporat Anda.');
+          setIsSubmitting(false);
+          return;
         }
-      } catch (err: any) {
-        setErrorMessage(err.message || 'Terjadi kendala saat memproses.');
-      } finally {
-        setIsSubmitting(false);
+        await login(email, password);
+        navigate('/app');
+      } else {
+        if (!email || !companyName || !fullName) {
+          setErrorMessage('Lengkapi nama, email, dan nama perusahaan Anda.');
+          setIsSubmitting(false);
+          return;
+        }
+        const industryName = selectedIndustry === 'other' 
+          ? (customIndustry || 'Sektor Lainnya') 
+          : (industries.find(i => i.id === selectedIndustry)?.name[language] || selectedIndustry);
+
+        await register({
+          fullName,
+          email,
+          companyName,
+          industry: industryName,
+          customIndustry: selectedIndustry === 'other' ? customIndustry : undefined,
+          revenueBracket,
+          role: executiveRole,
+          password
+        });
+        navigate('/app');
       }
-    }, 450);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Terjadi kendala saat memproses.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

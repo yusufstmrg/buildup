@@ -7,24 +7,33 @@ import { useBuildUp } from '../context/BuildUpContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login, enterDemoMode, t } = useBuildUp();
+  const { login, enterDemoMode, t, user, isAuthLoading } = useBuildUp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if (user && !isAuthLoading) {
+      navigate('/app');
+    }
+  }, [user, isAuthLoading, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
       setError('Silakan masukkan email korporat Anda.');
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
-      login(email, password);
-      setIsLoading(false);
+    try {
+      await login(email, password);
       navigate('/app');
-    }, 400);
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDemo = () => {

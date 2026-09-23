@@ -35,8 +35,8 @@ export async function runAITask(
   
   // Model Routing
   const model = taskType === 'strategic_analysis' || taskType === 'decision_proposal' 
-    ? 'gemini-2.5-pro' 
-    : 'gemini-2.5-flash';
+    ? 'gemini-3.6-pro' 
+    : 'gemini-3.6-flash';
 
   // Context Builder
   const systemContext = `

@@ -185,7 +185,7 @@ export function ContactSection() {
                     <label className="block text-xs font-semibold text-brand-textMuted mb-1">Fokus Tantangan Utama</label>
                     
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                        {['Kebocoran Margin & Inefisiensi', 'Piutang Lambat & Defisit Kas', 'Kepatuhan Pajak & Rekonsiliasi', 'Pencegahan Fraud & Audit', 'Integrasi Data ERP & AI Workforce'].map(opt => (
+                        {['Kebocoran Margin & Inefisiensi', 'Piutang Lambat & Defisit Kas', 'Kepatuhan Pajak & Rekonsiliasi', 'Pencegahan Fraud & Audit', 'Integrasi Data ERP & AI Workforce', 'Lainnya'].map(opt => (
                           <label key={opt} className="flex items-center gap-2 text-xs text-brand-textMain cursor-pointer">
                             <input 
                               type="checkbox" 

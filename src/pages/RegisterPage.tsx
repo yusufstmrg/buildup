@@ -7,7 +7,7 @@ import { useBuildUp } from '../context/BuildUpContext';
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { register, enterDemoMode, industries, language, t } = useBuildUp();
+  const { register, enterDemoMode, industries, language, t, user, isAuthLoading } = useBuildUp();
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -20,7 +20,13 @@ export function RegisterPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if (user && !isAuthLoading) {
+      navigate('/app');
+    }
+  }, [user, isAuthLoading, navigate]);
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !email || !companyName) {
       setError('Lengkapi seluruh data wajib bertanda bintang (*).');

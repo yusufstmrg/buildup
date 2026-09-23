@@ -74,7 +74,7 @@ var init_firebase_admin = __esm({
       });
     }
     adminAuth = (0, import_auth.getAuth)();
-    adminDb = (0, import_firestore.getFirestore)();
+    adminDb = (0, import_firestore.getFirestore)((0, import_app.getApps)()[0], firebase_applet_config_default.firestoreDatabaseId || "(default)");
   }
 });
 
@@ -234,7 +234,7 @@ async function runAITask(orgId, taskType, payload) {
   const startTime = Date.now();
   const ai = getAIClient();
   const genome = await getBusinessGenome(orgId);
-  const model = taskType === "strategic_analysis" || taskType === "decision_proposal" ? "gemini-2.5-pro" : "gemini-2.5-flash";
+  const model = taskType === "strategic_analysis" || taskType === "decision_proposal" ? "gemini-3.6-pro" : "gemini-3.6-flash";
   const systemContext = `
 You are the elite "BuildUp AI Executive".
 Company Context (from Business Genome):

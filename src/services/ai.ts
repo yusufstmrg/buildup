@@ -42,9 +42,9 @@ User Scenario / Query:
 `;
 
   try {
-    // We use gemini-2.5-flash via Vertex AI endpoint
+    // We use gemini-3.6-flash via Vertex AI endpoint
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         temperature: 0.2,
@@ -130,7 +130,7 @@ Return ONLY a JSON object with this exact structure (no markdown formatting arou
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.6-flash",
       contents: prompt,
       config: {
         temperature: 0.1,

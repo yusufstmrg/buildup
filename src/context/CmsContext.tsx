@@ -84,43 +84,48 @@ const defaultState: CmsState = {
   },
   sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing',
     'testimonials', 'about', 'contact'],
+  
   pricing: [
     {
       id: 'starter', label: 'ENTRY DIAGNOSTIC', name: 'Starter / Basic', priceIdr: 0, priceUsd: 0,
-      description: 'Fast, low-friction front door screening.', features: ['Overall Health Score', '8-Dimension scores'],
+      description: 'Pemindaian awal untuk menemukan kebocoran finansial tanpa risiko.', features: ['Full 8-Dimension Diagnostic Scan', 'Root Cause Identification', 'Initial AI Value Leakage Report', 'Basic System Integration (1 ERP)', '1-on-1 Consultation Session'],
       buttonText: 'Request Diagnostic Audit', isPopular: false
     },
     {
       id: 'standard', label: 'MONITORING', name: 'Standard Business', priceIdr: 6000000, priceUsd: 390,
-      description: 'Live continuous benchmark progression.', features: ['Pemantauan 8 Dimensi 24/7', 'Peringatan Dini'],
+      description: 'Pemantauan indikator kesehatan bisnis secara real-time dan terus menerus.', features: ['Pemantauan 8 Dimensi 24/7', 'Peringatan Dini (Early Warning System)', 'Akses Dashboard Real-Time', 'Integrasi hingga 3 Sistem Internal', 'Weekly Executive Report', 'Email Support'],
       buttonText: 'Start Monitoring', isPopular: false
     },
     {
       id: 'growth', label: 'ACTIVE OPTIMIZATION', name: 'Growth & Scale', priceIdr: 28000000, priceUsd: 1790,
-      description: 'Full business OS replacement.', features: ['Semua Fitur Standard', 'Automated Decision Objects'],
+      description: 'Solusi transformasi menyeluruh: Sistem operasi bisnis berbasis AI yang mandiri.', features: ['Semua Fitur Standard', 'Automated Decision Objects', 'Full AI Workforce Orchestration', 'Unlimited Systems Integration', 'Prediksi Arus Kas Jangka Panjang', 'Otomatisasi Penagihan & Procurement', 'Dedicated Customer Success Manager'],
       buttonText: 'Deploy Business OS', isPopular: true
     },
     {
       id: 'enterprise', label: 'CUSTOM ENGAGEMENT', name: 'Enterprise Custom', priceIdr: 120000000, priceUsd: 7900,
-      description: 'For conglomerates and multi-entity holding groups.', features: ['Private VPC Deployment', 'Dedicated Architect'],
+      description: 'Untuk konglomerasi multinasional dengan infrastruktur tertutup dan kustomisasi ekstrem.', features: ['Semua Fitur & Benefit Growth & Scale', 'Private VPC / On-Premise Deployment', 'Dedicated Enterprise Architect', 'White-glove SLA 99.99%', 'Custom AI Model Training', 'Audit Keamanan Militer', 'Board-Level Strategic Reporting'],
       buttonText: 'Talk to Sales', isPopular: false
-    },
-    {
-      id: 'gainshare', label: 'PERFORMANCE-BASED', name: 'Gain-Share Partnership', priceIdr: 0, priceUsd: 0,
-      description: 'Zero fixed cost, pure profit-share.', features: ['15-25% dari Peningkatan EBITDA', 'No-cure no-pay'],
-      buttonText: 'Apply for Partnership', isPopular: false
     }
   ],
   faqs: [
-    { q: 'Bagaimana BuildUp menjamin ROI?', a: 'Berdasarkan rekam jejak pada 120+ korporasi...' },
-    { q: 'Berapa lama proses implementasi?', a: 'Tahap Diagnostic dapat selesai dalam hitungan menit...' }
+    { q: 'Bagaimana BuildUp menjamin ROI?', a: 'Berdasarkan rekam jejak pada 120+ korporasi, klien kami mencatat ROI positif dalam 90 hari pertama karena AI kami secara presisi menutup kebocoran (value leakage) di procurement, inventory, dan piutang. Jika dalam 6 bulan tidak tercapai, kami akan memberikan konsultasi optimasi gratis.' },
+    { q: 'Berapa lama proses implementasi?', a: 'Tahap Diagnostic dapat selesai dalam hitungan menit sejak Anda mengunggah file. Untuk integrasi penuh ke ERP Anda, rata-rata membutuhkan waktu 3-7 hari kerja tergantung kompleksitas sistem internal Anda.' },
+    { q: 'Apakah data saya aman?', a: 'Sangat aman. Kami menggunakan enkripsi end-to-end setara perbankan militer (AES-256). Data Anda hanya digunakan untuk analisis spesifik perusahaan Anda dan tidak pernah dibagikan, dijual, atau dipakai untuk melatih AI pihak ketiga tanpa izin eksplisit.' },
+    { q: 'Apakah ini akan menggantikan karyawan saya?', a: 'Tidak. BuildUp bertindak sebagai "Copilot" tingkat eksekutif. Sistem kami mengotomatisasi pekerjaan repetitif (rekonsiliasi, penagihan, pengumpulan data), membebaskan karyawan Anda untuk fokus pada strategi, negosiasi tingkat tinggi, dan inovasi bisnis.' },
+    { q: 'Sistem ERP apa saja yang didukung?', a: 'Kami mendukung integrasi out-of-the-box dengan SAP S/4HANA, Oracle NetSuite, Odoo, Accurate, Jurnal by Mekari, Microsoft Dynamics, hingga custom database SQL/PostgreSQL melalui konektor API standar industri.' }
   ],
   aboutStages: [
-    { num: '01', title: 'Diagnostic Triage', desc: 'Pemindaian 8 dimensi...' },
-    { num: '02', title: 'Root-Cause Discovery', desc: 'Menggali kelemahan...' },
-    { num: '03', title: 'Orkestrasi', desc: 'Orkestrasi eksekusi multi-sistem secara otomatis.' }
+    { num: '01', title: 'Diagnostic Triage', desc: 'Pemindaian 8 dimensi kesehatan bisnis secara instan menggunakan data finansial historis.' },
+    { num: '02', title: 'Root-Cause Discovery', desc: 'Menggali kelemahan operasional, menemukan sumber "value leakage" (kebocoran nilai) terbesar.' },
+    { num: '03', title: 'AI Modeling', desc: 'Memodelkan arsitektur data internal perusahaan untuk diajarkan pada AI Brain BuildUp.' },
+    { num: '04', title: 'Workflow Injection', desc: 'Mengintegrasikan alur kerja otomatis ke dalam ERP dan sistem yang sudah ada.' },
+    { num: '05', title: 'Live Synchronization', desc: 'Konektivitas 2 arah (2-way sync) dengan ERP/Bank untuk mendapatkan data real-time.' },
+    { num: '06', title: 'Orchestration', desc: 'Orkestrasi eksekusi multi-sistem, mengotomatisasi tugas di lintas departemen.' },
+    { num: '07', title: 'Active Optimization', desc: 'Optimalisasi aktif berkelanjutan; AI akan terus beradaptasi dan meningkatkan efisiensi.' },
+    { num: '08', title: 'Executive Reporting', desc: 'Dashboard level C-Suite yang menampilkan ROI, mitigasi risiko, dan metrik kunci.' },
+    { num: '09', title: 'Scale & Expand', desc: 'Duplikasi sistem ke anak perusahaan atau entitas baru secara instan.' }
   ],
-    navItems: [
+  navItems: [
     { id: 'home', label: 'Home', target: 'home' },
     { id: 'about', label: 'About Us', target: 'about' },
     { id: 'connectors', label: 'Platform & Connectors', target: 'connectors' },
@@ -143,8 +148,11 @@ const defaultState: CmsState = {
     { title: 'AI Strategy', desc: 'Analisis lanskap kompetitor, tren makroekonomi, dan simulasi ekspansi.' }
   ],
   aboutComparisons: [
-    { feature: 'Model Pelayanan', traditional: 'Presentasi statis', buildup: 'Sistem operasi 24/7' },
-    { feature: 'Dasar Bukti & Data', traditional: 'Wawancara subjektif', buildup: 'Membaca data nyata' }
+    { feature: 'Model Diagnostik', traditional: 'Audit manual berbasis wawancara subjektif yang memakan waktu berbulan-bulan.', buildup: 'Sistem operasi cerdas 24/7 dengan koneksi API langsung (Real-Time).' },
+    { feature: 'Akurasi Rekomendasi', traditional: 'Mengandalkan intuisi konsultan junior dengan margin of error tinggi.', buildup: 'Didukung oleh 12 Agen AI Eksekutif C-Level dengan akurasi data-driven.' },
+    { feature: 'Waktu Mendapatkan Nilai', traditional: 'Implementasi ERP atau inisiatif strategis membutuhkan 1-2 tahun.', buildup: 'Tindakan mitigasi kebocoran kas dalam 48 jam pertama.' },
+    { feature: 'Biaya Solusi', traditional: 'Membayar jutaan dolar di muka tanpa jaminan hasil yang konkret.', buildup: 'Langganan fleksibel (Pay-as-you-go) dengan transparansi Return on Investment (ROI).' },
+    { feature: 'Eksekusi & Monitoring', traditional: 'Berakhir dengan slide presentasi 100 halaman (Laporan pasif).', buildup: 'Otomatisasi perbaikan dan monitoring interaktif via Command Center 2 arah.' }
   ],
   themeOverrides: undefined,
   editMode: false,
@@ -156,7 +164,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<CmsState>(defaultState);
 
   useEffect(() => {
-    const saved = localStorage.getItem('buildup-cms-state-v2');
+    const saved = localStorage.getItem('buildup-cms-state-v4');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -164,7 +172,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
       } catch (e) {}
     } else {
       setState(defaultState);
-      localStorage.setItem('buildup-cms-state-v2', JSON.stringify(defaultState));
+      localStorage.setItem('buildup-cms-state-v4', JSON.stringify(defaultState));
     }
 
     const loadFromDb = async () => {
@@ -175,7 +183,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
           const remoteData = snap.data();
           setState(prev => {
             const newState = { ...prev, ...remoteData, editMode: false };
-            localStorage.setItem('buildup-cms-state-v2', JSON.stringify(newState));
+            localStorage.setItem('buildup-cms-state-v4', JSON.stringify(newState));
             return newState;
           });
         }
@@ -187,7 +195,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('buildup-cms-state-v2', JSON.stringify(state));
+    localStorage.setItem('buildup-cms-state-v4', JSON.stringify(state));
   }, [state]);
 
   const syncToFirestore = async (newState: CmsState) => {
@@ -256,6 +264,7 @@ export const useCms = () => {
   if (!ctx) throw new Error('useCms must be used within CmsProvider');
   return ctx;
 };
+
 
 
 

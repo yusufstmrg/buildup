@@ -8,7 +8,7 @@ export interface DecisionObject {
   id: string;
   code: string;
   title: string;
-  domain: 'Procurement' | 'Finance' | 'Operations' | 'Sales' | 'Tax & Compliance' | 'Risk';
+  domain: 'Procurement' | 'Finance' | 'Operations' | 'Sales' | 'Tax & Compliance' | 'Lainnya' | 'Risk';
   problem: string;
   evidence: string[];
   options: { label: string; impact: string; risk: 'Low' | 'Medium' | 'High' }[];
@@ -43,6 +43,8 @@ export interface UserProfile {
   connectedERP?: string;
   isSandbox: boolean;
   isLoggedIn: boolean;
+  isAuthLoading: boolean;
+  login: (email: string, password?: string, asDemo?: boolean) => Promise<void>;
   plan: 'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise';
 }
 
@@ -56,8 +58,10 @@ interface BuildUpContextType {
   // Authentication & Org State
   user: UserProfile | null;
   isLoggedIn: boolean;
+  isAuthLoading: boolean;
+  login: (email: string, password?: string, asDemo?: boolean) => Promise<void>;
   isSandbox: boolean;
-  login: (email: string, password?: string, asDemo?: boolean) => void;
+  
   register: (data: {
     fullName: string;
     email: string;
@@ -75,12 +79,14 @@ interface BuildUpContextType {
   // Score & Diagnostics
   overallScore: number;
   hasCompletedHealthCheck: boolean;
+  hasPendingDiagnostic: boolean;
   dimensions: HealthDimension[];
   criticalSignals: string[];
   totalAnnualLeakageIdr: number;
   totalAnnualLeakageUsd: number;
   updateScoreFromAnswers: (answers: number[]) => void;
   setGlobalHealthScore: (score: number, findings: string[], rec: string) => void;
+  saveDiagnosticToSession: (score: number, findings: string[], rec: string) => void;
   resetHealthCheck: () => void;
 
   // Decision Objects
@@ -225,6 +231,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   // User Authentication
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
   useEffect(() => {
@@ -256,24 +263,50 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         }
       } else {
         setUser(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+        }
+        setIsAuthLoading(false);
+      });
+      return () => unsubscribe();
+    }, []);
 
   const login = async (email: string, password?: string, asDemo?: boolean) => {
     try {
+      setIsAuthLoading(true);
       if (asDemo) {
         setUser(defaultDemoUser);
         setIsAuthModalOpen(false);
+        setIsAuthLoading(false);
         return;
       }
       if (!password) throw new Error("Password is required");
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      
+      const userDocRef = doc(db, 'users', cred.user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists()) {
+        const userData = userSnap.data() as UserProfile;
+        setUser({ ...userData, isLoggedIn: true, id: cred.user.uid });
+      } else {
+        setUser({
+          id: cred.user.uid,
+          name: cred.user.displayName || email.split('@')[0] || 'User',
+          email: email,
+          role: 'User',
+          companyName: 'Company',
+          industry: 'Other',
+          revenueBracket: 'Unknown',
+          isSandbox: false,
+          isLoggedIn: true,
+          plan: 'Free Health Check'
+        });
+      }
+
       setIsAuthModalOpen(false);
+      setIsAuthLoading(false);
     } catch (error: any) {
+      setIsAuthLoading(false);
       console.error("Login error:", error);
-      alert("Login failed: " + error.message);
+      throw error; // Throw so the component can show the error
     }
   };
 
@@ -288,22 +321,23 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     password?: string;
   }) => {
     try {
+      setIsAuthLoading(true);
       if (!data.password) throw new Error("Password is required");
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const uid = userCredential.user.uid;
       const orgId = `org-${Date.now()}`;
 
-      // Create tenant organization
+      const safeCustomIndustry = data.customIndustry || "";
+      
       await setDoc(doc(db, 'organizations', orgId), {
         id: orgId,
         name: data.companyName,
         industry: data.industry,
-        customIndustry: data.customIndustry,
+        customIndustry: safeCustomIndustry,
         revenueBracket: data.revenueBracket,
         createdAt: new Date().toISOString()
       });
 
-      // Create user profile
       const newUserProfile: UserProfile = {
         id: uid,
         name: data.fullName,
@@ -311,7 +345,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         role: data.role || 'Managing Director',
         companyName: data.companyName,
         industry: data.industry,
-        customIndustry: data.customIndustry,
+        customIndustry: safeCustomIndustry,
         revenueBracket: data.revenueBracket,
         isSandbox: false,
         isLoggedIn: true,
@@ -320,7 +354,6 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
 
       await setDoc(doc(db, 'users', uid), newUserProfile);
       
-      // Create membership
       await setDoc(doc(db, 'memberships', `${uid}_${orgId}`), {
         userId: uid,
         orgId: orgId,
@@ -328,11 +361,37 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         joinedAt: new Date().toISOString()
       });
 
+      // Restore pending diagnostic from session if exists
+      const pendingRaw = sessionStorage.getItem('bu_pending_diagnostic');
+      if (pendingRaw) {
+        try {
+          const pending = JSON.parse(pendingRaw);
+          await setDoc(doc(db, 'users', uid, 'diagnostics', 'latest'), {
+            ...pending,
+            restoredAt: new Date().toISOString()
+          });
+          // Apply to live state immediately
+          setOverallScore(pending.score);
+          setHasCompletedHealthCheck(true);
+          localStorage.setItem('bu_score', pending.score.toString());
+          setCriticalSignals(pending.findings || []);
+          const leakage = (100 - pending.score) * 25000000;
+          setTotalAnnualLeakageIdr(leakage);
+          setTotalAnnualLeakageUsd(Math.round(leakage / 15000));
+          sessionStorage.removeItem('bu_pending_diagnostic');
+          setHasPendingDiagnostic(true);
+        } catch (e) {
+          console.warn('Could not restore pending diagnostic:', e);
+        }
+      }
+
       setUser(newUserProfile);
       setIsAuthModalOpen(false);
+      setIsAuthLoading(false);
     } catch (error: any) {
-      console.error("Registration error:", error);
-      alert("Registration failed: " + error.message);
+      setIsAuthLoading(false);
+      console.error("Register error:", error);
+      throw error;
     }
   };
 
@@ -369,9 +428,10 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   const [hasCompletedHealthCheck, setHasCompletedHealthCheck] = useState<boolean>(() => {
     return !!localStorage.getItem('bu_score');
   });
+  const [hasPendingDiagnostic, setHasPendingDiagnostic] = useState<boolean>(false);
   const [dimensions, setDimensions] = useState<HealthDimension[]>(initialDimensions);
   const [decisionObjects, setDecisionObjects] = useState<DecisionObject[]>(initialDecisions);
-  const [currency, setCurrency] = useState<'IDR' | 'USD'>('IDR');
+  const [currency, setCurrency] = useState<'IDR' | 'USD'>('USD');
   const [currentPlan, setCurrentPlan] = useState<'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise'>('Business X-Ray');
   const [isHealthCheckModalOpen, setIsHealthCheckModalOpen] = useState(false);
 
@@ -417,34 +477,54 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error("Error fetching decisions from backend:", error);
         }
-      } else {
-        // Fallback to initialDecisions for demo
+      } else if (user?.isSandbox) {
+        // Fallback to initialDecisions for demo only
         setDecisionObjects(initialDecisions);
+      } else {
+        setDecisionObjects([]);
       }
     }
     fetchBackendData();
   }, [user]);
 
-  const criticalSignals = [
-    'Procurement single-supplier dependency (>60% spend on 2 vendors)',
-    'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
-    'SoD dual-custody authorization violation in ERP approval chain',
-    'Unintegrated logistics handoffs causing 14% dispatch delay'
-  ];
+  const [criticalSignals, setCriticalSignals] = useState<string[]>(() => {
+    return user?.isSandbox ? [
+      'Procurement single-supplier dependency (>60% spend on 2 vendors)',
+      'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
+      'SoD dual-custody authorization violation in ERP approval chain',
+      'Unintegrated logistics handoffs causing 14% dispatch delay'
+    ] : [];
+  });
 
-  const totalAnnualLeakageIdr = 1450000000;
-  const totalAnnualLeakageUsd = 96000;
+  const [totalAnnualLeakageIdr, setTotalAnnualLeakageIdr] = useState<number>(() => user?.isSandbox ? 1450000000 : 0);
+  const [totalAnnualLeakageUsd, setTotalAnnualLeakageUsd] = useState<number>(() => user?.isSandbox ? 96000 : 0);
 
   const setGlobalHealthScore = (score: number, findings: string[], rec: string) => {
     setOverallScore(score);
     setHasCompletedHealthCheck(true);
     localStorage.setItem('bu_score', score.toString());
-    // Update the first dimension with the findings as a hack for demo
+    
+    // Connect AI findings directly to the Command Center dashboard
+    setCriticalSignals(findings);
+    
+    // Estimate leakage based on score (lower score = higher leakage)
+    const estimatedLeakageIdr = (100 - score) * 25000000;
+    setTotalAnnualLeakageIdr(estimatedLeakageIdr);
+    setTotalAnnualLeakageUsd(Math.round(estimatedLeakageIdr / 15000));
+
+    // Update the first dimension with the findings
     const updated = [...dimensions];
     updated[0].score = score;
-    updated[0].findings = findings.join(' | ');
+    updated[0].findings = findings[0] || 'Terdapat inefisiensi terdeteksi';
     updated[0].bottleneck = rec;
     setDimensions(updated);
+  };
+
+  // Save diagnostic results to sessionStorage for guest users (before sign up)
+  const saveDiagnosticToSession = (score: number, findings: string[], rec: string) => {
+    sessionStorage.setItem('bu_pending_diagnostic', JSON.stringify({
+      score, findings, rec, timestamp: new Date().toISOString()
+    }));
   };
 
   const updateScoreFromAnswers = (answers: number[]) => {
@@ -514,6 +594,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         user,
         isLoggedIn: !!user?.isLoggedIn,
         isSandbox: !!user?.isSandbox,
+        isAuthLoading,
         login,
         register,
         logout,
@@ -521,12 +602,14 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         updateUserProfile,
         overallScore,
         hasCompletedHealthCheck,
+        hasPendingDiagnostic,
         dimensions,
         criticalSignals,
         totalAnnualLeakageIdr,
         totalAnnualLeakageUsd,
         updateScoreFromAnswers,
         setGlobalHealthScore,
+        saveDiagnosticToSession,
         resetHealthCheck,
         decisionObjects,
         approveDecision,

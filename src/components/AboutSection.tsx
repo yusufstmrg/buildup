@@ -43,7 +43,7 @@ export function AboutSection() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-brand-textMain leading-tight">
-            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="text-[#D4AF37] font-black drop-shadow-md">AI-Native Business Transformation Intelligence · Direct Internal System Connectivity</span>
+            {t('aboutHeroTitle') || 'Kami Menggantikan Model Konsultasi Lama dengan'} <span className="text-[#D4AF37] font-black drop-shadow-md">AI-Native Business Transformation Intelligence ï¿½ Direct Internal System Connectivity</span>
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-brand-textMuted leading-relaxed max-w-3xl mx-auto">
@@ -58,12 +58,12 @@ export function AboutSection() {
               <span>{t('aboutTestHealth') || 'Uji Kesehatan Bisnis Perusahaan Anda'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
-            <Link
-              to="/contact"
+            <button
+              onClick={() => { const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
               className="px-6 py-3.5 bg-brand-surface/90 hover:bg-brand-surface border border-brand-border text-brand-textMain font-bold text-sm rounded-xl transition-all"
             >
               {t('aboutSchedule') || 'Jadwalkan Diskusi dengan Partner Ahli'}
-            </Link>
+            </button>
           </div>
         </div>
       </section>
