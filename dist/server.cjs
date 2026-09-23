@@ -614,7 +614,6 @@ __export(server_exports, {
 });
 module.exports = __toCommonJS(server_exports);
 var import_express = __toESM(require("express"), 1);
-var import_path = __toESM(require("path"), 1);
 
 // src/middleware/auth.ts
 init_firebase_admin();
@@ -633,21 +632,30 @@ var requireAuth = async (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };
+var requireAdmin = async (req, res, next) => {
+  await requireAuth(req, res, async () => {
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    try {
+      const { adminDb: adminDb2 } = await Promise.resolve().then(() => (init_firebase_admin(), firebase_admin_exports));
+      const userSnap = await adminDb2.collection("users").doc(req.user.uid).get();
+      if (!userSnap.exists || userSnap.data()?.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden: Admin access required" });
+      }
+      next();
+    } catch (err) {
+      console.error("Admin check failed:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+};
 
 // server.ts
 init_users();
 var import_https = require("firebase-functions/v2/https");
 var app = (0, import_express.default)();
 app.use(import_express.default.json());
-var port = Number(process.env.PORT || 3e3);
-var clientDist = import_path.default.resolve(process.cwd(), "dist");
-app.use(import_express.default.static(clientDist));
-app.get("/{*splat}", (req, res, next) => {
-  if (req.path.startsWith("/api/")) return next();
-  res.sendFile(import_path.default.join(clientDist, "index.html"), (error) => {
-    if (error) next(error);
-  });
-});
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "BuildUp OS Backend Running" });
 });
@@ -655,16 +663,24 @@ app.post("/api/auth/sync", requireAuth, async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
     const user = await getOrCreateUser(req.user.uid, req.user.email || "", req.user.name || "");
+    await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     res.json({ success: true, user });
   } catch (error) {
     console.error("User sync error:", error);
     res.status(500).json({ error: error.message });
   }
 });
+app.get("/api/admin/users", requireAdmin, async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 app.post("/api/ai/strategic-analysis", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { scenario } = req.body;
     if (!scenario) {
       return res.status(400).json({ error: "Scenario is required." });
@@ -679,8 +695,7 @@ app.post("/api/ai/strategic-analysis", requireAuth, async (req, res) => {
 });
 app.post("/api/ai/health-check", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { fileData } = req.body;
     if (!fileData) {
       return res.status(400).json({ error: "File data is required." });
@@ -701,15 +716,18 @@ app.post("/api/ai/health-check", requireAuth, async (req, res) => {
   }
 });
 var buildup_api = (0, import_https.onRequest)({ region: "asia-southeast1", memory: "1GiB" }, app);
-async function getOrgIdForRequest(uid) {
-  const { getOrganizationsForUser: getOrganizationsForUser2 } = await Promise.resolve().then(() => (init_users(), users_exports));
+async function getOrCreateOrgForUser(uid, email, name) {
+  const { getOrganizationsForUser: getOrganizationsForUser2, createOrganization: createOrganization2 } = await Promise.resolve().then(() => (init_users(), users_exports));
   const orgs = await getOrganizationsForUser2(uid);
-  return orgs.length > 0 ? orgs[0].id : null;
+  if (orgs.length > 0) return orgs[0].id;
+  const orgName = name ? `${name}'s Organization` : email ? email.split("@")[0] : "My Organization";
+  const newOrg = await createOrganization2(uid, orgName, uid);
+  console.log(`Auto-created organization ${newOrg.id} for user ${uid}`);
+  return newOrg.id;
 }
 app.get("/api/genome", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getBusinessGenome: getBusinessGenome2 } = await Promise.resolve().then(() => (init_genome(), genome_exports));
     const genome = await getBusinessGenome2(orgId);
     res.json({ genome });
@@ -719,8 +737,7 @@ app.get("/api/genome", requireAuth, async (req, res) => {
 });
 app.get("/api/metrics", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getMetrics: getMetrics2 } = await Promise.resolve().then(() => (init_metrics(), metrics_exports));
     const metrics = await getMetrics2(orgId);
     res.json({ metrics });
@@ -730,8 +747,7 @@ app.get("/api/metrics", requireAuth, async (req, res) => {
 });
 app.get("/api/connectors", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { adminDb: adminDb2 } = await Promise.resolve().then(() => (init_firebase_admin(), firebase_admin_exports));
     const snapshot = await adminDb2.collection("organizations").doc(orgId).collection("connectors").get();
     const connectors = snapshot.docs.map((doc) => doc.data());
@@ -742,8 +758,7 @@ app.get("/api/connectors", requireAuth, async (req, res) => {
 });
 app.post("/api/evidence", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { uploadEvidenceRecord: uploadEvidenceRecord2 } = await Promise.resolve().then(() => (init_evidence(), evidence_exports));
     const evidence = await uploadEvidenceRecord2(orgId, req.body);
     res.json({ evidence });
@@ -753,8 +768,7 @@ app.post("/api/evidence", requireAuth, async (req, res) => {
 });
 app.get("/api/diagnostics", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getDiagnostics: getDiagnostics2 } = await Promise.resolve().then(() => (init_diagnostics(), diagnostics_exports));
     const diagnostics = await getDiagnostics2(orgId);
     res.json({ diagnostics });
@@ -764,8 +778,7 @@ app.get("/api/diagnostics", requireAuth, async (req, res) => {
 });
 app.post("/api/decisions/propose", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { problem } = req.body;
     if (!problem) return res.status(400).json({ error: "Problem context is required" });
     const { runAITask: runAITask2 } = await Promise.resolve().then(() => (init_gateway(), gateway_exports));
@@ -780,8 +793,7 @@ app.post("/api/decisions/propose", requireAuth, async (req, res) => {
 });
 app.get("/api/decisions", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getDecisions: getDecisions2 } = await Promise.resolve().then(() => (init_decisions(), decisions_exports));
     const decisions = await getDecisions2(orgId);
     res.json({ decisions });
@@ -791,8 +803,7 @@ app.get("/api/decisions", requireAuth, async (req, res) => {
 });
 app.post("/api/initiatives", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { createInitiative: createInitiative2 } = await Promise.resolve().then(() => (init_initiatives(), initiatives_exports));
     const initiative = await createInitiative2(orgId, req.body);
     res.json({ success: true, initiative });
@@ -802,8 +813,7 @@ app.post("/api/initiatives", requireAuth, async (req, res) => {
 });
 app.get("/api/initiatives", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getInitiatives: getInitiatives2 } = await Promise.resolve().then(() => (init_initiatives(), initiatives_exports));
     const initiatives = await getInitiatives2(orgId);
     res.json({ initiatives });
@@ -813,8 +823,7 @@ app.get("/api/initiatives", requireAuth, async (req, res) => {
 });
 app.post("/api/outcomes/record", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { recordOutcome: recordOutcome2 } = await Promise.resolve().then(() => (init_outcomes(), outcomes_exports));
     const outcome = await recordOutcome2(orgId, req.body);
     res.json({ success: true, outcome });
@@ -824,8 +833,7 @@ app.post("/api/outcomes/record", requireAuth, async (req, res) => {
 });
 app.get("/api/outcomes", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getOutcomes: getOutcomes2 } = await Promise.resolve().then(() => (init_outcomes(), outcomes_exports));
     const outcomes = await getOutcomes2(orgId);
     res.json({ outcomes });
@@ -855,17 +863,13 @@ app.get("/api/benchmarks", requireAuth, async (req, res) => {
 });
 app.get("/api/billing/entitlement", requireAuth, async (req, res) => {
   try {
-    const orgId = await getOrgIdForRequest(req.user.uid);
-    if (!orgId) return res.status(404).json({ error: "No organization found for user" });
+    const orgId = await getOrCreateOrgForUser(req.user.uid, req.user.email, req.user.name);
     const { getEntitlement: getEntitlement2 } = await Promise.resolve().then(() => (init_commercial(), commercial_exports));
     const entitlement = await getEntitlement2(orgId);
     res.json({ entitlement });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
-app.listen(port, "0.0.0.0", () => {
-  console.log(`[BuildUp] preview server listening on ${port}`);
 });
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

@@ -52,6 +52,7 @@ export default function App() {
         <AdminBar />
         <ThemePanel />
         <SectionManager />
+        <DataManager />
 
         <Routes>
           {/* Public Enterprise Transformation Portal */}
