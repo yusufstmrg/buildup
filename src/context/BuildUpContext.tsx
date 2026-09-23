@@ -460,24 +460,35 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     fetchBackendData();
   }, [user]);
 
-  const criticalSignals = user?.isSandbox ? [
-    'Procurement single-supplier dependency (>60% spend on 2 vendors)',
-    'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
-    'SoD dual-custody authorization violation in ERP approval chain',
-    'Unintegrated logistics handoffs causing 14% dispatch delay'
-  ] : [];
+  const [criticalSignals, setCriticalSignals] = useState<string[]>(() => {
+    return user?.isSandbox ? [
+      'Procurement single-supplier dependency (>60% spend on 2 vendors)',
+      'DSO working capital drag locking ~Rp 1.85 Miliar in receivables',
+      'SoD dual-custody authorization violation in ERP approval chain',
+      'Unintegrated logistics handoffs causing 14% dispatch delay'
+    ] : [];
+  });
 
-  const totalAnnualLeakageIdr = user?.isSandbox ? 1450000000 : 0;
-  const totalAnnualLeakageUsd = user?.isSandbox ? 96000 : 0;
+  const [totalAnnualLeakageIdr, setTotalAnnualLeakageIdr] = useState<number>(() => user?.isSandbox ? 1450000000 : 0);
+  const [totalAnnualLeakageUsd, setTotalAnnualLeakageUsd] = useState<number>(() => user?.isSandbox ? 96000 : 0);
 
   const setGlobalHealthScore = (score: number, findings: string[], rec: string) => {
     setOverallScore(score);
     setHasCompletedHealthCheck(true);
     localStorage.setItem('bu_score', score.toString());
-    // Update the first dimension with the findings as a hack for demo
+    
+    // Connect AI findings directly to the Command Center dashboard
+    setCriticalSignals(findings);
+    
+    // Estimate leakage based on score (lower score = higher leakage)
+    const estimatedLeakageIdr = (100 - score) * 25000000;
+    setTotalAnnualLeakageIdr(estimatedLeakageIdr);
+    setTotalAnnualLeakageUsd(Math.round(estimatedLeakageIdr / 15000));
+
+    // Update the first dimension with the findings
     const updated = [...dimensions];
     updated[0].score = score;
-    updated[0].findings = findings.join(' | ');
+    updated[0].findings = findings[0] || 'Terdapat inefisiensi terdeteksi';
     updated[0].bottleneck = rec;
     setDimensions(updated);
   };

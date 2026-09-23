@@ -26,15 +26,19 @@ export function CommandCenter() {
   const { 
     user,
     overallScore, 
+    hasCompletedHealthCheck,
     setIsHealthCheckModalOpen, 
     decisionObjects, 
     approveDecision, 
     escalateDecision,
     formatMoney,
-    currency
+    currency,
+    totalAnnualLeakageIdr,
+    totalAnnualLeakageUsd,
+    criticalSignals
   } = useBuildUp();
 
-  const chartData = user?.isSandbox ? [
+  const chartData = (user?.isSandbox || hasCompletedHealthCheck) ? [
     { week: 'W1', revenue: 4200, margin: 1250, cash: 3100 },
     { week: 'W2', revenue: 4800, margin: 1420, cash: 3050 },
     { week: 'W3', revenue: 4600, margin: 1380, cash: 2900 },
@@ -89,11 +93,11 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">BuildUp Score™</div>
           <div className="text-3xl font-black text-gold-gradient tracking-tight mb-2">
-            {user?.isSandbox ? overallScore : '--'}<span className="text-sm font-normal text-brand-textMuted">/100</span>
+            {user?.isSandbox || hasCompletedHealthCheck ? overallScore : '--'}<span className="text-sm font-normal text-brand-textMuted">/100</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> {user?.isSandbox ? '+4 pts in 30d' : 'Needs Data'}
+              <ArrowUpRight className="w-3.5 h-3.5" /> {(user?.isSandbox || hasCompletedHealthCheck) ? '+4 pts in 30d' : 'Needs Data'}
             </span>
             <button 
               onClick={() => setIsHealthCheckModalOpen(true)}
@@ -108,11 +112,11 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Working Capital Freed</div>
           <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
-            {user?.isSandbox ? formatMoney(1850000000, 119000) : formatMoney(0, 0)}
+            {user?.isSandbox || hasCompletedHealthCheck ? formatMoney(totalAnnualLeakageIdr * 1.2, totalAnnualLeakageUsd * 1.2) : formatMoney(0, 0)}
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <ArrowUpRight className="w-3.5 h-3.5" /> {user?.isSandbox ? 'DSO -17 Days' : 'DSO -- Days'}
+              <ArrowUpRight className="w-3.5 h-3.5" /> {(user?.isSandbox || hasCompletedHealthCheck) ? 'DSO -17 Days' : 'DSO -- Days'}
             </span>
             <span className="text-brand-textMuted text-[11px]">AI CFO Active</span>
           </div>
@@ -122,11 +126,11 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Active AI Workflows</div>
           <div className="text-2xl font-black text-brand-textMain tracking-tight mb-2">
-            {user?.isSandbox ? '18 / 18' : '0 / 18'} <span className="text-xs font-normal text-brand-textMuted">Autonomous</span>
+            {user?.isSandbox || hasCompletedHealthCheck ? '18 / 18' : '0 / 18'} <span className="text-xs font-normal text-brand-textMuted">Autonomous</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> {user?.isSandbox ? '99.4% SLA' : '--% SLA'}
+              <CheckCircle2 className="w-3.5 h-3.5" /> {(user?.isSandbox || hasCompletedHealthCheck) ? '99.4% SLA' : '--% SLA'}
             </span>
             <Link to="/workforce" className="text-[11px] text-brand-gold hover:underline font-bold">
               Inspect ↗
@@ -138,11 +142,11 @@ export function CommandCenter() {
         <div className="bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-xl p-5 relative overflow-hidden transition-all group">
           <div className="text-xs font-bold text-brand-textMuted uppercase tracking-wider mb-1">Recoverable Leakage</div>
           <div className="text-2xl font-black text-emerald-400 tracking-tight mb-2">
-            {user?.isSandbox ? formatMoney(1450000000, 96000) : formatMoney(0, 0)}
+            {user?.isSandbox || hasCompletedHealthCheck ? formatMoney(totalAnnualLeakageIdr, totalAnnualLeakageUsd) : formatMoney(0, 0)}
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-yellow-400 font-semibold flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" /> {user?.isSandbox ? '3 Bottlenecks' : '0 Bottlenecks'}
+              <AlertTriangle className="w-3.5 h-3.5" /> {(user?.isSandbox || hasCompletedHealthCheck) ? `${criticalSignals.length || 0} Bottlenecks` : '0 Bottlenecks'}
             </span>
             <Link to="/diagnostics" className="text-[11px] text-brand-gold hover:underline font-bold">
               X-Ray Map ↗

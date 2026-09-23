@@ -211,7 +211,7 @@ Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Rec
           },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 512 }
+            generationConfig: { temperature: 0.3, maxOutputTokens: 2048 }
           })
         });
       } finally {
@@ -233,14 +233,23 @@ Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Rec
       // Parse JSON dari respons
       let analysis: { score?: number; findings?: string[]; recommendation?: string } = {};
       try {
-        const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        analysis = JSON.parse(cleaned);
-      } catch {
-        // Jika JSON gagal, buat hasil sederhana dari teks mentah
+        // Ekstrak blok JSON saja, abaikan teks lain di luar kurung kurawal
+        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const cleaned = jsonMatch[0].replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          analysis = JSON.parse(cleaned);
+        } else {
+          throw new Error("Format JSON tidak valid");
+        }
+      } catch (e) {
+        // Jika JSON gagal atau kepotong, ambil string hasil sebisa mungkin
         analysis = {
           score: 65,
-          findings: ['Analisis selesai. Data berhasil diproses.', rawText.substring(0, 150)],
-          recommendation: 'Tinjau laporan lebih detail bersama konsultan keuangan.'
+          findings: [
+            'Analisis selesai, namun AI mengembalikan format yang tidak standar.', 
+            'Temuan mentah: ' + rawText.substring(0, 250).replace(/[{"}\[\]]/g, ' ')
+          ],
+          recommendation: 'Tinjau laporan lebih detail bersama konsultan keuangan atau coba jalankan ulang.'
         };
       }
 
