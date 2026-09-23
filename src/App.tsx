@@ -4,6 +4,7 @@ import { BuildUpProvider } from './context/BuildUpContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { HealthCheckModal } from './components/HealthCheckModal';
 import { AuthModal } from './components/AuthModal';
+import { CheckoutModal } from './components/checkout/CheckoutModal';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CmsProvider } from './context/CmsContext';
 import { AdminBar } from './components/admin/AdminBar';
@@ -49,6 +50,7 @@ export default function App() {
         {/* Global Modals */}
         <HealthCheckModal />
         <AuthModal />
+        <CheckoutModal />
         <AdminBar />
         <ThemePanel />
         <SectionManager />

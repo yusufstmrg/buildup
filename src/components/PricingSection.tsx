@@ -7,7 +7,7 @@ import * as Switch from '@radix-ui/react-switch';
 import { EditableText } from '../components/admin/EditableText';
 
 export function PricingSection() {
-  const { setIsHealthCheckModalOpen, formatMoney } = useBuildUp();
+  const { setIsHealthCheckModalOpen, formatMoney, openCheckout } = useBuildUp();
   const { state } = useCms();
   const navigate = useNavigate();
 
@@ -163,10 +163,16 @@ export function PricingSection() {
                   <button 
                     onClick={() => {
                       if (plan.id === 'enterprise' || plan.id === 'scale') {
-                        navigate('/contact');
-                      } else {
-                        setIsHealthCheckModalOpen(true);
-                      }
+                          navigate('/contact');
+                        } else {
+                          openCheckout({
+                            id: plan.id,
+                            name: `Paket ${plan.name}`,
+                            price: isAnnual ? plan.priceIdrMonthly * 0.8 : plan.priceIdrMonthly,
+                            type: 'saas',
+                            isAnnual: isAnnual
+                          });
+                        }
                     }}
                     className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                       plan.isPopular 
@@ -210,7 +216,13 @@ export function PricingSection() {
                 <div className="text-brand-textMuted text-xs font-semibold mb-2">Investasi Satu Kali</div>
                 <div className="text-2xl font-black text-brand-gold mb-6">{prod.priceText}</div>
                 <button 
-                  onClick={() => prod.id === 'health-check' ? setIsHealthCheckModalOpen(true) : navigate('/contact')}
+                  onClick={() => prod.id === 'health-check' ? openCheckout({
+                      id: prod.id,
+                      name: prod.name,
+                      price: prod.priceIdr,
+                      type: 'diagnostic',
+                      isAnnual: false
+                    }) : navigate('/contact')}
                   className="w-full bg-brand-gold hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-gold-sm text-sm"
                 >
                   {prod.buttonText}

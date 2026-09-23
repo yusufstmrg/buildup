@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, Zap, Lock, ArrowRight, BarChart2 } from 'lucide-react';
 
 export function ContextualUpgradeWidget() {
-  const { subscription, totalAnnualLeakageIdr, formatMoney, setIsHealthCheckModalOpen } = useBuildUp();
+  const { subscription, totalAnnualLeakageIdr, formatMoney, openCheckout } = useBuildUp();
   const navigate = useNavigate();
 
   // Hitung persentase pemakaian
@@ -94,7 +94,13 @@ export function ContextualUpgradeWidget() {
           <div className="space-y-3">
             <div className="text-[10px] text-brand-textMuted">Rekomendasi Tindakan:</div>
             <button 
-              onClick={() => setIsHealthCheckModalOpen(true)}
+              onClick={() => openCheckout({
+                id: 'health-check',
+                name: 'Business Health Check™',
+                price: 749000,
+                type: 'diagnostic',
+                isAnnual: false
+              })}
               className="w-full bg-brand-gold hover:opacity-90 text-slate-900 font-bold py-2.5 px-4 rounded-xl transition-all shadow-gold-sm text-sm flex items-center justify-center gap-2"
             >
               <BarChart2 className="w-4 h-4" />

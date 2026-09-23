@@ -55,13 +55,21 @@ export interface UsageMetric {
 }
 
 export interface UserSubscriptionInfo {
-  planId: 'snapshot' | 'health-check' | 'starter' | 'business' | 'growth' | 'scale';
+  planId: 'snapshot' | 'health-check' | 'starter' | 'business' | 'growth' | 'scale' | 'enterprise';
   planName: string;
   metrics: {
     aiInsights: UsageMetric;
     integrations: UsageMetric;
     workflows: UsageMetric;
   };
+}
+
+export interface CheckoutItem {
+  id: string;
+  name: string;
+  price: number;
+  type: 'saas' | 'diagnostic';
+  isAnnual?: boolean;
 }
 
 interface BuildUpContextType {
@@ -71,8 +79,13 @@ interface BuildUpContextType {
   t: (key: keyof typeof TRANSLATIONS['id']) => string;
   industries: IndustryOption[];
 
-  // User Subscription
+  // User Subscription & Checkout
   subscription: UserSubscriptionInfo;
+  isCheckoutModalOpen: boolean;
+  checkoutItem: CheckoutItem | null;
+  openCheckout: (item: CheckoutItem) => void;
+  closeCheckout: () => void;
+  processPaymentSuccess: (planId: UserSubscriptionInfo['planId'], planName: string) => void;
 
   // Authentication & Org State
   user: UserProfile | null;
@@ -603,7 +616,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     return `Rp ${idr.toLocaleString('id-ID')}`;
   };
 
-  const [subscription] = useState<UserSubscriptionInfo>({
+  const [subscription, setSubscription] = useState<UserSubscriptionInfo>({
     planId: 'snapshot',
     planName: 'Health Snapshot™ (Free)',
     metrics: {
@@ -613,6 +626,33 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [checkoutItem, setCheckoutItem] = useState<CheckoutItem | null>(null);
+
+  const openCheckout = (item: CheckoutItem) => {
+    setCheckoutItem(item);
+    setIsCheckoutModalOpen(true);
+  };
+
+  const closeCheckout = () => {
+    setIsCheckoutModalOpen(false);
+    setTimeout(() => setCheckoutItem(null), 300);
+  };
+
+  const processPaymentSuccess = (planId: UserSubscriptionInfo['planId'], planName: string) => {
+    // Simulasi upgrade: unlock limits
+    setSubscription(prev => ({
+      ...prev,
+      planId,
+      planName,
+      metrics: {
+        aiInsights: { ...prev.metrics.aiInsights, limit: planId === 'health-check' ? 10 : 100 },
+        integrations: { ...prev.metrics.integrations, limit: planId === 'health-check' ? 3 : 10 },
+        workflows: { ...prev.metrics.workflows, limit: planId === 'health-check' ? 1 : 25 }
+      }
+    }));
+  };
+
   return (
     <BuildUpContext.Provider
       value={{
@@ -621,6 +661,11 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         t,
         industries: COMPREHENSIVE_INDUSTRIES,
         subscription,
+        isCheckoutModalOpen,
+        checkoutItem,
+        openCheckout,
+        closeCheckout,
+        processPaymentSuccess,
         user,
         isLoggedIn: !!user?.isLoggedIn,
         isSandbox: !!user?.isSandbox,
