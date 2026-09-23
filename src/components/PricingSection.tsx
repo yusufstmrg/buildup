@@ -118,15 +118,29 @@ export function PricingSection() {
                 <div className="p-6 md:p-5 lg:p-6 border-b border-brand-border/50">
                   <h4 className="text-xl font-bold text-brand-textMain">{plan.name}</h4>
                   <p className="text-xs text-brand-textMuted mt-2 h-8">{plan.targetAudience}</p>
-                  <div className="mt-4 mb-2">
+                  <div className="mt-4 mb-2 min-h-[76px] flex flex-col justify-end">
                     {plan.priceIdrMonthly === 0 ? (
-                      <span className="text-2xl font-black text-brand-textMain">Custom Pricing</span>
+                      <span className="text-2xl font-black text-brand-textMain mb-1">Custom Pricing</span>
                     ) : (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl lg:text-3xl font-black text-brand-textMain tracking-tight">
-                          {getSaaSPrice(plan.priceIdrMonthly)}
-                        </span>
-                        <span className="text-xs text-brand-textMuted">/ bulan</span>
+                      <div className="flex flex-col gap-1.5">
+                        {isAnnual ? (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-semibold text-brand-textMuted line-through decoration-brand-textMuted/50">
+                              {formatMoney(plan.priceIdrMonthly)}
+                            </span>
+                            <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              Hemat {formatMoney(plan.priceIdrMonthly * 12 * 0.2)} / thn
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="h-6"></div> /* Spacer to keep card heights perfectly aligned */
+                        )}
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl lg:text-3xl font-black text-brand-textMain tracking-tight">
+                            {getSaaSPrice(plan.priceIdrMonthly)}
+                          </span>
+                          <span className="text-xs text-brand-textMuted font-medium">/ bulan</span>
+                        </div>
                       </div>
                     )}
                   </div>
