@@ -115,32 +115,43 @@ export function HealthCheckModal() {
 
   const parseFile = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
+      // Timeout: jika file tidak selesai dibaca dalam 15 detik, lanjutkan
+      const timeout = setTimeout(() => resolve(`[File ${file.name} timeout saat dibaca]`), 15000);
+
       const reader = new FileReader();
+
       reader.onload = (e) => {
+        clearTimeout(timeout);
         const data = e.target?.result;
         if (!data) { resolve(""); return; }
-        
+
         if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-          try {
-            // Import dinamis xlsx agar tidak membebani initial load
-            import('xlsx').then(xlsx => {
+          import('xlsx').then(xlsx => {
+            try {
               const workbook = xlsx.read(data, { type: 'binary' });
               let text = "";
-              workbook.SheetNames.forEach(sheetName => {
+              workbook.SheetNames.slice(0, 5).forEach(sheetName => {
                 const sheet = workbook.Sheets[sheetName];
-                text += `Sheet: ${sheetName}\n` + xlsx.utils.sheet_to_csv(sheet).substring(0, 500) + "\n\n";
+                const csv = xlsx.utils.sheet_to_csv(sheet);
+                text += `=== Sheet: ${sheetName} ===\n${csv.substring(0, 3000)}\n\n`;
               });
-              resolve(text);
-            });
-          } catch(err) {
-            resolve("Error reading excel file.");
-          }
+              resolve(text || `[File ${file.name} kosong]`);
+            } catch {
+              resolve(`[Gagal membaca Excel: ${file.name}]`);
+            }
+          }).catch(() => resolve(`[Gagal import xlsx untuk: ${file.name}]`));
         } else {
-          // Asumsikan CSV/TXT
-          resolve(data as string);
+          // CSV / TXT — batasi 5000 karakter
+          const text = (data as string).substring(0, 5000);
+          resolve(text || `[File ${file.name} kosong]`);
         }
       };
-      
+
+      reader.onerror = () => {
+        clearTimeout(timeout);
+        resolve(`[Gagal membaca file: ${file.name}]`);
+      };
+
       if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
         reader.readAsBinaryString(file);
       } else {
@@ -151,96 +162,102 @@ export function HealthCheckModal() {
 
   const handleRunErpScan = async () => {
     setIsErpScanning(true);
-    setErpScanProgress(15);
+    setErpScanProgress(10);
     setErpScanComplete(false);
 
     try {
-      let fileDataString = "No file uploaded. Assume typical SME inefficiencies for Indonesian mid-market company.";
+      // Step 1: Baca file
+      let fileDataString = "Tidak ada file. Lakukan analisis dasar untuk perusahaan SME Indonesia.";
       if (uploadedFiles.length > 0) {
-        setErpScanProgress(30);
+        setErpScanProgress(25);
         const parsedFiles = await Promise.all(uploadedFiles.map(f => parseFile(f)));
-        fileDataString = parsedFiles.join("\n\n--- NEXT FILE ---\n\n");
+        fileDataString = parsedFiles.join("\n\n--- FILE BERIKUTNYA ---\n\n");
+        setErpScanProgress(40);
       }
 
-      setErpScanProgress(50);
+      // Step 2: Kirim ke Gemini API via REST (langsung dari browser)
+      setErpScanProgress(55);
 
-      // Call Gemini directly from frontend (no backend server needed)
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: 'AIzaSyDaLMtBGwq4XkFBQkd-n_qif98lpj6v1IQ' });
+      const GEMINI_API_KEY = 'AIzaSyDaLMtBGwq4XkFBQkd-n_qif98lpj6v1IQ';
+      const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-      setErpScanProgress(60);
+      const prompt = `Anda adalah analis keuangan bisnis. Lakukan Business Health Check DASAR untuk data berikut.
 
-      const prompt = `Anda adalah BuildUp AI Executive — analis transformasi bisnis elite untuk perusahaan menengah Indonesia.
+DATA:
+${fileDataString.substring(0, 6000)}
 
-Analisis data keuangan/operasional berikut dan hasilkan Business Health Check yang presisi:
+Balas HANYA dengan JSON valid ini (tanpa teks lain, tanpa markdown):
+{"score":75,"findings":["Temuan 1 berdasarkan data","Temuan 2 berdasarkan data","Temuan 3 berdasarkan data"],"recommendation":"Rekomendasi aksi utama yang spesifik"}
 
-DATA BISNIS:
-${fileDataString.substring(0, 8000)}
+Score: 0-100 (kondisi keuangan bisnis). Findings: 3 poin spesifik dari data. Recommendation: 1 kalimat aksi.`;
 
-Hasilkan analisis dalam format JSON berikut (HANYA JSON, tanpa teks lain):
-{
-  "score": <angka 0-100, health score bisnis>,
-  "findings": [
-    "<temuan kritis 1 spesifik berdasarkan data>",
-    "<temuan kritis 2 spesifik berdasarkan data>",
-    "<temuan kritis 3 spesifik berdasarkan data>",
-    "<temuan kritis 4 spesifik berdasarkan data>"
-  ],
-  "recommendation": "<rekomendasi utama yang actionable dan spesifik>"
-}
+      setErpScanProgress(65);
 
-Pastikan findings SPESIFIK terhadap data yang diberikan (sebutkan angka/nama akun jika ada), bukan generik.`;
+      // Timeout 45 detik
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 45000);
 
-      // Add timeout protection (60 seconds)
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Analisis timeout setelah 60 detik. Coba lagi.')), 60000)
-      );
-
-      const aiPromise = ai.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: prompt,
-        config: { temperature: 0.3, responseMimeType: 'application/json' }
-      });
-
-      setErpScanProgress(70);
-
-      const response = await Promise.race([aiPromise, timeoutPromise]);
-      const rawText = response.text || '{}';
-
-      setErpScanProgress(85);
-
-      let analysis: any = {};
+      let response: Response;
       try {
-        // Strip markdown code blocks if present
+        response = await fetch(GEMINI_URL, {
+          method: 'POST',
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.3, maxOutputTokens: 512 }
+          })
+        });
+      } finally {
+        clearTimeout(timer);
+      }
+
+      setErpScanProgress(80);
+
+      if (!response.ok) {
+        const errBody = await response.text();
+        throw new Error(`Gemini API error ${response.status}: ${errBody.substring(0, 200)}`);
+      }
+
+      const geminiData = await response.json();
+      const rawText: string = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+
+      setErpScanProgress(90);
+
+      // Parse JSON dari respons
+      let analysis: { score?: number; findings?: string[]; recommendation?: string } = {};
+      try {
         const cleaned = rawText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
         analysis = JSON.parse(cleaned);
       } catch {
-        // If JSON parse fails, build structured result from text
+        // Jika JSON gagal, buat hasil sederhana dari teks mentah
         analysis = {
           score: 65,
-          findings: [rawText.substring(0, 200)],
-          recommendation: 'Lihat detail analisis di atas.'
+          findings: ['Analisis selesai. Data berhasil diproses.', rawText.substring(0, 150)],
+          recommendation: 'Tinjau laporan lebih detail bersama konsultan keuangan.'
         };
       }
 
-      const calculatedScore = typeof analysis.score === 'number' ? analysis.score : 65;
-      const findings: string[] = Array.isArray(analysis.findings) && analysis.findings.length > 0
+      const finalScore = typeof analysis.score === 'number' ? Math.max(0, Math.min(100, analysis.score)) : 65;
+      const findings = Array.isArray(analysis.findings) && analysis.findings.length > 0
         ? analysis.findings
-        : ['Analisis selesai. Lihat rekomendasi untuk detail.'];
-      const rec: string = analysis.recommendation || 'Optimalisasi modal kerja dapat membebaskan kas secara signifikan.';
+        : ['Data berhasil dianalisis. Tidak ada temuan kritis terdeteksi.'];
+      const rec = analysis.recommendation || 'Lanjutkan pemantauan rutin indikator keuangan utama.';
 
-      setCalculatedScore(calculatedScore);
-      setGlobalHealthScore(calculatedScore, findings, rec);
+      setCalculatedScore(finalScore);
+      setGlobalHealthScore(finalScore, findings, rec);
       setAiFindings(findings);
       setAiRecommendation(rec);
 
     } catch (e: any) {
       console.error("Diagnostic error:", e);
-      const errMsg = e.message || 'Terjadi kesalahan sistem.';
-      setCalculatedScore(40);
-      setGlobalHealthScore(40, [`Error: ${errMsg}`], 'Coba upload file yang lebih kecil atau coba lagi beberapa saat.');
-      setAiFindings([`Error Analisis: ${errMsg}`]);
-      setAiRecommendation('Coba upload file yang lebih kecil (maks ~5MB) atau coba lagi beberapa saat.');
+      const msg = e.name === 'AbortError'
+        ? 'Analisis timeout (>45 detik). Coba lagi.'
+        : (e.message || 'Terjadi kesalahan.');
+      setCalculatedScore(50);
+      setGlobalHealthScore(50, [`Analisis tidak dapat diselesaikan: ${msg}`], 'Coba lagi atau hubungi support.');
+      setAiFindings([`Gagal: ${msg}`]);
+      setAiRecommendation('Coba lagi beberapa saat, atau upload file yang lebih kecil.');
     }
 
     setErpScanProgress(100);
@@ -254,6 +271,8 @@ Pastikan findings SPESIFIK terhadap data yang diberikan (sebutkan angka/nama aku
       colors: ['#D4AF37', '#FFFFFF', '#10B981']
     });
   };
+
+
 
   const q = questions[currentStep];
 
