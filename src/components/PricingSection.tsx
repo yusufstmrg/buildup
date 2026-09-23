@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { CheckCircle2, ChevronDown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CheckCircle2, ChevronRight, Search, FileText, BarChart, Rocket, Building2 } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
 import { useCms } from '../context/CmsContext';
-import * as Accordion from '@radix-ui/react-accordion';
 import * as Switch from '@radix-ui/react-switch';
 import { EditableText } from '../components/admin/EditableText';
 
 export function PricingSection() {
-  const { 
-    setIsHealthCheckModalOpen, 
-    currency, 
-    setCurrency, 
-    formatMoney
-  } = useBuildUp();
+  const { setIsHealthCheckModalOpen, formatMoney } = useBuildUp();
   const { state } = useCms();
+  const navigate = useNavigate();
 
   const [isAnnual, setIsAnnual] = useState(true);
 
@@ -23,215 +18,191 @@ export function PricingSection() {
     window.scrollTo(0, 0);
   }, []);
 
-  const getPriceIdr = (monthlyIdr: number) => {
-    return isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
-  };
-  
-  const getBilledYearlyIdr = (monthlyIdr: number) => { return monthlyIdr * 12 * 0.8; };
-
-  const getPriceUsd = (monthlyUsd: number) => {
-    return isAnnual ? monthlyUsd * 0.8 : monthlyUsd;
-  };
-  
-  const getBilledYearlyUsd = (monthlyUsd: number) => { return monthlyUsd * 12 * 0.8; };
-
-  const formatPrice = (value: number) => {
-    if (value === 0) return "Free";
-    if (value >= 1000000000) {
-      return "Rp " + (value / 1000000000).toFixed(2).replace(".", ",") + " Miliar";
-    }
-    if (value >= 1000000) {
-      return "Rp " + (value / 1000000) + " Juta";
-    }
-    return formatMoney(value);
+  const getSaaSPrice = (monthlyIdr: number) => {
+    if (monthlyIdr === 0) return "Custom Pricing";
+    const actualPrice = isAnnual ? monthlyIdr * 0.8 : monthlyIdr;
+    return formatMoney(actualPrice);
   };
 
-  const faqs = state.faqs;
-  const packages = state.pricing;
+  const { saasPlans, diagnosticProducts } = state;
 
   return (
     <section id="pricing" className="py-24 bg-brand-deep">
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h1 className="text-4xl sm:text-5xl font-black text-brand-textMain tracking-tight">
-            <EditableText id="pricing.title" default="Transparent, Outcome-Led Pricing" />
-          </h1>
-          <p className="mt-4 text-base text-brand-textMuted">
-            <EditableText id="pricing.subtitle" default="Select the engagement model that fits your scale." className="block" />
-          </p>
+      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-32">
+        
+        {/* SEGMENT 1: JALUR TRANSFORMASI */}
+        <div className="space-y-12">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-sm font-bold text-brand-gold tracking-widest uppercase mb-3">Jalur Transformasi BuildUp</h2>
+            <h3 className="text-4xl sm:text-5xl font-black text-brand-textMain tracking-tight">
+              Dari Insight ke Impact
+            </h3>
+            <p className="mt-4 text-base text-brand-textMuted max-w-2xl mx-auto">
+              Mulai dari diagnosa gratis hingga transformasi skala besar, BuildUp mendampingi setiap tahap pertumbuhan bisnis Anda.
+            </p>
+          </div>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-4">
-            <div className="flex items-center gap-3 text-sm font-bold bg-brand-surface p-2 rounded-2xl border border-brand-border">
-              <span className={"px-4 py-2 rounded-xl transition-colors " + (!isAnnual ? "bg-brand-navy text-brand-textMain shadow-sm" : "text-brand-textMuted cursor-pointer")} onClick={() => setIsAnnual(false)}>Monthly</span>
-              <Switch.Root
-                className="w-[42px] h-[25px] bg-brand-navy rounded-full relative shadow-[0_2px_10px] shadow-blackA4 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-brand-gold outline-none cursor-default"
-                checked={isAnnual}
-                onCheckedChange={setIsAnnual}
-              >
-                <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
-              </Switch.Root>
-              <span className={"px-4 py-2 rounded-xl transition-colors flex items-center gap-2 " + (isAnnual ? "bg-brand-navy text-brand-textMain shadow-sm" : "text-brand-textMuted cursor-pointer")} onClick={() => setIsAnnual(true)}>
-                Yearly
-                <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">SAVE 20%</span>
-              </span>
-            </div>
-            
-            <div className="inline-flex items-center p-1 rounded-xl bg-brand-navy border border-brand-border mt-2">
-              <button
-                onClick={() => setCurrency("IDR")}
-                className={"px-3 py-1 rounded-lg text-xs font-bold transition-all " + (
-                  currency === "IDR"
-                    ? "bg-brand-gold text-brand-deep"
-                    : "text-brand-textMuted hover:text-brand-textMain"
-                )}
-              >
-                IDR
-              </button>
-              <button
-                onClick={() => setCurrency("USD")}
-                className={"px-3 py-1 rounded-lg text-xs font-bold transition-all " + (
-                  currency === "USD"
-                    ? "bg-brand-gold text-brand-deep"
-                    : "text-brand-textMuted hover:text-brand-textMain"
-                )}
-              >
-                USD
-              </button>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+            {/* Connection Line */}
+            <div className="hidden md:block absolute top-[60px] left-10 right-10 h-0.5 bg-brand-border z-0"></div>
+
+            {[
+              { step: 1, title: 'DISCOVER', name: 'Health Snapshot™', desc: 'Diagnosa awal bisnis secara gratis', price: 'Gratis', icon: <Search className="w-6 h-6 text-brand-gold" /> },
+              { step: 2, title: 'DIAGNOSE', name: 'Business Health Check™', desc: 'Analisa lebih mendalam dengan AI', price: 'Rp 749.000 / sekali', icon: <FileText className="w-6 h-6 text-brand-gold" /> },
+              { step: 3, title: 'DEEP DIVE', name: 'Business X-Ray™', desc: 'Analisa komprehensif dan value quantification', price: 'Mulai Rp 7.500.000', icon: <BarChart className="w-6 h-6 text-brand-gold" /> },
+              { step: 4, title: 'TRANSFORM', name: 'BuildUp Platform', desc: 'Implementasi & otomatisasi dengan AI', price: 'Mulai Rp 299.000/bln', icon: <Rocket className="w-6 h-6 text-brand-gold" /> },
+              { step: 5, title: 'SCALE', name: 'Enterprise', desc: 'Solusi custom untuk grup & korporasi', price: 'Hubungi Kami', icon: <Building2 className="w-6 h-6 text-brand-gold" /> }
+            ].map((item, idx) => (
+              <div key={idx} className="relative z-10 flex flex-col items-center text-center bg-brand-navy border border-brand-border rounded-2xl p-6 hover:border-brand-gold/50 transition-all group">
+                <div className="w-6 h-6 rounded-full bg-brand-gold text-slate-900 text-xs font-bold flex items-center justify-center mb-4 absolute -top-3">
+                  {item.step}
+                </div>
+                <div className="text-[10px] font-bold text-brand-textMuted tracking-wider mb-2">{item.title}</div>
+                <div className="w-12 h-12 rounded-xl bg-brand-card flex items-center justify-center border border-brand-border mb-4 group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </div>
+                <h4 className="text-sm font-bold text-brand-textMain mb-2">{item.name}</h4>
+                <p className="text-[11px] text-brand-textMuted leading-relaxed mb-4 flex-1">{item.desc}</p>
+                <div className="w-full py-2 bg-brand-card rounded-lg text-xs font-semibold text-brand-gold border border-brand-gold/20">
+                  {item.price}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {(packages || []).map((pkg) => (
-            <div
-              key={pkg.id}
-              className={"relative bg-brand-surface border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 " + (pkg.isPopular ? "border-brand-gold border-2 shadow-[0_0_30px_rgba(234,179,8,0.1)] scale-[1.02] z-10" : "border-brand-border hover:border-brand-gold/40")}
-            >
-              {pkg.isPopular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-gold text-brand-deep font-black text-[10px] uppercase tracking-wider py-1 px-4 rounded-full">
-                  PALING BANYAK DIPILIH
-                </div>
-              )}
 
-              <div>
-                <p className="text-[10px] font-bold text-brand-textMuted uppercase tracking-wider mb-2">{pkg.label}</p>
-                <h3 className="text-xl font-black text-brand-textMain mb-4">{pkg.name}</h3>
-                
-                <div className="mb-6">
-                  {pkg.priceIdr === 0 ? (
-                    <div className="text-4xl font-black text-brand-textMain">Free</div>
-                  ) : (
-                    <>
-                      <div className="flex items-end gap-1">
-                        <span className="text-4xl font-black text-brand-textMain">
-                          {currency === "IDR" ? formatPrice(getPriceIdr(pkg.priceIdr)) : "$" + getPriceUsd(pkg.priceUsd)}
-                        </span>
-                        <span className="text-sm text-brand-textMuted mb-1 font-medium">/ month</span>
-                      </div>
-                      {isAnnual && (
-                        <div className="text-xs font-bold text-emerald-500 mt-1">
-                          Billed {currency === "IDR" ? formatPrice(getBilledYearlyIdr(pkg.priceIdr)) : "$" + getBilledYearlyUsd(pkg.priceUsd)} yearly
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-                <p className="text-sm text-brand-textMuted leading-relaxed border-b border-brand-border pb-6 mb-6">
-                  {pkg.description}
-                </p>
-              </div>
+        {/* SEGMENT 2: PAKET LANGGANAN SAAS */}
+        <div className="space-y-12">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-sm font-bold text-brand-gold tracking-widest uppercase mb-3">Paket Langganan BuildUp</h2>
+            <h3 className="text-3xl sm:text-4xl font-black text-brand-textMain tracking-tight">
+              Pilih Paket yang Sesuai dengan Kebutuhan Anda
+            </h3>
+            <p className="mt-4 text-sm text-brand-textMuted max-w-2xl mx-auto">
+              Solusi fleksibel untuk setiap tahap pertumbuhan bisnis. Harga transparan, fitur jelas, nilai nyata.
+            </p>
 
-              <div>
-                <ul className="space-y-4 text-sm text-brand-textMain mb-8">
-                  {pkg.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-brand-gold shrink-0 mt-0.5" />
-                      <span className="font-medium">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-auto">
-                <button
-                  onClick={() => setIsHealthCheckModalOpen(true)}
-                  className={"w-full py-3 px-6 rounded-xl font-bold text-sm tracking-wide transition-all " + (pkg.isPopular ? "bg-brand-gold text-brand-deep hover:bg-[#FACC15]" : "bg-brand-navy hover:bg-brand-card text-brand-textMain border border-brand-border hover:border-brand-textMuted")}
+            <div className="mt-8 flex flex-col items-center justify-center gap-4">
+              <div className="flex items-center gap-3 text-sm font-bold bg-brand-surface p-2 rounded-2xl border border-brand-border">
+                <span className={"px-4 py-2 rounded-xl transition-colors " + (!isAnnual ? "bg-brand-navy text-brand-textMain shadow-sm" : "text-brand-textMuted cursor-pointer")} onClick={() => setIsAnnual(false)}>Bulanan</span>
+                <Switch.Root
+                  className="w-[42px] h-[25px] bg-brand-navy rounded-full relative shadow-[0_2px_10px] shadow-blackA4 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-brand-gold outline-none cursor-default"
+                  checked={isAnnual}
+                  onCheckedChange={setIsAnnual}
                 >
-                  {pkg.buttonText}
+                  <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+                </Switch.Root>
+                <span className={"px-4 py-2 rounded-xl transition-colors flex items-center gap-2 " + (isAnnual ? "bg-brand-navy text-brand-textMain shadow-sm" : "text-brand-textMuted cursor-pointer")} onClick={() => setIsAnnual(true)}>
+                  Tahunan <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Hemat 20%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-6 items-end">
+            {saasPlans.map((plan) => (
+              <div 
+                key={plan.id} 
+                className={`relative flex flex-col bg-brand-navy rounded-2xl border transition-all ${
+                  plan.isPopular 
+                    ? 'border-brand-gold shadow-[0_0_30px_rgba(212,175,55,0.15)] md:-translate-y-4' 
+                    : 'border-brand-border hover:border-brand-gold/50'
+                }`}
+              >
+                {plan.isPopular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-gold text-slate-900 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-wider whitespace-nowrap shadow-md">
+                    Paling Populer
+                  </div>
+                )}
+                <div className="p-6 md:p-5 lg:p-6 border-b border-brand-border/50">
+                  <h4 className="text-xl font-bold text-brand-textMain">{plan.name}</h4>
+                  <p className="text-xs text-brand-textMuted mt-2 h-8">{plan.targetAudience}</p>
+                  <div className="mt-4 mb-2">
+                    {plan.priceIdrMonthly === 0 ? (
+                      <span className="text-2xl font-black text-brand-textMain">Custom Pricing</span>
+                    ) : (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl lg:text-3xl font-black text-brand-textMain tracking-tight">
+                          {getSaaSPrice(plan.priceIdrMonthly)}
+                        </span>
+                        <span className="text-xs text-brand-textMuted">/ bulan</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="p-6 md:p-5 lg:p-6 flex-1 flex flex-col bg-brand-card/30 rounded-b-2xl">
+                  <ul className="space-y-4 flex-1 mb-8">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <CheckCircle2 className="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
+                        <span className="text-xs text-brand-textMuted leading-relaxed">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <button 
+                    onClick={() => {
+                      if (plan.id === 'enterprise' || plan.id === 'scale') {
+                        navigate('/contact');
+                      } else {
+                        setIsHealthCheckModalOpen(true);
+                      }
+                    }}
+                    className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                      plan.isPopular 
+                        ? 'bg-brand-gold text-slate-900 hover:opacity-90 shadow-gold-sm' 
+                        : 'bg-brand-surface border border-brand-border text-brand-textMain hover:bg-brand-navy hover:border-brand-gold/50'
+                    }`}
+                  >
+                    {plan.buttonText}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
+        {/* SEGMENT 3: DIAGNOSTIC PRODUCTS */}
+        <div className="space-y-8 max-w-5xl mx-auto">
+          {diagnosticProducts.map((prod) => (
+            <div key={prod.id} className="bg-brand-navy border border-brand-border hover:border-brand-gold/30 transition-all rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl">
+              <div className="flex-1 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-brand-border text-brand-textMain text-[10px] font-bold uppercase tracking-wider">
+                  <Search className="w-3 h-3 text-brand-gold" /> DIAGNOSTIC PRODUCT
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-brand-textMain">{prod.name}</h3>
+                <p className="text-sm text-brand-textMuted leading-relaxed max-w-xl">
+                  {prod.description}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+                  {prod.features.map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      </div>
+                      <span className="text-xs text-brand-textMain font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="w-full md:w-72 shrink-0 bg-brand-card rounded-2xl p-6 text-center border border-brand-border flex flex-col justify-center items-center">
+                <div className="text-brand-textMuted text-xs font-semibold mb-2">Investasi Satu Kali</div>
+                <div className="text-2xl font-black text-brand-gold mb-6">{prod.priceText}</div>
+                <button 
+                  onClick={() => prod.id === 'health-check' ? setIsHealthCheckModalOpen(true) : navigate('/contact')}
+                  className="w-full bg-brand-gold hover:opacity-90 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all shadow-gold-sm text-sm"
+                >
+                  {prod.buttonText}
                 </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Gain-Share Partnership Tier */}
-        <div className="mt-8 relative bg-brand-surface border border-brand-border hover:border-brand-gold/40 rounded-2xl p-8 flex flex-col md:flex-row gap-8 transition-all duration-300">
-           <div className="absolute -top-3 left-8 bg-brand-gold text-brand-deep font-black text-[10px] uppercase tracking-wider py-1 px-4 rounded-full">
-              OUTCOME-BASED PRICING
-           </div>
-           
-           <div className="md:w-1/3 flex flex-col justify-center">
-             <h3 className="text-2xl font-black text-brand-textMain mb-4">Gain-Share Partnership</h3>
-             <div className="text-3xl font-black text-brand-gold mb-4">Custom + 10% Fee</div>
-             <p className="text-sm text-brand-textMuted leading-relaxed">
-               We align with your success. A fixed implementation fee plus a percentage of verified cost savings and cash flow unlocked.
-             </p>
-           </div>
-           
-           <div className="hidden md:block w-px bg-brand-border"></div>
-           
-           <div className="md:w-2/3 flex flex-col justify-between">
-             <ul className="space-y-4 text-sm text-brand-textMain mb-8 grid sm:grid-cols-2 gap-x-4 gap-y-2">
-               {[
-                 "Fixed Base Price + 10% Fee on Recovered Value",
-                 "Full Platform & Native Core Access",
-                 "Focus on Procurement & DSO Recovery",
-                 "Certified by 3rd-party auditors",
-                 "True alignment with business owners"
-               ].map((feature, idx) => (
-                 <li key={idx} className="flex items-start gap-3">
-                   <CheckCircle2 className="w-5 h-5 text-brand-gold shrink-0 mt-0.5" />
-                   <span className="font-medium">{feature}</span>
-                 </li>
-               ))}
-             </ul>
-             
-             <div className="flex justify-start">
-               <button
-                  onClick={() => setIsHealthCheckModalOpen(true)}
-                  className="py-3 px-8 rounded-xl font-bold text-sm tracking-wide transition-all bg-brand-gold text-brand-deep hover:bg-[#FACC15]"
-                >
-                  Apply for Partnership
-               </button>
-             </div>
-           </div>
-        </div>
-
-        <div className="mt-32 max-w-3xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-brand-textMain tracking-tight"><EditableText id="pricing.faq.title" default="Frequently Asked Questions" /></h2>
-          </div>
-          
-          <Accordion.Root type="single" collapsible className="space-y-4">
-            {(faqs || []).map((faq, i) => (
-              <Accordion.Item key={i} value={"faq-" + i} className="bg-brand-surface border border-brand-border rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-gold/50">
-                <Accordion.Header>
-                  <Accordion.Trigger className="w-full flex items-center justify-between p-6 text-left hover:bg-brand-navy/50 transition-colors group">
-                    <span className="font-bold text-brand-textMain text-base pr-8">{faq.q}</span>
-                    <ChevronDown className="w-5 h-5 text-brand-textMuted group-data-[state=open]:rotate-180 transition-transform duration-300 ease-in-out shrink-0" />
-                  </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content className="px-6 pb-6 text-brand-textMuted text-sm leading-relaxed data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-                  {faq.a}
-                </Accordion.Content>
-              </Accordion.Item>
-            ))}
-          </Accordion.Root>
-        </div>
       </div>
     </section>
   );
 }
-
-
-

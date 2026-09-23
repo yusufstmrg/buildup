@@ -17,7 +17,7 @@ export interface CmsState {
   content: Record<string, string>;
   visibleSections: Record<string, boolean>;
   sectionOrder: string[];
-  pricing: PricingPackage[];
+  diagnosticProducts: DiagnosticProduct[]; saasPlans: SaasPlan[];
   faqs: FaqItem[];
   aboutStages: AboutStage[];
   aboutComparisons: AboutComparison[];
@@ -27,16 +27,24 @@ export interface CmsState {
   editMode: boolean;
 }
 
-export interface PricingPackage {
+export interface DiagnosticProduct {
   id: string;
-  label: string;
   name: string;
+  priceText: string;
   priceIdr: number;
-  priceUsd: number;
   description: string;
   features: string[];
   buttonText: string;
+}
+
+export interface SaasPlan {
+  id: string;
+  name: string;
+  targetAudience: string;
+  priceIdrMonthly: number;
+  features: string[];
   isPopular: boolean;
+  buttonText: string;
 }
 
 export interface FaqItem {
@@ -67,7 +75,8 @@ interface CmsContextProps {
   updateContent: (id: string, html: string) => void;
   toggleSection: (key: string, visible: boolean) => void;
   reorderSections: (order: string[]) => void;
-  setPricing: (tiers: PricingPackage[]) => void;
+  setDiagnosticProducts: (products: DiagnosticProduct[]) => void;
+  setSaasPlans: (plans: SaasPlan[]) => void;
   setFaqs: (faqs: FaqItem[]) => void;
   setAboutStages: (stages: AboutStage[]) => void;
   setAboutComparisons: (comparisons: AboutComparison[]) => void;
@@ -85,26 +94,45 @@ const defaultState: CmsState = {
   sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing',
     'testimonials', 'about', 'contact'],
   
-  pricing: [
+  diagnosticProducts: [
     {
-      id: 'starter', label: 'ENTRY DIAGNOSTIC', name: 'Starter / Basic', priceIdr: 0, priceUsd: 0,
-      description: 'Pemindaian awal untuk menemukan kebocoran finansial tanpa risiko.', features: ['Full 8-Dimension Diagnostic Scan', 'Root Cause Identification', 'Initial AI Value Leakage Report', 'Basic System Integration (1 ERP)', '1-on-1 Consultation Session'],
-      buttonText: 'Request Diagnostic Audit', isPopular: false
+      id: 'health-check', name: 'Business Health Check™', priceText: 'Rp 749.000', priceIdr: 749000,
+      description: 'Analisa lebih mendalam untuk bisnis Anda. Laporan komprehensif dengan rekomendasi prioritas.',
+      features: ['Analisa 8 Dimensi Lengkap', 'Value Leakage Estimation', 'Root-Cause Indication', 'Priority Matrix', 'Executive Report (PDF)'],
+      buttonText: 'Pesan Sekarang'
     },
     {
-      id: 'standard', label: 'MONITORING', name: 'Standard Business', priceIdr: 6000000, priceUsd: 390,
-      description: 'Pemantauan indikator kesehatan bisnis secara real-time dan terus menerus.', features: ['Pemantauan 8 Dimensi 24/7', 'Peringatan Dini (Early Warning System)', 'Akses Dashboard Real-Time', 'Integrasi hingga 3 Sistem Internal', 'Weekly Executive Report', 'Email Support'],
-      buttonText: 'Start Monitoring', isPopular: false
+      id: 'x-ray', name: 'Business X-Ray™', priceText: 'Mulai Rp 7.500.000', priceIdr: 7500000,
+      description: 'Temukan Akar Masalah dan Nilai yang Hilang. Analisa mendalam menggunakan data sistem perusahaan.',
+      features: ['Integrasi data multi-sistem', 'Value Leakage Quantification', 'Cross-functional Analysis', '90-Day Transformation Roadmap', 'Executive Presentation'],
+      buttonText: 'Jadwalkan Konsultasi'
+    }
+  ],
+  saasPlans: [
+    {
+      id: 'starter', name: 'Starter', targetAudience: 'Untuk UMKM & bisnis pemula', priceIdrMonthly: 299000,
+      features: ['Business Health Score', 'Dashboard dasar', '1 integrasi sistem', 'AI Business Advisor', 'Laporan bulanan', '1 user'],
+      isPopular: false, buttonText: 'Mulai Sekarang'
     },
     {
-      id: 'growth', label: 'ACTIVE OPTIMIZATION', name: 'Growth & Scale', priceIdr: 28000000, priceUsd: 1790,
-      description: 'Solusi transformasi menyeluruh: Sistem operasi bisnis berbasis AI yang mandiri.', features: ['Semua Fitur Standard', 'Automated Decision Objects', 'Full AI Workforce Orchestration', 'Unlimited Systems Integration', 'Prediksi Arus Kas Jangka Panjang', 'Otomatisasi Penagihan & Procurement', 'Dedicated Customer Success Manager'],
-      buttonText: 'Deploy Business OS', isPopular: true
+      id: 'business', name: 'Business', targetAudience: 'Untuk bisnis kecil dan menengah', priceIdrMonthly: 1490000,
+      features: ['Semua di Starter', 'Analytics lanjutan', '3 integrasi sistem', '3 AI Agents', 'KPI monitoring', '5 users'],
+      isPopular: false, buttonText: 'Mulai Sekarang'
     },
     {
-      id: 'enterprise', label: 'CUSTOM ENGAGEMENT', name: 'Enterprise Custom', priceIdr: 120000000, priceUsd: 7900,
-      description: 'Untuk konglomerasi multinasional dengan infrastruktur tertutup dan kustomisasi ekstrem.', features: ['Semua Fitur & Benefit Growth & Scale', 'Private VPC / On-Premise Deployment', 'Dedicated Enterprise Architect', 'White-glove SLA 99.99%', 'Custom AI Model Training', 'Audit Keamanan Militer', 'Board-Level Strategic Reporting'],
-      buttonText: 'Talk to Sales', isPopular: false
+      id: 'growth', name: 'Growth', targetAudience: 'Untuk bisnis berkembang', priceIdrMonthly: 4990000,
+      features: ['Semua di Business', '10 integrasi sistem', '10 AI Agents', 'Workflow automation', 'Predictive analytics', '10 users'],
+      isPopular: true, buttonText: 'Mulai Sekarang'
+    },
+    {
+      id: 'scale', name: 'Scale', targetAudience: 'Untuk perusahaan menengah', priceIdrMonthly: 14900000,
+      features: ['Semua di Growth', '25+ integrasi sistem', '25 AI Agents', 'Advanced BI & simulation', 'Multi-entity support', '25 users'],
+      isPopular: false, buttonText: 'Hubungi Sales'
+    },
+    {
+      id: 'enterprise', name: 'Enterprise', targetAudience: 'Untuk grup & korporasi', priceIdrMonthly: 0, // Custom
+      features: ['Solusi fully custom', 'Unlimited integrasi', 'Custom AI Agenton', 'Priority deployment', 'Dedicated team', 'SLA & enterprise support'],
+      isPopular: false, buttonText: 'Hubungi Sales'
     }
   ],
   faqs: [
@@ -220,8 +248,13 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
     setState(newState);
     syncToFirestore(newState);
   };
-  const setPricing = (tiers: PricingPackage[]) => {
-    const newState = { ...state, pricing: tiers };
+  const setDiagnosticProducts = (products: DiagnosticProduct[]) => {
+    const newState = { ...state, diagnosticProducts: products };
+    setState(newState);
+    syncToFirestore(newState);
+  };
+  const setSaasPlans = (plans: SaasPlan[]) => {
+    const newState = { ...state, saasPlans: plans };
     setState(newState);
     syncToFirestore(newState);
   };
@@ -251,7 +284,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setPricing, setFaqs, setAboutStages, setAboutComparisons,
+    <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setDiagnosticProducts, setSaasPlans, setFaqs, setAboutStages, setAboutComparisons,
     setNavItems: (items) => { const ns = {...state, navItems: items}; setState(ns); syncToFirestore(ns); },
     setWorkforceRoles: (roles) => { const ns = {...state, workforceRoles: roles}; setState(ns); syncToFirestore(ns); }, setThemeOverrides, toggleEditMode }}>
       {children}
