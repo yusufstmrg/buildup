@@ -5,7 +5,16 @@ import { getOrCreateUser, getAllUsers } from './src/db/users.ts';
 import { onRequest } from "firebase-functions/v2/https";
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+
+const clientDist = path.resolve(process.cwd(), "dist");
+app.use(express.static(clientDist));
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api/")) return next();
+  res.sendFile(path.join(clientDist, "index.html"), (error) => {
+    if (error) next(error);
+  });
+});
 
 // API routes
 app.get("/api/health", (req, res) => {
@@ -281,5 +290,10 @@ app.get("/api/billing/entitlement", requireAuth, async (req: AuthRequest, res) =
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
+});
+
+const port = Number(process.env.PORT || 3000);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`[BuildUp] preview server listening on ${port}`);
 });
 

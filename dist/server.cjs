@@ -614,6 +614,7 @@ __export(server_exports, {
 });
 module.exports = __toCommonJS(server_exports);
 var import_express = __toESM(require("express"), 1);
+var import_path = __toESM(require("path"), 1);
 
 // src/middleware/auth.ts
 init_firebase_admin();
@@ -655,7 +656,15 @@ var requireAdmin = async (req, res, next) => {
 init_users();
 var import_https = require("firebase-functions/v2/https");
 var app = (0, import_express.default)();
-app.use(import_express.default.json());
+app.use(import_express.default.json({ limit: "1mb" }));
+var clientDist = import_path.default.resolve(process.cwd(), "dist");
+app.use(import_express.default.static(clientDist));
+app.get("/{*splat}", (req, res, next) => {
+  if (req.path.startsWith("/api/")) return next();
+  res.sendFile(import_path.default.join(clientDist, "index.html"), (error) => {
+    if (error) next(error);
+  });
+});
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "BuildUp OS Backend Running" });
 });
@@ -870,6 +879,10 @@ app.get("/api/billing/entitlement", requireAuth, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+var port = Number(process.env.PORT || 3e3);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`[BuildUp] preview server listening on ${port}`);
 });
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
