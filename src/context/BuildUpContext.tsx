@@ -145,86 +145,17 @@ interface BuildUpContextType {
 }
 
 const initialDimensions: HealthDimension[] = [
-  { name: 'Finance & Cash Flow', score: 78, benchmark: 82, status: 'Warning', findings: 'DSO extended by 18 days; working capital locked in unbilled receivables.', bottleneck: 'Delayed invoicing cycle & loose credit terms' },
-  { name: 'Sales & Growth', score: 86, benchmark: 75, status: 'Healthy', findings: 'Pipeline healthy (+24% YoY), but closing cycle drags in enterprise deals.', bottleneck: 'Sales follow-up friction & custom pricing quotes' },
-  { name: 'Operations & SOP', score: 72, benchmark: 80, status: 'Warning', findings: 'Manual data handoffs between ERP and warehouse logistics.', bottleneck: 'Unintegrated inventory records & dispatch bottleneck' },
-  { name: 'Procurement & Spend', score: 64, benchmark: 78, status: 'Critical', findings: '65% spend concentrated on 2 unvetted suppliers; missing quotation normalization.', bottleneck: 'Price leakage & single-supplier dependency' },
-  { name: 'People & HRGA', score: 81, benchmark: 79, status: 'Healthy', findings: 'Clear headcount capacity, though talent onboarding cycle is 42 days.', bottleneck: 'Slow CV pre-screening & assessment verification' },
-  { name: 'Risk & Governance', score: 68, benchmark: 85, status: 'Critical', findings: 'Segregation of Duties (SoD) breach detected in manual PO-to-Payment approval.', bottleneck: 'Single-approver override on expenditures' },
-  { name: 'Technology & AI', score: 70, benchmark: 76, status: 'Warning', findings: 'Legacy ERP running without automated data reconciliation or context graphs.', bottleneck: 'Data silos between finance, CRM, and inventory' },
-  { name: 'Strategic Execution', score: 82, benchmark: 80, status: 'Healthy', findings: 'Strategic objectives defined, but 90-day review cadence is reactive.', bottleneck: 'Static quarterly reforecasting instead of continuous' }
+  { name: 'Finance & Cash Flow', score: 78, benchmark: 82, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Sales & Growth', score: 86, benchmark: 75, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Operations & SOP', score: 72, benchmark: 80, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Procurement & Spend', score: 64, benchmark: 78, status: 'Critical', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'People & HRGA', score: 81, benchmark: 79, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Risk & Governance', score: 68, benchmark: 85, status: 'Critical', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Technology & AI', score: 70, benchmark: 76, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Strategic Execution', score: 82, benchmark: 80, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' }
 ];
 
-const initialDecisions: DecisionObject[] = [
-  {
-    id: 'dec-1',
-    code: 'DEC-2026-089',
-    title: 'Supplier Spend Concentration & Price Normalization',
-    domain: 'Procurement',
-    problem: '65% of raw packaging materials spend is concentrated on 2 suppliers, resulting in 8.4% price premium over validated market benchmarks.',
-    evidence: [
-      'ERP PO logs: 142 orders over past 6 months totaling Rp 4.850.000.000',
-      'Benchmark price database: Market rate is Rp 1.450/unit vs current Rp 1.580/unit',
-      'Supplier delivery SLA compliance: 91.2% on-time'
-    ],
-    options: [
-      { label: 'Option A: Trigger automated RFQ to 4 qualified regional suppliers with normalized quotation parsing', impact: 'Estimated annual savings of Rp 420.000.000', risk: 'Low' },
-      { label: 'Option B: Re-negotiate volume discount with incumbent using AI-prepared pricing teardown', impact: 'Estimated annual savings of Rp 280.000.000', risk: 'Low' }
-    ],
-    financialImpact: '+Rp 420.000.000 / year',
-    confidence: 96,
-    recommendation: 'Execute Option A. Pre-qualify 2 backup suppliers to eliminate single-point supply chain vulnerability.',
-    authority: 'VP Procurement / COO Approval Required',
-    status: 'Pending Review',
-    timestamp: '28 mins ago',
-    agent: 'AI Procurement'
-  },
-  {
-    id: 'dec-2',
-    code: 'DEC-2026-090',
-    title: 'Working Capital Recovery — Receivables Acceleration',
-    domain: 'Finance',
-    problem: 'Average Days Sales Outstanding (DSO) increased from 42 to 61 days across top 15 B2B clients, locking Rp 1.850.000.000 in excess working capital.',
-    evidence: [
-      'Aging schedule: Rp 1.2B in 30-60 day bucket, Rp 650M in 60-90 day bucket',
-      'Invoice dispute log: 80% of payment delays caused by missing delivery receipts (Surat Jalan)',
-      'Customer payment behavioral trend: Reminders sent after due date instead of 5 days prior'
-    ],
-    options: [
-      { label: 'Option 1: Autonomous pre-due date reminder workflows + digital Surat Jalan auto-attachment', impact: 'Reduce DSO to 44 days; unlock Rp 1.150.000.000 cash in 30 days', risk: 'Low' },
-      { label: 'Option 2: 2/10 Net 30 prompt payment incentive', impact: 'Fast cash recovery with 2% margin haircut', risk: 'Medium' }
-    ],
-    financialImpact: 'Rp 1.150.000.000 cash unlocked',
-    confidence: 94,
-    recommendation: 'Deploy Option 1 via AI CFO and automated billing workflows to eliminate reconciliation friction.',
-    authority: 'CFO / Finance Director',
-    status: 'Pending Review',
-    timestamp: '1 hour ago',
-    agent: 'AI CFO'
-  },
-  {
-    id: 'dec-3',
-    code: 'DEC-2026-091',
-    title: 'Segregation of Duties (SoD) Internal Control Remediation',
-    domain: 'Risk',
-    problem: 'AI Risk Engine detected 3 instances where user ID "FIN-OP-04" created purchase orders and subsequently approved vendor payment releases.',
-    evidence: [
-      'Transaction hash TX-98401, TX-98442, TX-98501 totaling Rp 184.500.000',
-      'System permission log: Role conflict in ERP user authorization matrix',
-      'Policy reference: Section 11.3 Materiality & Approval Threshold Policy'
-    ],
-    options: [
-      { label: 'Option A: Revoke payment authorization from operator role and enforce mandatory dual-custody approval gate', impact: 'Zero fraud exposure; total compliance with governance policy', risk: 'Low' }
-    ],
-    financialImpact: 'Eliminates Rp 500M+ fraud vulnerability',
-    confidence: 99,
-    recommendation: 'Instantly revoke conflicting ERP permissions and escalate audit trail to Audit Committee.',
-    authority: 'CEO / Audit Committee Sign-Off',
-    status: 'Pending Review',
-    timestamp: '3 hours ago',
-    agent: 'AI Risk & Internal Control'
-  }
-];
+const initialDecisions: DecisionObject[] = [];
 
 const defaultDemoUser: UserProfile = {
   id: 'usr-demo-01',
@@ -235,10 +166,9 @@ const defaultDemoUser: UserProfile = {
   industry: 'Distribusi, Grosir & Supply Chain',
   revenueBracket: 'Rp 50 Miliar - Rp 250 Miliar',
   employeeCount: '150 - 500 Karyawan',
-  connectedERP: 'SAP Business One & Accurate Cloud',
-  isSandbox: true,
-  isLoggedIn: true,
-  plan: 'Business X-Ray'
+  isSandbox: false,
+  isLoggedIn: false,
+  plan: 'Free Health Check'
 };
 
 const BuildUpContext = createContext<BuildUpContextType | undefined>(undefined);
