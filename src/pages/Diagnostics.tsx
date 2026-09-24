@@ -30,30 +30,9 @@ export function Diagnostics() {
 
   const [activeTab, setActiveTab] = useState<'dimensions' | 'leakage' | 'roadmap'>('dimensions');
 
-  const leakageBreakdown = [
-    { category: 'Procurement Price Variance', amount: 480000000, desc: 'Overpaying for raw packaging materials due to lack of normalized supplier quotations.', agent: 'AI Procurement', severity: 'Critical' },
-    { category: 'Unbilled Receivables (DSO Drag)', amount: 420000000, desc: '18-day average delay in customer payment cycle due to manual Surat Jalan matching.', agent: 'AI CFO', severity: 'High' },
-    { category: 'Operational Re-work & Dispatch Waste', amount: 310000000, desc: 'Manual CSV handoffs between sales orders and warehouse logistics causing mis-shipments.', agent: 'AI COO', severity: 'Medium' },
-    { category: 'Internal Control & Maverick Spend', amount: 240000000, desc: 'Purchases made outside approved vendor lists without competitive RFQ verification.', agent: 'AI Risk & Control', severity: 'High' },
-  ];
+  const leakageBreakdown: any[] = [];
 
-  const roadmap90Day = [
-    { phase: 'Days 1 - 30: Quick Cash Recovery', target: 'Recover Rp 500M+ Liquidity', tasks: [
-      'Automate invoice delivery with digital delivery receipt attachments (Surat Jalan)',
-      'Enforce strict 3-quote policy on top 20 packaging & raw materials vendors',
-      'Revoke conflicting ERP permissions to resolve Segregation of Duties (SoD) breaches'
-    ]},
-    { phase: 'Days 31 - 60: Operating Margin Defense', target: 'Expand EBITDA by 1.8%', tasks: [
-      'Deploy autonomous AI Procurement RFQ normalization engine',
-      'Integrate warehouse logistics dispatch directly with ERP sales order status',
-      'Institute weekly rolling 13-week liquidity forecasting with automated debtor scoring'
-    ]},
-    { phase: 'Days 61 - 90: Autonomous Scale & Control', target: 'Institutionalize Continuous OS', tasks: [
-      'Activate 24/7 autonomous transaction anomaly and duplicate payment testing',
-      'Establish dynamic sales pricing approval gates based on live gross margin thresholds',
-      'Conduct 90-day transformation review with BuildUp Certified Partner & Board'
-    ]}
-  ];
+  const roadmap90Day: any[] = [];
 
   return (
     <div className="space-y-6">
@@ -162,7 +141,7 @@ export function Diagnostics() {
       {/* Tab 1: 8 Dimensions */}
       {activeTab === 'dimensions' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {dimensions.map((dim, idx) => (
+          {dimensions.length === 0 ? <div className="col-span-full py-8 text-center text-brand-textMuted text-sm">Belum ada dimensi bisnis yang dievaluasi. Hubungkan data Anda.</div> : dimensions.map((dim, idx) => (
             <div key={idx} className="bg-brand-surface border border-brand-border rounded-xl p-5 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -212,7 +191,7 @@ export function Diagnostics() {
             </p>
 
             <div className="space-y-3">
-              {leakageBreakdown.map((item, i) => (
+              {leakageBreakdown.length === 0 ? <div className="py-8 text-center text-brand-textMuted text-sm">Belum ada data inefisiensi/kebocoran yang terdeteksi. Hubungkan data operasional Anda.</div> : leakageBreakdown.map((item, i) => (
                 <div key={i} className="p-4 rounded-xl bg-brand-navy border border-brand-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -243,7 +222,7 @@ export function Diagnostics() {
       {/* Tab 3: 90-Day Roadmap */}
       {activeTab === 'roadmap' && (
         <div className="space-y-4">
-          {roadmap90Day.map((phase, idx) => (
+          {roadmap90Day.length === 0 ? <div className="py-8 text-center text-brand-textMuted text-sm">Belum ada roadmap yang dibuat. Hubungkan data operasional Anda.</div> : roadmap90Day.map((phase, idx) => (
             <div key={idx} className="bg-brand-surface border border-brand-border rounded-xl p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-brand-border">
                 <div className="flex items-center gap-2.5">

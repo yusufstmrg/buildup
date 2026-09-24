@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   BrainCircuit, 
   Layers, 
@@ -43,7 +43,7 @@ function IntelligenceContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">BuildUp Intelligence™</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">BuildUp IntelligenceΓäó</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Product Stage 06
             </span>
@@ -100,7 +100,7 @@ function IntelligenceContent() {
                   <div className="text-xs font-black text-brand-gold mt-0.5">{node.count}</div>
                   <div className="text-[9px] text-brand-textMuted mt-1">{node.sub}</div>
                 </button>
-                {i < 6 && <span className="text-brand-gold font-black">→</span>}
+                {i < 6 && <span className="text-brand-gold font-black">ΓåÆ</span>}
               </React.Fragment>
             ))}
           </div>
@@ -198,7 +198,7 @@ function IntelligenceContent() {
                   </span>
                 </div>
                 <h2 className="text-lg font-black text-brand-textMain">{activeDecision.title}</h2>
-                <div className="text-[11px] text-brand-textMuted mt-0.5">Authoring Agent: <strong>{activeDecision.agent}</strong> · {activeDecision.timestamp}</div>
+                <div className="text-[11px] text-brand-textMuted mt-0.5">Authoring Agent: <strong>{activeDecision.agent}</strong> ┬╖ {activeDecision.timestamp}</div>
               </div>
 
               <div className="text-right">

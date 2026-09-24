@@ -108,8 +108,17 @@ function StrategicPlannerContent() {
 
   return (
     <div className="space-y-6">
-      
-      {/* Header */}
+      {!user?.connectedERP ? (
+        <div className="bg-brand-surface border border-brand-border rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
+          <div className="w-16 h-16 bg-brand-gold/10 rounded-full flex items-center justify-center mb-4">
+            <TrendingUp className="w-8 h-8 text-brand-gold opacity-50" />
+          </div>
+          <h2 className="text-xl font-bold text-brand-textMain mb-2">Belum Ada Data Keuangan</h2>
+          <p className="text-brand-textMuted max-w-md text-sm">Menunggu integrasi sistem akuntansi/ERP Anda. Simulator strategis ini membutuhkan baseline data riil (Revenue, COGS, OPEX) untuk menghasilkan proyeksi yang akurat.</p>
+        </div>
+      ) : (
+        <>
+        {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -376,8 +385,8 @@ function StrategicPlannerContent() {
         </div>
       )}
 
+          </>
+      )}
     </div>
   );
 }
-
-

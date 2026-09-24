@@ -195,17 +195,11 @@ function AIWorkforceContent() {
   const [agents, setAgents] = useState<AgentRole[]>(initialAgents);
   const [activeAgent, setActiveAgent] = useState<AgentRole>(initialAgents[1]); // AI CFO
   const [chatInput, setChatInput] = useState('');
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'agent'; text: string }[]>([
-    { role: 'user', text: initialAgents[1].samplePrompt },
-    { role: 'agent', text: initialAgents[1].sampleResponse }
-  ]);
+  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'agent'; text: string }[]>([]);
 
   const handleSelectAgent = (agent: AgentRole) => {
     setActiveAgent(agent);
-    setChatHistory([
-      { role: 'user', text: agent.samplePrompt },
-      { role: 'agent', text: agent.sampleResponse }
-    ]);
+    setChatHistory([]);
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -308,7 +302,12 @@ function AIWorkforceContent() {
 
         {/* Chat History Box */}
         <div className="bg-brand-navy border border-brand-border rounded-xl p-4 h-64 overflow-y-auto space-y-3 font-sans text-xs">
-          {chatHistory.map((msg, i) => (
+          {chatHistory.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-brand-textMuted opacity-50">
+                <activeAgent.icon className="w-8 h-8 mb-2" />
+                <p>Silakan berikan perintah atau mulai percakapan.</p>
+              </div>
+            ) : chatHistory.map((msg, i) => (
             <div
               key={i}
               className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}

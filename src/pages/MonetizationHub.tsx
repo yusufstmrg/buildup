@@ -15,7 +15,7 @@ import {
 import { useBuildUp } from '../context/BuildUpContext';
 
 export function MonetizationHub() {
-  const { currentPlan, setCurrentPlan, currency, setCurrency, formatMoney } = useBuildUp();
+  const { language, currency, setCurrency, formatMoney, subscription } = useBuildUp();
   const [selectedPlanToUpgrade, setSelectedPlanToUpgrade] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -124,13 +124,13 @@ export function MonetizationHub() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">Commercial & Monetization Engine</h1>
+            <h1 className="text-2xl font-black text-brand-textMain tracking-tight">{language === 'id' ? 'Paket & Tagihan' : 'Billing & Plans'}</h1>
             <span className="text-[10px] font-bold bg-brand-gold/15 text-brand-gold border border-brand-gold/30 px-2 py-0.5 rounded-full uppercase">
               Section 16 · Revenue Architecture
             </span>
           </div>
           <p className="text-xs text-brand-textMuted mt-1">
-            BuildUp monetization packages, client value attribution, and instant contract generation.
+            Kelola paket langganan Anda, metode pembayaran, dan riwayat tagihan.
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export function MonetizationHub() {
               Measured Value Unlocked This Quarter: <span className="text-emerald-400">{formatMoney(480000000, 31000)}</span>
             </h2>
             <p className="text-xs text-brand-textMuted mt-1 max-w-2xl">
-              You invested in <strong>{currentPlan}</strong>. BuildUp's automated supplier quotation normalization and DSO acceleration workflows have directly recovered 10.6x your investment.
+              You invested in <strong>{subscription.planId}</strong>. BuildUp's automated supplier quotation normalization and DSO acceleration workflows have directly recovered 10.6x your investment.
             </p>
           </div>
 
@@ -177,13 +177,13 @@ export function MonetizationHub() {
       {/* Pricing Matrix */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-brand-textMain">Commercial Tier Packaging</h2>
-          <span className="text-xs text-brand-textMuted">Section 16.1 Product Pricing Architecture</span>
+          <h2 className="text-base font-bold text-brand-textMain">Pilihan Paket Langganan</h2>
+          <span className="text-xs text-brand-textMuted">Pilih Paket Sesuai Skala Bisnis Anda</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {plans.map((p) => {
-            const isCurrent = currentPlan === p.id;
+            const isCurrent = subscription.planId === p.id;
             return (
               <div
                 key={p.id}
@@ -317,7 +317,7 @@ export function MonetizationHub() {
                 <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
                 <h4 className="text-lg font-bold text-brand-textMain">Subscription Activated!</h4>
                 <p className="text-xs text-brand-textMuted max-w-sm mx-auto">
-                  Your organization is now officially operating on <strong>{currentPlan}</strong>. Pro-Forma Invoice #INV-BU-2026-0812 has been issued to accounting.
+                  Your organization is now officially operating on <strong>{subscription.planId}</strong>. Pro-Forma Invoice #INV-BU-2026-0812 has been issued to accounting.
                 </p>
                 <button
                   onClick={() => setShowCheckoutModal(false)}
