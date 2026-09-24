@@ -155,7 +155,7 @@ function IntelligenceContent() {
           {/* Decision Cards */}
           <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
             {filteredDecisions.map((dec) => {
-              const isSelected = activeDecision.id === dec.id;
+              const isSelected = activeDecision?.id === dec.id;
               return (
                 <div
                   key={dec.id}
@@ -199,21 +199,21 @@ function IntelligenceContent() {
             <div className="flex items-start justify-between pb-4 border-b border-brand-border">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-black text-brand-gold">{activeDecision.code}</span>
+                  <span className="text-xs font-black text-brand-gold">{activeDecision?.code}</span>
                   <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-brand-textMuted px-2 py-0.5 rounded">
-                    Domain: {activeDecision.domain}
+                    Domain: {activeDecision?.domain}
                   </span>
                   <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                    {activeDecision.confidence}% AI Confidence
+                    {activeDecision?.confidence}% AI Confidence
                   </span>
                 </div>
-                <h2 className="text-lg font-black text-brand-textMain">{activeDecision.title}</h2>
-                <div className="text-[11px] text-brand-textMuted mt-0.5">Authoring Agent: <strong>{activeDecision.agent}</strong> ┬╖ {activeDecision.timestamp}</div>
+                <h2 className="text-lg font-black text-brand-textMain">{activeDecision?.title}</h2>
+                <div className="text-[11px] text-brand-textMuted mt-0.5">Authoring Agent: <strong>{activeDecision?.agent}</strong> ┬╖ {activeDecision?.timestamp}</div>
               </div>
 
               <div className="text-right">
                 <div className="text-[10px] text-brand-textMuted font-semibold uppercase">Projected Impact</div>
-                <div className="text-sm font-black text-emerald-400">{activeDecision.financialImpact}</div>
+                <div className="text-sm font-black text-emerald-400">{activeDecision?.financialImpact}</div>
               </div>
             </div>
 
@@ -223,7 +223,7 @@ function IntelligenceContent() {
                 Problem Statement
               </div>
               <div className="p-3.5 rounded-xl bg-brand-navy border border-brand-border text-xs text-brand-textMain leading-relaxed">
-                {activeDecision.problem}
+                {activeDecision?.problem}
               </div>
             </div>
 
@@ -234,7 +234,7 @@ function IntelligenceContent() {
                 Evidence Base (Cross-System Verification)
               </div>
               <ul className="space-y-1.5 text-xs text-brand-textMuted">
-                {activeDecision.evidence.map((ev, i) => (
+                {(activeDecision?.evidence || []).map((ev, i) => (
                   <li key={i} className="flex items-start gap-2 bg-brand-card/30 p-2.5 rounded-lg border border-brand-border/60">
                     <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold mt-0.5 shrink-0" />
                     <span>{ev}</span>
@@ -249,7 +249,7 @@ function IntelligenceContent() {
                 Evaluated Options
               </div>
               <div className="space-y-2">
-                {activeDecision.options.map((opt, i) => (
+                {(activeDecision?.options || []).map((opt, i) => (
                   <div key={i} className="p-3 rounded-xl bg-brand-navy border border-brand-border flex items-center justify-between text-xs">
                     <div>
                       <div className="font-semibold text-brand-textMain">{opt.label}</div>
@@ -270,10 +270,10 @@ function IntelligenceContent() {
                 Model Recommendation
               </div>
               <p className="text-xs text-brand-textMain font-medium leading-relaxed">
-                {activeDecision.recommendation}
+                {activeDecision?.recommendation}
               </p>
               <div className="mt-2 text-[11px] text-brand-textMuted">
-                Required Authority Gate: <strong className="text-brand-textMain">{activeDecision.authority}</strong>
+                Required Authority Gate: <strong className="text-brand-textMain">{activeDecision?.authority}</strong>
               </div>
             </div>
 
@@ -281,16 +281,16 @@ function IntelligenceContent() {
 
           {/* Action Footer */}
           <div className="pt-6 mt-6 border-t border-brand-border flex items-center justify-between gap-3">
-            {activeDecision.status === 'Pending Review' ? (
+            {activeDecision?.status === 'Pending Review' ? (
               <>
                 <button
-                  onClick={() => approveDecision(activeDecision.id)}
+                  onClick={() => approveDecision(activeDecision?.id)}
                   className="flex-1 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldLight text-brand-deep font-extrabold text-xs uppercase tracking-wider shadow-gold-sm hover:from-brand-goldDark hover:to-brand-gold transition-all"
                 >
                   Approve & Dispatch Autonomous Execution
                 </button>
                 <button
-                  onClick={() => escalateDecision(activeDecision.id)}
+                  onClick={() => escalateDecision(activeDecision?.id)}
                   className="px-5 py-3 rounded-xl bg-brand-card hover:bg-brand-border text-brand-textMain font-bold text-xs border border-brand-border transition-colors flex items-center gap-2"
                 >
                   <UserCheck className="w-4 h-4 text-brand-gold" />
@@ -299,7 +299,7 @@ function IntelligenceContent() {
               </>
             ) : (
               <div className="w-full py-3 text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                Decision Object Status: {activeDecision.status}
+                Decision Object Status: {activeDecision?.status}
               </div>
             )}
           </div>

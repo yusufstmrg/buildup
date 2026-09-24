@@ -27,44 +27,7 @@ interface ControlAlert {
   timestamp: string;
 }
 
-const initialAlerts: ControlAlert[] = [
-  {
-    id: 'AL-01',
-    code: 'SOD-2026-004',
-    type: 'SoD Breach',
-    severity: 'Critical',
-    title: 'Dual Custody Violation: PO Creation & Payment Release by Same User',
-    details: 'User ID FIN-OP-04 generated purchase order #PO-8821 (Rp 184.500.000) and subsequently signed off bank transfer voucher without secondary supervisor sign-off.',
-    userEntity: 'User: FIN-OP-04 (Finance Ops)',
-    amount: 'Rp 184.500.000',
-    status: 'Open Investigation',
-    timestamp: '42 mins ago'
-  },
-  {
-    id: 'AL-02',
-    code: 'DUP-2026-088',
-    type: 'Duplicate Payment',
-    severity: 'High',
-    title: 'Potential Duplicate Invoice Submitted by Packaging Vendor',
-    details: 'Invoice #INV-2901 matches invoice #INV-2844 on amount (Rp 48.200.000), date range, and PO line items. Payment hold automatically applied.',
-    userEntity: 'Vendor: PT Sentosa Pack',
-    amount: 'Rp 48.200.000',
-    status: 'Remediated',
-    timestamp: '2 hours ago'
-  },
-  {
-    id: 'AL-03',
-    code: 'TAX-2026-012',
-    type: 'Tax Discrepancy',
-    severity: 'Medium',
-    title: 'PPh 23 Withholding Calculation Missing NPWP',
-    details: 'Consultancy invoice processed with 2% withholding instead of statutory 4% rate for non-NPWP vendor. Auto-adjusted before tax filing.',
-    userEntity: 'Consultant: Mitra Jaya',
-    amount: 'Rp 4.500.000',
-    status: 'Remediated',
-    timestamp: '5 hours ago'
-  },
-];
+const initialAlerts: ControlAlert[] = [];
 
 export function ControlEngine() {
   const [alerts, setAlerts] = useState<ControlAlert[]>(initialAlerts);
@@ -72,20 +35,30 @@ export function ControlEngine() {
 
   const handleRemediate = (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'Remediated' } : a));
-    if (activeAlert.id === id) {
+    if (activeAlert?.id === id) {
       setActiveAlert(prev => ({ ...prev, status: 'Remediated' }));
     }
   };
 
   const handleEscalate = (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'Escalated to Audit Committee' } : a));
-    if (activeAlert.id === id) {
+    if (activeAlert?.id === id) {
       setActiveAlert(prev => ({ ...prev, status: 'Escalated to Audit Committee' }));
     }
   };
 
   return (
     <div className="space-y-6">
+      {!activeAlert ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <h2 className="text-xl font-bold text-brand-textMain mb-2">Belum Ada Alert Kontrol</h2>
+          <p className="text-sm text-brand-textMuted max-w-md">
+            Sistem tidak mendeteksi adanya pelanggaran kontrol atau anomali saat ini.
+          </p>
+        </div>
+      ) : (
+        <>
+
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -144,7 +117,7 @@ export function ControlEngine() {
 
           <div className="space-y-2.5">
             {alerts.map((a) => {
-              const isSelected = activeAlert.id === a.id;
+              const isSelected = activeAlert?.id === a.id;
               return (
                 <div
                   key={a.id}
@@ -188,18 +161,18 @@ export function ControlEngine() {
             <div className="flex items-start justify-between pb-4 border-b border-brand-border">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-black text-brand-gold">{activeAlert.code}</span>
+                  <span className="text-xs font-black text-brand-gold">{activeAlert?.code}</span>
                   <span className="text-[10px] font-bold bg-brand-navy border border-brand-border text-brand-textMuted px-2 py-0.5 rounded">
-                    Type: {activeAlert.type}
+                    Type: {activeAlert?.type}
                   </span>
                 </div>
-                <h2 className="text-base font-black text-brand-textMain">{activeAlert.title}</h2>
-                <div className="text-xs text-brand-textMuted mt-1">{activeAlert.userEntity} · {activeAlert.timestamp}</div>
+                <h2 className="text-base font-black text-brand-textMain">{activeAlert?.title}</h2>
+                <div className="text-xs text-brand-textMuted mt-1">{activeAlert?.userEntity} · {activeAlert?.timestamp}</div>
               </div>
 
               <div className="text-right">
                 <span className="text-xs text-brand-textMuted">At-Risk Value</span>
-                <div className="text-base font-black text-red-400">{activeAlert.amount}</div>
+                <div className="text-base font-black text-red-400">{activeAlert?.amount}</div>
               </div>
             </div>
 
@@ -208,7 +181,7 @@ export function ControlEngine() {
                 Audit Trail Evidence & Findings
               </div>
               <div className="p-4 rounded-xl bg-brand-navy border border-brand-border text-xs text-brand-textMain leading-relaxed space-y-2">
-                <p>{activeAlert.details}</p>
+                <p>{activeAlert?.details}</p>
                 <div className="pt-2 border-t border-brand-border text-[11px] text-brand-textMuted">
                   Policy Reference: <strong>Section 11.3 Materiality & Approval Threshold Policy</strong> (Requires non-overlapping operator and approver for any amount over Rp 50.000.000).
                 </div>
@@ -233,16 +206,16 @@ export function ControlEngine() {
           </div>
 
           <div className="pt-6 mt-6 border-t border-brand-border flex items-center gap-3">
-            {activeAlert.status === 'Open Investigation' ? (
+            {activeAlert?.status === 'Open Investigation' ? (
               <>
                 <button
-                  onClick={() => handleRemediate(activeAlert.id)}
+                  onClick={() => handleRemediate(activeAlert?.id)}
                   className="flex-1 py-3 bg-gradient-to-r from-brand-gold to-brand-goldLight text-brand-deep font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-gold-sm transition-all"
                 >
                   Revoke Role & Remediate Control Breach
                 </button>
                 <button
-                  onClick={() => handleEscalate(activeAlert.id)}
+                  onClick={() => handleEscalate(activeAlert?.id)}
                   className="px-4 py-3 bg-brand-card hover:bg-brand-border text-brand-textMuted font-bold text-xs rounded-xl border border-brand-border transition-colors"
                 >
                   Escalate to Audit Committee
@@ -250,14 +223,14 @@ export function ControlEngine() {
               </>
             ) : (
               <div className="w-full py-3 text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                Remediation Status: {activeAlert.status}
+                Remediation Status: {activeAlert?.status}
               </div>
             )}
           </div>
         </div>
-
       </div>
-
+      </>
+      )}
     </div>
   );
 }

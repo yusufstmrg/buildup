@@ -38,19 +38,9 @@ interface ApprovalRequest {
   timestamp: string;
 }
 
-const initialWorkflows: WorkflowItem[] = [
-  { id: 'WF-01', name: 'Automated 3-Quote RFQ Normalization', domain: 'Procurement', trigger: 'PO creation > Rp 25M', status: 'Active', lastRun: '12 mins ago', successRate: 99.4, actionsTotal: 342 },
-  { id: 'WF-02', name: 'Pre-Due Date DSO Reminder & Surat Jalan Sync', domain: 'Finance', trigger: 'Invoice due in 5 days', status: 'Active', lastRun: '28 mins ago', successRate: 98.8, actionsTotal: 820 },
-  { id: 'WF-03', name: 'Continuous GL & Bank Statement Reconciliation', domain: 'Controller', trigger: 'Daily midnight bank feed', status: 'Active', lastRun: '6 hours ago', successRate: 100, actionsTotal: 1450 },
-  { id: 'WF-04', name: 'ERP SoD Dual-Custody Approval Interceptor', domain: 'Risk & Governance', trigger: 'High-value payout release', status: 'Active', lastRun: '1 hour ago', successRate: 100, actionsTotal: 180 },
-  { id: 'WF-05', name: 'Order-to-Warehouse Logistics Handshake', domain: 'Operations', trigger: 'Sales order status -> Approved', status: 'Active', lastRun: '4 mins ago', successRate: 97.6, actionsTotal: 690 },
-];
+const initialWorkflows: WorkflowItem[] = [];
 
-const initialApprovals: ApprovalRequest[] = [
-  { id: 'AP-101', title: 'Normalize Packaging Material Vendor Quotes', agent: 'AI Procurement', amount: 'Rp 420.000.000 / yr savings', domain: 'Procurement', rationale: 'Incumbent supplier billing 8.4% above benchmark. 4 quotes normalized; ready to award split volume.', status: 'Pending', timestamp: '14 mins ago' },
-  { id: 'AP-102', title: 'Override 60-Day Payment Terms for B2B Client PT Megah', agent: 'AI CFO', amount: 'Rp 380.000.000 exposure', domain: 'Finance', rationale: 'Client requested Net 75 days. Current policy limit is Net 45. Require VP sign-off.', status: 'Pending', timestamp: '1 hour ago' },
-  { id: 'AP-103', title: 'Revoke Conflicting ERP Role FIN-OP-04', agent: 'AI Risk', amount: 'Zero Fraud Exposure', domain: 'Governance', rationale: 'Remediates detected Segregation of Duties (SoD) vulnerability.', status: 'Pending', timestamp: '3 hours ago' },
-];
+const initialApprovals: ApprovalRequest[] = [];
 
 export function BusinessOS() {
   const [workflows, setWorkflows] = useState<WorkflowItem[]>(initialWorkflows);
