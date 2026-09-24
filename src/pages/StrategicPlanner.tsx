@@ -18,7 +18,7 @@ import { auth } from '../firebaseConfig';
 
 export function StrategicPlanner() {
   return (
-    <PremiumLock featureName="Strategic AI Planner" requiredPlan="Transformation Retainer">
+    <PremiumLock featureName="Strategic AI Planner" requiredPlan="growth" requiredPlanName="Growth">
       <StrategicPlannerContent />
     </PremiumLock>
   );

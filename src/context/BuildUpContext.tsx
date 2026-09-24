@@ -45,7 +45,7 @@ export interface UserProfile {
   isLoggedIn: boolean;
   isAuthLoading: boolean;
   login: (email: string, password?: string, asDemo?: boolean) => Promise<void>;
-  plan: 'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise';
+  plan: UserSubscriptionInfo['planId'];
 }
 
 export interface UsageMetric {
@@ -129,7 +129,7 @@ interface BuildUpContextType {
   // Currency & Plan
   currency: 'IDR' | 'USD';
   setCurrency: (c: 'IDR' | 'USD') => void;
-  currentPlan: 'Free Health Check' | 'Business X-Ray' | 'Score Pro' | 'Transformation Retainer' | 'Enterprise';
+  hasAccess: (requiredPlanId: UserSubscriptionInfo['planId']) => boolean;
   setCurrentPlan: (p: any) => void;
 
   // Modal open states
@@ -242,6 +242,17 @@ const defaultDemoUser: UserProfile = {
 };
 
 const BuildUpContext = createContext<BuildUpContextType | undefined>(undefined);
+
+export const PLAN_TIERS: Record<UserSubscriptionInfo['planId'], number> = {
+  'snapshot': 0,
+  'health-check': 10,
+  'x-ray': 20,
+  'starter': 30,
+  'business': 40,
+  'growth': 50,
+  'scale': 60,
+  'enterprise': 70
+};
 
 export function BuildUpProvider({ children }: { children: React.ReactNode }) {
   // Language (Indonesian is default target market)
@@ -639,6 +650,12 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setCheckoutItem(null), 300);
   };
 
+  const hasAccess = (requiredPlanId: UserSubscriptionInfo['planId']) => {
+    const userTier = PLAN_TIERS[subscription.planId] || 0;
+    const requiredTier = PLAN_TIERS[requiredPlanId] || 0;
+    return userTier >= requiredTier;
+  };
+
   const processPaymentSuccess = (planId: UserSubscriptionInfo['planId'], planName: string) => {
     // Simulasi upgrade: unlock limits
     setSubscription(prev => ({
@@ -665,6 +682,7 @@ export function BuildUpProvider({ children }: { children: React.ReactNode }) {
         checkoutItem,
         openCheckout,
         closeCheckout,
+        hasAccess,
         processPaymentSuccess,
         user,
         isLoggedIn: !!user?.isLoggedIn,

@@ -1,21 +1,27 @@
 import React from 'react';
 import { Lock, Crown } from 'lucide-react';
-import { useBuildUp } from '../context/BuildUpContext';
+import { useBuildUp, UserSubscriptionInfo } from '../context/BuildUpContext';
 
-export function PremiumLock({ children, featureName, requiredPlan = 'Score Pro' }: { children: React.ReactNode, featureName: string, requiredPlan?: string }) {
-  const { currentPlan } = useBuildUp();
+interface PremiumLockProps {
+  children: React.ReactNode;
+  featureName: string;
+  requiredPlan: UserSubscriptionInfo['planId'];
+  requiredPlanName: string;
+}
+
+export function PremiumLock({ children, featureName, requiredPlan, requiredPlanName }: PremiumLockProps) {
+  const { hasAccess } = useBuildUp();
   
-  // Basic check for demo
-  const isPremium = currentPlan === 'Enterprise' || currentPlan === 'Transformation Retainer' || currentPlan === 'Score Pro';
+  const isUnlocked = hasAccess(requiredPlan);
   
-  if (isPremium) {
+  if (isUnlocked) {
     return <>{children}</>;
   }
 
   return (
     <div className="relative w-full rounded-2xl border border-brand-border bg-brand-surface/30 overflow-hidden group">
       {/* Blurred / Hidden Content */}
-      <div className="opacity-20 blur-sm pointer-events-none p-4">
+      <div className="opacity-20 blur-sm pointer-events-none p-4 select-none">
         {children}
       </div>
       
@@ -24,16 +30,16 @@ export function PremiumLock({ children, featureName, requiredPlan = 'Score Pro' 
         <div className="w-12 h-12 rounded-full bg-brand-gold/20 flex items-center justify-center mb-4 border border-brand-gold/40 shadow-gold-sm group-hover:scale-110 transition-transform">
           <Lock className="w-6 h-6 text-brand-gold" />
         </div>
-        <h3 className="text-lg font-bold text-brand-textMain mb-2">{featureName} Dikunci</h3>
+        <h3 className="text-lg font-bold text-brand-textMain mb-2">{featureName}</h3>
         <p className="text-xs text-brand-textMuted max-w-sm mb-6">
-          Fitur analitik cerdas ini hanya tersedia untuk pengguna paket <span className="text-brand-gold font-semibold">{requiredPlan}</span> ke atas.
+          Fitur analitik cerdas ini eksklusif untuk pengguna paket <span className="text-brand-gold font-semibold uppercase">{requiredPlanName}</span> ke atas.
         </p>
         <button 
-          onClick={() => window.location.href = '/pricing'} 
+          onClick={() => window.location.href = '/#pricing'} 
           className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-500 text-slate-950 text-xs font-black shadow-lg hover:opacity-95 transition-all flex items-center gap-2"
         >
           <Crown className="w-4 h-4" />
-          <span>Upgrade Paket Anda</span>
+          <span>Lihat Paket Berlangganan</span>
         </button>
       </div>
     </div>

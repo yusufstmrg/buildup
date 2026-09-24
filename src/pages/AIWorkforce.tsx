@@ -185,7 +185,7 @@ const initialAgents: AgentRole[] = [
 
 export function AIWorkforce() {
   return (
-    <PremiumLock featureName="AI Workforce Hub" requiredPlan="Transformation Retainer">
+    <PremiumLock featureName="AI Workforce Hub" requiredPlan="business" requiredPlanName="Business">
       <AIWorkforceContent />
     </PremiumLock>
   );

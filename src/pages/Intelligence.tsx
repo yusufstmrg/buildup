@@ -20,7 +20,7 @@ import { PremiumLock } from '../components/PremiumLock';
 
 export function Intelligence() {
   return (
-    <PremiumLock featureName="Business Context Graph" requiredPlan="Score Pro">
+    <PremiumLock featureName="Business Context Graph" requiredPlan="starter" requiredPlanName="Starter">
       <IntelligenceContent />
     </PremiumLock>
   );
