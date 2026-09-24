@@ -283,13 +283,23 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
     setState(newState);
   };
 
+  
+  const themeStyles = state.themeOverrides ? `
+    :root, .dark {
+      ${state.themeOverrides.primary ? `--gold: ${state.themeOverrides.primary}; --gold-light: ${state.themeOverrides.primary}; --gold-dark: ${state.themeOverrides.primary};` : ''}
+      ${state.themeOverrides.background ? `--bg-deep: ${state.themeOverrides.background}; --bg-navy: ${state.themeOverrides.background};` : ''}
+    }
+  ` : '';
+
   return (
     <CmsContext.Provider value={{ state, updateContent, toggleSection, reorderSections, setDiagnosticProducts, setSaasPlans, setFaqs, setAboutStages, setAboutComparisons,
     setNavItems: (items) => { const ns = {...state, navItems: items}; setState(ns); syncToFirestore(ns); },
     setWorkforceRoles: (roles) => { const ns = {...state, workforceRoles: roles}; setState(ns); syncToFirestore(ns); }, setThemeOverrides, toggleEditMode }}>
+      {state.themeOverrides && <style>{themeStyles}</style>}
       {children}
     </CmsContext.Provider>
   );
+
 };
 
 export const useCms = () => {

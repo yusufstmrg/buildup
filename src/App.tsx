@@ -55,6 +55,7 @@ export default function App() {
         <ThemePanel />
         <SectionManager />
         <DataManager />
+        <PricingManager />
 
         <Routes>
           {/* Public Enterprise Transformation Portal */}
