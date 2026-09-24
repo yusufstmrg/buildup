@@ -5,7 +5,7 @@ export interface DiagnosticQuestion {
   dimensionId: string;
   category: Record<Language, string>;
   question: Record<Language, string>;
-  description: Record<Language, string>;
+  description: Partial<Record<Language, string>>;
   benchmarkNote?: Record<Language, string>;
   options: {
     text: Record<Language, string>;
@@ -718,8 +718,8 @@ export interface ERPConnectorSpec {
   category: 'Tier 1 Global ERP' | 'SME & Regional ERP' | 'Cash & Banking API' | 'Tax & Compliance' | 'Supply Chain & POS';
   description: Record<Language, string>;
   logoIcon: string;
-  dataReadCapabilities: Record<Language, string[]>;
-  typicalDiagnosticsUncovered: Record<Language, string[]>;
+  dataReadCapabilities: Partial<Record<Language, string[]>>;
+  typicalDiagnosticsUncovered: Partial<Record<Language, string[]>>;
   supportedProtocols: string[];
   latency: string;
   isPopularInID: boolean;

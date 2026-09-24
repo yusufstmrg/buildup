@@ -5,28 +5,30 @@ import {
   TrendingUp, 
   Users, 
   DollarSign, 
-  ArrowRight,
-  Gift,
   Award,
   Wallet,
   CheckCircle2,
-  Clock,
   ChevronRight,
-  ExternalLink
+  Gift,
+  X,
+  Building2,
+  Landmark
 } from 'lucide-react';
 import { useBuildUp } from '../context/BuildUpContext';
 
 export function AffiliateEngine() {
   const { user, language, formatMoney } = useBuildUp();
   const [copied, setCopied] = useState(false);
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
   const [payoutRequested, setPayoutRequested] = useState(false);
-
-  // Mock Data for the Affiliate Engine
-  const referralLink = `https://buildup-os.web.app/r/${user?.uid || 'user123'}`;
-  const totalEarnings = 12500000;
-  const pendingPayout = 4500000;
-  const totalReferrals = 14;
-  const activeSubscribers = 6;
+  
+  // Real Data (Currently Zeroed Out for Production)
+  const referralLink = `https://buildup-os.web.app/r/${user?.id || 'partner'}`;
+  const totalEarnings = 0;
+  const pendingPayout = 0;
+  const totalReferrals = 0;
+  const activeSubscribers = 0;
+  const recentReferrals: any[] = []; // Kosong
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
@@ -34,11 +36,12 @@ export function AffiliateEngine() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const recentReferrals = [
-    { id: 1, company: 'PT Teknologi Digital...', date: '2026-09-20', status: 'Active', plan: 'BuildUp Score™ Pro', commission: 1500000 },
-    { id: 2, company: 'CV Maju Bersama', date: '2026-09-18', status: 'Pending', plan: 'Free Health Check', commission: 0 },
-    { id: 3, company: 'PT Distribusi Logistik', date: '2026-09-15', status: 'Active', plan: 'Business X-Ray™ Sprint', commission: 3000000 },
-  ];
+  const handlePayoutSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowPayoutModal(false);
+    setPayoutRequested(true);
+    // Di sini akan dikirim ke Firestore 'payouts' collection
+  };
 
   const t = {
     title: language === 'id' ? 'Kemitraan & Afiliasi' : 'Referral & Affiliate Engine',
@@ -59,6 +62,8 @@ export function AffiliateEngine() {
     tableStatus: language === 'id' ? 'Status' : 'Status',
     tablePlan: language === 'id' ? 'Paket' : 'Plan',
     tableCommission: language === 'id' ? 'Komisi' : 'Commission',
+    emptyTableTitle: language === 'id' ? 'Belum Ada Referal' : 'No Referrals Yet',
+    emptyTableDesc: language === 'id' ? 'Bagikan tautan Anda untuk mulai mendapatkan komisi.' : 'Share your link to start earning commissions.',
   };
 
   return (
@@ -116,46 +121,56 @@ export function AffiliateEngine() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content - Left 2 cols */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-brand-surface border border-brand-border rounded-2xl p-6">
+          <div className="bg-brand-surface border border-brand-border rounded-2xl p-6 min-h-[300px]">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold text-brand-textMain">{t.recentActivity}</h2>
-              <button className="text-xs text-brand-gold hover:underline flex items-center gap-1">
-                View All <ChevronRight className="w-3 h-3" />
-              </button>
+              {recentReferrals.length > 0 && (
+                <button className="text-xs text-brand-gold hover:underline flex items-center gap-1">
+                  View All <ChevronRight className="w-3 h-3" />
+                </button>
+              )}
             </div>
             
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-brand-border text-brand-textMuted">
-                    <th className="pb-3 font-semibold">{t.tableCompany}</th>
-                    <th className="pb-3 font-semibold">{t.tableDate}</th>
-                    <th className="pb-3 font-semibold">{t.tablePlan}</th>
-                    <th className="pb-3 font-semibold text-right">{t.tableCommission}</th>
-                    <th className="pb-3 font-semibold text-center">{t.tableStatus}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-brand-border text-brand-textMain">
-                  {recentReferrals.map(ref => (
-                    <tr key={ref.id} className="hover:bg-brand-navy/30 transition-colors">
-                      <td className="py-4 font-medium">{ref.company}</td>
-                      <td className="py-4 text-brand-textMuted text-xs">{ref.date}</td>
-                      <td className="py-4 text-xs">{ref.plan}</td>
-                      <td className="py-4 text-right font-bold text-brand-gold">{formatMoney(ref.commission)}</td>
-                      <td className="py-4 text-center">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          ref.status === 'Active' 
-                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                            : 'bg-brand-border/30 text-brand-textMuted border border-brand-border'
-                        }`}>
-                          {ref.status}
-                        </span>
-                      </td>
+            {recentReferrals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 text-center border border-dashed border-brand-border rounded-xl bg-brand-navy/30">
+                <Users className="w-8 h-8 text-brand-textMuted mb-3 opacity-50" />
+                <h3 className="text-sm font-bold text-brand-textMain mb-1">{t.emptyTableTitle}</h3>
+                <p className="text-xs text-brand-textMuted max-w-xs">{t.emptyTableDesc}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-brand-border text-brand-textMuted">
+                      <th className="pb-3 font-semibold">{t.tableCompany}</th>
+                      <th className="pb-3 font-semibold">{t.tableDate}</th>
+                      <th className="pb-3 font-semibold">{t.tablePlan}</th>
+                      <th className="pb-3 font-semibold text-right">{t.tableCommission}</th>
+                      <th className="pb-3 font-semibold text-center">{t.tableStatus}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-brand-border text-brand-textMain">
+                    {recentReferrals.map(ref => (
+                      <tr key={ref.id} className="hover:bg-brand-navy/30 transition-colors">
+                        <td className="py-4 font-medium">{ref.company}</td>
+                        <td className="py-4 text-brand-textMuted text-xs">{ref.date}</td>
+                        <td className="py-4 text-xs">{ref.plan}</td>
+                        <td className="py-4 text-right font-bold text-brand-gold">{formatMoney(ref.commission)}</td>
+                        <td className="py-4 text-center">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            ref.status === 'Active' 
+                              ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                              : 'bg-brand-border/30 text-brand-textMuted border border-brand-border'
+                          }`}>
+                            {ref.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
 
@@ -168,16 +183,16 @@ export function AffiliateEngine() {
             <p className="text-xs text-brand-textMuted mb-6">{t.payoutDesc}</p>
             
             <button 
-              onClick={() => setPayoutRequested(true)}
+              onClick={() => setShowPayoutModal(true)}
               disabled={payoutRequested || pendingPayout < 1000000}
               className={`w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                 payoutRequested 
                   ? 'bg-emerald-500/20 text-emerald-400 cursor-not-allowed'
-                  : 'bg-brand-gold text-slate-900 hover:bg-yellow-500 shadow-gold-sm'
+                  : 'bg-brand-gold text-slate-900 hover:bg-yellow-500 shadow-gold-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-brand-gold'
               }`}
             >
               {payoutRequested ? <CheckCircle2 className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
-              {payoutRequested ? (language === 'id' ? 'Permintaan Diproses' : 'Request Processing') : t.requestPayout}
+              {payoutRequested ? (language === 'id' ? 'Penarikan Diproses' : 'Payout Processing') : t.requestPayout}
             </button>
           </div>
 
@@ -207,6 +222,90 @@ export function AffiliateEngine() {
           </div>
         </div>
       </div>
+
+      {/* Payout Request Modal */}
+      {showPayoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-deep/80 backdrop-blur-sm">
+          <div className="bg-brand-surface border border-brand-border w-full max-w-md rounded-2xl p-6 shadow-2xl relative animate-fade-in">
+            <button 
+              onClick={() => setShowPayoutModal(false)}
+              className="absolute top-4 right-4 text-brand-textMuted hover:text-brand-textMain"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center border border-brand-gold/20">
+                <Landmark className="w-5 h-5 text-brand-gold" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-brand-textMain">
+                  {language === 'id' ? 'Detail Rekening Pencairan' : 'Payout Bank Details'}
+                </h3>
+                <p className="text-xs text-brand-textMuted">
+                  {language === 'id' ? 'Dana akan ditransfer dalam 1-3 hari kerja' : 'Funds will be transferred in 1-3 business days'}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handlePayoutSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-brand-textMuted mb-1.5">
+                  {language === 'id' ? 'Nama Bank' : 'Bank Name'}
+                </label>
+                <select required className="w-full bg-brand-navy border border-brand-border rounded-lg p-2.5 text-sm text-brand-textMain focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none">
+                  <option value="">Pilih Bank</option>
+                  <option value="BCA">Bank BCA</option>
+                  <option value="Mandiri">Bank Mandiri</option>
+                  <option value="BNI">Bank BNI</option>
+                  <option value="BRI">Bank BRI</option>
+                  <option value="Permata">Bank Permata</option>
+                  <option value="BSI">Bank Syariah Indonesia</option>
+                  <option value="Jago">Bank Jago</option>
+                  <option value="Other">Lainnya...</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-bold text-brand-textMuted mb-1.5">
+                  {language === 'id' ? 'Nomor Rekening' : 'Account Number'}
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Contoh: 1234567890"
+                  className="w-full bg-brand-navy border border-brand-border rounded-lg p-2.5 text-sm text-brand-textMain focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-brand-textMuted mb-1.5">
+                  {language === 'id' ? 'Nama Pemilik Rekening' : 'Account Holder Name'}
+                </label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Sesuai buku tabungan"
+                  className="w-full bg-brand-navy border border-brand-border rounded-lg p-2.5 text-sm text-brand-textMain focus:border-brand-gold focus:ring-1 focus:ring-brand-gold outline-none"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-brand-border mt-6">
+                <div className="flex justify-between items-center mb-4 text-sm">
+                  <span className="text-brand-textMuted">{language === 'id' ? 'Total Penarikan:' : 'Withdrawal Total:'}</span>
+                  <span className="font-bold text-brand-gold">{formatMoney(pendingPayout)}</span>
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full py-3 bg-brand-gold text-slate-900 rounded-xl font-bold shadow-gold-sm hover:bg-yellow-500 transition-colors"
+                >
+                  {language === 'id' ? 'Konfirmasi Pencairan' : 'Confirm Payout Request'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  ArrowRight, Sparkles, BrainCircuit, ShieldCheck, TrendingUp, Activity, Users, CheckCircle2, 
+  Share2, ArrowRight, Sparkles, BrainCircuit, ShieldCheck, TrendingUp, Activity, Users, CheckCircle2, 
   ChevronRight, Building2, DollarSign, Sliders, Cpu, BarChart3, Lock, Workflow, AlertTriangle, 
   Award, Zap, ChevronDown
 } from 'lucide-react';
@@ -90,6 +90,12 @@ export function LandingPage() {
           <div className="flex items-center gap-2 sm:gap-2.5">
             <ThemeToggle />
             <LanguageSelector />
+
+              <Link to="/affiliate" className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold/10 hover:bg-brand-gold/20 text-brand-gold border border-brand-gold/30 font-bold text-xs transition-colors">
+                <Share2 className="w-3.5 h-3.5" />
+                Affiliate Program
+              </Link>
+
             
             <div className="hidden sm:flex items-center bg-brand-card border border-brand-border rounded-lg p-0.5 text-xs">
               <button onClick={() => setCurrency('IDR')} className={`px-2 py-1 rounded font-bold text-[11px] transition-colors ${currency === 'IDR' ? 'bg-brand-gold text-white' : 'text-brand-textMuted hover:text-brand-textMain'}`}>IDR</button>

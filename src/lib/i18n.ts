@@ -284,7 +284,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     registerTitle: '企业注册',
     registerSubtitle: '今天开始转型',
     companyNameLabel: '公司名称',
-    industryLabel: '行业',
+    // duplicate industryLabel
     customIndustryLabel: '其他行业',
     customIndustryPlaceholder: '例如：物流',
     annualRevenueLabel: '年收入',
@@ -295,7 +295,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     erpHeading: 'Automated 2-Way Sync with Global Systems',
     erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
 
-    industryLabel: '行业',
+    // duplicate industryLabel
     revenueLabel: '年收入 (十亿 IDR): ',
     headcountLabel: '总人数: ',
     totalLeakage: '年度总漏损',
@@ -379,7 +379,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     registerTitle: '企業登録',
     registerSubtitle: '今すぐ始める',
     companyNameLabel: '会社名',
-    industryLabel: '業界',
+    // duplicate industryLabel
     customIndustryLabel: 'その他の業界',
     customIndustryPlaceholder: '例: 物流',
     annualRevenueLabel: '年間収益',
@@ -390,7 +390,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     erpHeading: 'Automated 2-Way Sync with Global Systems',
     erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
 
-    industryLabel: '業界',
+    // duplicate industryLabel
     revenueLabel: '年間収益 (10億 IDR): ',
     headcountLabel: '総従業員数: ',
     totalLeakage: '年間総漏出額',
@@ -474,7 +474,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     registerTitle: 'تسجيل حساب',
     registerSubtitle: 'ابدأ التحول الذكي',
     companyNameLabel: 'اسم الشركة',
-    industryLabel: 'الصناعة',
+    // duplicate industryLabel
     customIndustryLabel: 'صناعة أخرى',
     customIndustryPlaceholder: 'مثل: الخدمات',
     annualRevenueLabel: 'الإيرادات',
@@ -485,7 +485,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     erpHeading: 'Automated 2-Way Sync with Global Systems',
     erpSubheading: 'Connect BuildUp with your ERP, accounting, and internal databases instantly without disrupting core data.',
 
-    industryLabel: 'الصناعة',
+    // duplicate industryLabel
     revenueLabel: 'الإيرادات السنوية (مليار IDR): ',
     headcountLabel: 'إجمالي الموظفين: ',
     totalLeakage: 'إجمالي التسرب السنوي',

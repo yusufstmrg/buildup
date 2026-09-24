@@ -76,12 +76,7 @@ export function Sidebar() {
       href: "/affiliate",
       icon: Share2,
     },
-    {
-      name: language === "id" ? "Afiliasi & Kemitraan" : "Referral & Affiliate",
-      href: "/affiliate",
-      icon: Users,
-    }
-  ];
+    ];
   return (
     <>
       {" "}
