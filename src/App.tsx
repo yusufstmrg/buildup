@@ -29,6 +29,7 @@ import { StrategicPlanner } from './pages/StrategicPlanner';
 import { ControlEngine } from './pages/ControlEngine';
 import { MonetizationHub } from './pages/MonetizationHub';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { AffiliateEngine } from './pages/AffiliateEngine';
 
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
   constructor(props: any) { super(props); this.state = { hasError: false, error: null }; }
@@ -81,6 +82,7 @@ export default function App() {
             <Route path="/control" element={<ControlEngine />} />
             <Route path="/monetization" element={<MonetizationHub />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/affiliate" element={<AffiliateEngine />} />
           </Route>
 
           {/* Catch-all fallback redirect */}
