@@ -38,9 +38,9 @@ function StrategicPlannerContent() {
   const [aiError, setAiError] = useState<string | null>(null);
 
   // Baseline financials (PT Nusantara Jaya Abadi - IDR 50B baseline)
-  const baseRevenue = 50000000000;
-  const baseCogs = 32000000000;
-  const baseOpex = 10500000000;
+  const baseRevenue = 0;
+  const baseCogs = 0;
+  const baseOpex = 0;
   const baseEbitda = baseRevenue - baseCogs - baseOpex; // Rp 7.5B (15%)
 
   // Recalculations based on sliders
@@ -160,7 +160,7 @@ function StrategicPlannerContent() {
               <Sliders className="w-5 h-5 text-brand-gold" />
               <h2 className="text-base font-bold text-brand-textMain">Interactive Scenario Levers</h2>
             </div>
-            <span className="text-xs text-brand-textMuted">Baseline Revenue: Rp 50 Miliar</span>
+            <span className="text-xs text-brand-textMuted">Baseline Revenue: Rp 0</span>
           </div>
 
           {/* Lever 1: Revenue Target */}

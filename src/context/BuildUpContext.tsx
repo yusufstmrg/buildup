@@ -145,14 +145,14 @@ interface BuildUpContextType {
 }
 
 const initialDimensions: HealthDimension[] = [
-  { name: 'Finance & Cash Flow', score: 78, benchmark: 82, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Sales & Growth', score: 86, benchmark: 75, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Operations & SOP', score: 72, benchmark: 80, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Procurement & Spend', score: 64, benchmark: 78, status: 'Critical', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'People & HRGA', score: 81, benchmark: 79, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Risk & Governance', score: 68, benchmark: 85, status: 'Critical', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Technology & AI', score: 70, benchmark: 76, status: 'Warning', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
-  { name: 'Strategic Execution', score: 82, benchmark: 80, status: 'Healthy', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' }
+  { name: 'Finance & Cash Flow', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Sales & Growth', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Operations & SOP', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Procurement & Spend', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'People & HRGA', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Risk & Governance', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Technology & AI', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' },
+  { name: 'Strategic Execution', score: 0, benchmark: 0, status: 'Pending', findings: 'Belum ada data mendetail', bottleneck: 'Menunggu integrasi sistem' }
 ];
 
 const initialDecisions: DecisionObject[] = [];

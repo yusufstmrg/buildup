@@ -38,6 +38,16 @@ function IntelligenceContent() {
 
   return (
     <div className="space-y-6">
+      {!activeDecision ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <BrainCircuit className="w-16 h-16 text-brand-gold opacity-50 mb-4" />
+          <h2 className="text-xl font-bold text-brand-textMain mb-2">Belum Ada Data Keputusan</h2>
+          <p className="text-sm text-brand-textMuted max-w-md">
+            Menunggu aliran data dari integrasi sistem. BuildUp AI Gateway akan memantau operasional Anda secara real-time dan memunculkan rekomendasi keputusan otomatis di sini.
+          </p>
+        </div>
+      ) : (
+        <>
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -294,9 +304,9 @@ function IntelligenceContent() {
             )}
           </div>
         </div>
-
       </div>
-
+      </>
+      )}
     </div>
   );
 }
