@@ -89,10 +89,9 @@ interface CmsContextProps {
 const defaultState: CmsState = {
   content: {},
   visibleSections: {
-    hero: true, calculator: true, connectors: true, workforce: true, pricing: true, about: true, contact: true
+    hero: true, calculator: true, connectors: true, workforce: true, pricing: true, affiliate: true, about: true, contact: true
   },
-  sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing',
-    'testimonials', 'about', 'contact'],
+  sectionOrder: ['hero', 'calculator', 'connectors', 'workforce', 'pricing', 'affiliate', 'testimonials', 'about', 'contact'],
   
   diagnosticProducts: [
     {

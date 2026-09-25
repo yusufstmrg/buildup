@@ -47,6 +47,7 @@ export function LandingPage() {
     t,
   } = useBuildUp();
   const { state } = useCms();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [revenue, setRevenue] = useState(50);
   const [headcount, setHeadcount] = useState(75);
@@ -429,6 +430,8 @@ export function LandingPage() {
 
           case "pricing":
             return <PricingSection key="pricing" />;
+            case "affiliate":
+              return <AffiliateSection key="affiliate" />;
           case "testimonials":
             return <TestimonialsSection key="testimonials" />;
           case "about":
